@@ -1,0 +1,17 @@
+{
+  "name": "hiro",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "node scripts/lint.mjs",
+    "typecheck": "node scripts/typecheck.mjs",
+    "test": "node scripts/test.mjs",
+    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "check:governance": "node scripts/check-governance.mjs",
+    "check": "npm run check:boundaries && npm run check:governance && npm run lint && npm run typecheck && npm run test"
+  }
+}
