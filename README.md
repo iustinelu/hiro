@@ -21,6 +21,8 @@ This file is mandatory for all contributors and agents.
 
 ## Common Commands
 
+- `npm run dev:web`
+- `npm run dev:mobile`
 - `npm run lint`
 - `npm run typecheck`
 - `npm run test`

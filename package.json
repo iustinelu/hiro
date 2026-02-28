@@ -7,6 +7,8 @@
     "packages/*"
   ],
   "scripts": {
+    "dev:web": "npm run dev --workspace @hiro/web",
+    "dev:mobile": "npm run dev --workspace @hiro/mobile",
     "lint": "node scripts/lint.mjs",
     "typecheck": "node scripts/typecheck.mjs",
     "test": "node scripts/test.mjs",
