@@ -1,6 +1,15 @@
 ## Summary
 
+Linear issue: `HIR-xx`
+
 ## What Changed
+
+## Local Preflight (optional but recommended)
+
+```bash
+# Save your PR body draft to /tmp/pr-body.md, then run:
+npm run check:pr-governance:local
+```
 
 ## Compliance Checklist (Required)
 
