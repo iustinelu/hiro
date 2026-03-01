@@ -8,6 +8,7 @@ Architecture and engineering guardrails live in:
 - [docs/architecture/founder-qa-workflow.md](docs/architecture/founder-qa-workflow.md)
 
 This file is mandatory for all contributors and agents.
+Branch protection must require `quality` and `pr-governance` checks before merge.
 
 ## Workspace Layout
 
