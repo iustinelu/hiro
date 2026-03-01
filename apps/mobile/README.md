@@ -7,4 +7,5 @@
 ## Run
 
 - From repo root: `npm run dev:mobile`
+- Fresh start with cache reset: `npm run dev:mobile:fresh`
 - From this folder: `npm run dev`
