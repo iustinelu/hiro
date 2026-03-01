@@ -1,0 +1,6 @@
+# Founder-required ownership for architecture, governance, and delivery flow.
+.github/* @targovetiustin
+docs/architecture-standards.md @targovetiustin
+docs/architecture/* @targovetiustin
+scripts/check-*.mjs @targovetiustin
+packages/* @targovetiustin

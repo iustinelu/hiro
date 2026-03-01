@@ -5,6 +5,7 @@
 Architecture and engineering guardrails live in:
 
 - [docs/architecture-standards.md](docs/architecture-standards.md)
+- [docs/architecture/founder-qa-workflow.md](docs/architecture/founder-qa-workflow.md)
 
 This file is mandatory for all contributors and agents.
 
@@ -27,3 +28,5 @@ This file is mandatory for all contributors and agents.
 - `npm run typecheck`
 - `npm run test`
 - `npm run check:boundaries`
+- `npm run check:governance`
+- `npm run check`

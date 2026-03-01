@@ -2,6 +2,7 @@ name: ci
 
 on:
   pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
   push:
     branches: [main]
 
@@ -18,3 +19,13 @@ jobs:
       - run: npm run check:governance
       - run: npm run lint
       - run: npm run typecheck
+
+  pr-governance:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run check:pr-governance
