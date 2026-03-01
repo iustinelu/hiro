@@ -1,5 +1,7 @@
 :root {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--hiro-font-family);
+  background-color: var(--hiro-color-bg);
+  color: var(--hiro-color-text-primary);
 }
 
 * {
@@ -8,5 +10,12 @@
 
 body {
   margin: 0;
-  padding: 1.5rem;
+  min-height: 100vh;
+  padding: var(--hiro-spacing-xl);
+  background: radial-gradient(
+      circle at 100% 0%,
+      var(--hiro-semantic-info-bg) 0%,
+      transparent 40%
+    ),
+    var(--hiro-color-bg);
 }
