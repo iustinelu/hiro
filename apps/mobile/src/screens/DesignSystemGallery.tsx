@@ -25,6 +25,7 @@ export function DesignSystemGalleryScreen() {
   const [segmentValue, setSegmentValue] = useState("view");
   const [activeListeners, setActiveListeners] = useState(true);
   const [debugMode, setDebugMode] = useState(false);
+  const [menuValue, setMenuValue] = useState("system");
 
   return (
     <>
@@ -86,6 +87,7 @@ export function DesignSystemGalleryScreen() {
             <MobileButton label="Secondary" variant="secondary" />
             <MobileButton label="Ghost" variant="ghost" />
             <MobileButton label="Danger" variant="danger" />
+            <MobileButton label="Disabled" variant="primary" disabled />
           </View>
         </MobileCard>
 
@@ -99,6 +101,44 @@ export function DesignSystemGalleryScreen() {
             />
             <MobileInput label="Execution Key" value="wf_9382" state="success" helperText="Validated and ready" />
             <MobileInput label="Webhook URL" value="" state="error" helperText="Missing endpoint URL" />
+            <MobileInput label="Read-only secret" value="************" state="disabled" helperText="Disabled input style" />
+          </View>
+        </MobileCard>
+
+        <MobileCard title="Color Palette" description="Core surfaces, semantic states, and data-viz accents.">
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: tokens.spacing.sm }}>
+            {[
+              ["Accent", tokens.color.accent],
+              ["Accent Alt", tokens.color.accentAlt],
+              ["Info", tokens.color.info],
+              ["Success", tokens.color.success],
+              ["Warning", tokens.color.warning],
+              ["Error", tokens.color.error],
+              ["Surface", tokens.color.surface],
+              ["Surface M", tokens.color.surfaceMuted]
+            ].map(([label, color]) => (
+              <View key={label} style={{ width: 70, gap: 4 }}>
+                <View
+                  style={{
+                    height: 32,
+                    borderRadius: tokens.radius.sm,
+                    borderWidth: 1,
+                    borderColor: tokens.color.border,
+                    backgroundColor: color
+                  }}
+                />
+                <Text style={{ color: tokens.color.inkMuted, fontFamily: tokens.typography.fontFamily, fontSize: 10 }}>{label}</Text>
+              </View>
+            ))}
+          </View>
+        </MobileCard>
+
+        <MobileCard title="Typography" description="Display, heading, body, and label standards.">
+          <View style={{ gap: tokens.spacing.sm }}>
+            <Text style={{ color: tokens.color.ink, fontFamily: tokens.typography.fontFamily, fontSize: 32, fontWeight: "800" }}>Display 32</Text>
+            <Text style={{ color: tokens.color.ink, fontFamily: tokens.typography.fontFamily, fontSize: 22, fontWeight: "700" }}>Heading 22</Text>
+            <Text style={{ color: tokens.color.inkMuted, fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.bodySize }}>Body 16 for operational detail copy.</Text>
+            <Text style={{ color: tokens.color.accent, fontFamily: tokens.typography.fontFamily, fontSize: 11, fontWeight: "700", letterSpacing: 0.8, textTransform: "uppercase" }}>Label 11 uppercase token metadata</Text>
           </View>
         </MobileCard>
 
@@ -182,6 +222,73 @@ export function DesignSystemGalleryScreen() {
             <View style={{ height: 62, borderRadius: tokens.radius.md, backgroundColor: tokens.color.accent }} />
           </View>
         </MobileChartContainer>
+
+        <MobileCard title="Data Viz Palette" description="Ordered palette for chart bars and legends.">
+          <View style={{ gap: tokens.spacing.sm }}>
+            {[
+              ["Primary Trend", tokens.color.accent],
+              ["Secondary Trend", tokens.color.accentAlt],
+              ["Info Series", tokens.color.info],
+              ["Success Series", tokens.color.success]
+            ].map(([label, color]) => (
+              <View key={label} style={{ gap: 4 }}>
+                <Text style={{ color: tokens.color.inkMuted, fontFamily: tokens.typography.fontFamily, fontSize: 11 }}>{label}</Text>
+                <View style={{ height: 8, borderRadius: tokens.radius.pill, backgroundColor: color }} />
+              </View>
+            ))}
+          </View>
+        </MobileCard>
+
+        <MobileCard title="Iconography Standard" description="Use icon size rhythm across controls and navigation.">
+          <View style={{ gap: tokens.spacing.sm }}>
+            {[
+              ["Small", tokens.size.iconSm, "dense lists"],
+              ["Medium", tokens.size.iconMd, "controls"],
+              ["Large", tokens.size.iconLg, "primary nav"]
+            ].map(([name, px, usage]) => (
+              <View key={name} style={{ flexDirection: "row", alignItems: "center", gap: tokens.spacing.sm }}>
+                <View
+                  style={{
+                    width: Number(px),
+                    height: Number(px),
+                    borderRadius: tokens.radius.sm,
+                    backgroundColor: tokens.color.surfaceStrong,
+                    borderWidth: 1,
+                    borderColor: tokens.color.border
+                  }}
+                />
+                <Text style={{ color: tokens.color.ink, fontFamily: tokens.typography.fontFamily, fontSize: 12, fontWeight: "700" }}>{name}</Text>
+                <Text style={{ color: tokens.color.inkMuted, fontFamily: tokens.typography.fontFamily, fontSize: 12 }}>{px}px {usage}</Text>
+              </View>
+            ))}
+          </View>
+        </MobileCard>
+
+        <MobileCard title="Mobile Menu Pattern" description="Bottom-tab token treatment preview.">
+          <View style={{ borderRadius: tokens.radius.lg, borderWidth: 1, borderColor: tokens.color.border, backgroundColor: tokens.color.bgElevated, padding: tokens.spacing.sm }}>
+            <View style={{ flexDirection: "row", gap: tokens.spacing.xs }}>
+              {[
+                { id: "system", label: "System" },
+                { id: "comp", label: "Comp" },
+                { id: "patterns", label: "Patterns" },
+                { id: "settings", label: "Settings" }
+              ].map((item) => {
+                const active = menuValue === item.id;
+                return (
+                  <View key={item.id} style={{ flex: 1 }}>
+                    <MobileButton
+                      label={item.label}
+                      variant={active ? "primary" : "ghost"}
+                      size="sm"
+                      onPress={() => setMenuValue(item.id)}
+                      fullWidth
+                    />
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        </MobileCard>
       </ScrollView>
 
       <MobileModalSheet

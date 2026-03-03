@@ -34,12 +34,11 @@ export function WebButton({
         padding: buttonPaddingBySize[size],
         borderRadius: tokens.radius.lg,
         border: `1px solid ${disabled ? resolveColor("disabledBorder") : colors.border}`,
-        background:
-          variant === "primary"
+        background: disabled
+          ? resolveColor("disabledBg")
+          : variant === "primary"
             ? `linear-gradient(90deg, ${resolveColor("accent")} 0%, ${resolveColor("accentStrong")} 100%)`
-            : disabled
-              ? resolveColor("disabledBg")
-              : colors.background,
+            : colors.background,
         color: disabled ? resolveColor("disabledInk") : colors.foreground,
         fontFamily: tokens.typography.fontFamily,
         fontSize: tokens.typography.bodySmallSize,
@@ -49,7 +48,9 @@ export function WebButton({
         transform: `scale(${scale})`,
         opacity: 1,
         boxShadow:
-          variant === "primary"
+          disabled
+            ? "none"
+            : variant === "primary"
             ? `0 0 16px ${resolveColor("accentSoft")}`
             : hovered
               ? tokens.elevation.mid
