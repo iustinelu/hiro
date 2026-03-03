@@ -18,6 +18,12 @@
 - `ModalSheet`: open/close, title/description, primary/secondary actions.
 - `ChartContainer`: standard card-like wrapper for chart surfaces.
 - `LoadingState` / `EmptyState` / `ErrorState`: reusable async states.
+- `SegmentedControl`: compact 3-state style switching surface.
+- `PresenceAvatar`: initials avatar with online/idle/offline indicator.
+- `KpiTile`: metric card with delta label and mini bar visualization.
+- `StatusBadge`: semantic status pill for operational states.
+- `SwitchRow`: labeled toggle row for system options.
+- `InteractiveChip`: selectable/removable chip tokens.
 
 ## Usage Examples
 

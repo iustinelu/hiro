@@ -7,16 +7,25 @@ import {
   WebChartContainer,
   WebEmptyState,
   WebErrorState,
+  WebInteractiveChip,
   WebInput,
+  WebKpiTile,
   WebListRow,
   WebLoadingState,
-  WebModalSheet
+  WebModalSheet,
+  WebPresenceAvatar,
+  WebSegmentedControl,
+  WebStatusBadge,
+  WebSwitchRow
 } from "@hiro/ui-primitives/web";
 import { tokens } from "@hiro/ui-tokens";
 
 export default function DesignSystemGalleryPage() {
   const [inputValue, setInputValue] = useState("hiro_flow_01");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [segmentValue, setSegmentValue] = useState("view");
+  const [activeListeners, setActiveListeners] = useState(true);
+  const [debugMode, setDebugMode] = useState(false);
 
   return (
     <main style={{ minHeight: "100vh", padding: tokens.spacing.xl, position: "relative" }}>
@@ -151,6 +160,44 @@ export default function DesignSystemGalleryPage() {
             gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))"
           }}
         >
+          <WebCard title="Inventory Expansion" description="Segmented controls, presence, KPI, badges, switches, and chips.">
+            <div style={{ display: "grid", gap: tokens.spacing.md }}>
+              <WebSegmentedControl
+                options={[
+                  { label: "View", value: "view" },
+                  { label: "Edit", value: "edit" },
+                  { label: "Manage", value: "manage" }
+                ]}
+                value={segmentValue}
+                onChange={setSegmentValue}
+              />
+              <div style={{ display: "flex", gap: tokens.spacing.sm }}>
+                <WebPresenceAvatar name="Sarah Jenkins" status="online" highlighted />
+                <WebPresenceAvatar name="Michael Chen" status="idle" />
+                <WebPresenceAvatar name="Emma Wilson" status="offline" />
+              </div>
+              <div style={{ display: "grid", gap: tokens.spacing.sm, gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
+                <WebKpiTile title="Sync Rate" value="98.4%" deltaLabel="+12%" deltaTone="success" />
+                <WebKpiTile title="Latency" value="24ms" deltaLabel="-4ms" deltaTone="error" accent="accent" />
+              </div>
+              <div style={{ display: "flex", gap: tokens.spacing.sm, flexWrap: "wrap" }}>
+                <WebStatusBadge label="Operational" tone="success" />
+                <WebStatusBadge label="Degraded" tone="warning" />
+                <WebStatusBadge label="Critical" tone="error" />
+                <WebStatusBadge label="Maintenance" tone="neutral" />
+              </div>
+              <div style={{ display: "grid", gap: tokens.spacing.sm }}>
+                <WebSwitchRow label="Active listeners" value={activeListeners} onToggle={setActiveListeners} />
+                <WebSwitchRow label="Debug mode" value={debugMode} onToggle={setDebugMode} />
+              </div>
+              <div style={{ display: "flex", gap: tokens.spacing.sm, flexWrap: "wrap" }}>
+                <WebInteractiveChip label="Performance" leadingIcon="+" />
+                <WebInteractiveChip label="Security" leadingIcon="*" active />
+                <WebInteractiveChip label="Integrations" leadingIcon="#" removable />
+              </div>
+            </div>
+          </WebCard>
+
           <WebCard title="Workflow Nodes" description="Dense list styling with clean metadata alignment.">
             <div style={{ display: "grid", gap: tokens.spacing.sm }}>
               <WebListRow title="Parse incoming webhook payload" subtitle="Node: transform.input" meta="42ms" />

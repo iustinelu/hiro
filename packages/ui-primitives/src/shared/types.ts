@@ -6,6 +6,8 @@ export type InputState = "default" | "error" | "success" | "disabled";
 export type CardTone = "default" | "accent" | "warning";
 export type ListRowDensity = "comfortable" | "compact";
 export type FeedbackState = "loading" | "empty" | "error";
+export type BadgeTone = "success" | "warning" | "error" | "neutral";
+export type PresenceStatus = "online" | "idle" | "offline";
 
 export interface ButtonProps {
   label: string;
@@ -65,4 +67,51 @@ export interface FeedbackStateProps {
   description?: string;
   retryLabel?: string;
   onRetry?: () => void;
+}
+
+export interface SegmentedControlOption {
+  label: string;
+  value: string;
+}
+
+export interface SegmentedControlProps {
+  options: SegmentedControlOption[];
+  value: string;
+  onChange?: (nextValue: string) => void;
+}
+
+export interface PresenceAvatarProps {
+  name: string;
+  status?: PresenceStatus;
+  highlighted?: boolean;
+  size?: PrimitiveSize;
+}
+
+export interface KpiTileProps {
+  title: string;
+  value: string;
+  deltaLabel?: string;
+  deltaTone?: BadgeTone;
+  bars?: number[];
+  accent?: "primary" | "accent";
+}
+
+export interface StatusBadgeProps {
+  label: string;
+  tone?: BadgeTone;
+}
+
+export interface SwitchRowProps {
+  label: string;
+  value: boolean;
+  onToggle?: (nextValue: boolean) => void;
+}
+
+export interface InteractiveChipProps {
+  label: string;
+  active?: boolean;
+  leadingIcon?: string;
+  removable?: boolean;
+  onPress?: () => void;
+  onRemove?: () => void;
 }

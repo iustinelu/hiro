@@ -6,16 +6,25 @@ import {
   MobileChartContainer,
   MobileEmptyState,
   MobileErrorState,
+  MobileInteractiveChip,
   MobileInput,
+  MobileKpiTile,
   MobileListRow,
   MobileLoadingState,
-  MobileModalSheet
+  MobileModalSheet,
+  MobilePresenceAvatar,
+  MobileSegmentedControl,
+  MobileStatusBadge,
+  MobileSwitchRow
 } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
 
 export function DesignSystemGalleryScreen() {
   const [nameValue, setNameValue] = useState("hiro_user_01");
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [segmentValue, setSegmentValue] = useState("view");
+  const [activeListeners, setActiveListeners] = useState(true);
+  const [debugMode, setDebugMode] = useState(false);
 
   return (
     <>
@@ -110,6 +119,48 @@ export function DesignSystemGalleryScreen() {
             <MobileLoadingState title="Execution running" description="Processing active node graph." />
             <MobileEmptyState title="No triggers found" description="Waiting for incoming webhook events." />
             <MobileErrorState title="Execution failed" description="Retry after checking auth node." onRetry={() => undefined} />
+          </View>
+        </MobileCard>
+
+        <MobileCard title="Inventory Expansion" description="Segmented controls, presence, KPI, badges, switches, and chips.">
+          <View style={{ gap: tokens.spacing.md }}>
+            <MobileSegmentedControl
+              options={[
+                { label: "View", value: "view" },
+                { label: "Edit", value: "edit" },
+                { label: "Manage", value: "manage" }
+              ]}
+              value={segmentValue}
+              onChange={setSegmentValue}
+            />
+            <View style={{ flexDirection: "row", gap: tokens.spacing.sm }}>
+              <MobilePresenceAvatar name="Sarah Jenkins" status="online" highlighted />
+              <MobilePresenceAvatar name="Michael Chen" status="idle" />
+              <MobilePresenceAvatar name="Emma Wilson" status="offline" />
+            </View>
+            <View style={{ flexDirection: "row", gap: tokens.spacing.sm }}>
+              <View style={{ flex: 1 }}>
+                <MobileKpiTile title="Sync Rate" value="98.4%" deltaLabel="+12%" deltaTone="success" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <MobileKpiTile title="Latency" value="24ms" deltaLabel="-4ms" deltaTone="error" accent="accent" />
+              </View>
+            </View>
+            <View style={{ flexDirection: "row", gap: tokens.spacing.sm, flexWrap: "wrap" }}>
+              <MobileStatusBadge label="Operational" tone="success" />
+              <MobileStatusBadge label="Degraded" tone="warning" />
+              <MobileStatusBadge label="Critical" tone="error" />
+              <MobileStatusBadge label="Maintenance" tone="neutral" />
+            </View>
+            <View style={{ gap: tokens.spacing.sm }}>
+              <MobileSwitchRow label="Active listeners" value={activeListeners} onToggle={setActiveListeners} />
+              <MobileSwitchRow label="Debug mode" value={debugMode} onToggle={setDebugMode} />
+            </View>
+            <View style={{ flexDirection: "row", gap: tokens.spacing.sm, flexWrap: "wrap" }}>
+              <MobileInteractiveChip label="Performance" leadingIcon="+" />
+              <MobileInteractiveChip label="Security" leadingIcon="*" active />
+              <MobileInteractiveChip label="Integrations" leadingIcon="#" removable />
+            </View>
           </View>
         </MobileCard>
 
