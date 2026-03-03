@@ -33,19 +33,21 @@ export function WebButton({
         minHeight: buttonMinHeightBySize[size],
         padding: buttonPaddingBySize[size],
         borderRadius: tokens.radius.lg,
-        border: `1px solid ${colors.border}`,
+        border: `1px solid ${disabled ? resolveColor("disabledBorder") : colors.border}`,
         background:
           variant === "primary"
             ? `linear-gradient(90deg, ${resolveColor("accent")} 0%, ${resolveColor("accentStrong")} 100%)`
-            : colors.background,
-        color: disabled ? resolveColor("inkSoft") : colors.foreground,
+            : disabled
+              ? resolveColor("disabledBg")
+              : colors.background,
+        color: disabled ? resolveColor("disabledInk") : colors.foreground,
         fontFamily: tokens.typography.fontFamily,
         fontSize: tokens.typography.bodySmallSize,
         letterSpacing: 0.2,
         fontWeight: 800,
         cursor: disabled ? "not-allowed" : "pointer",
         transform: `scale(${scale})`,
-        opacity: disabled ? 0.5 : 1,
+        opacity: 1,
         boxShadow:
           variant === "primary"
             ? `0 0 16px ${resolveColor("accentSoft")}`

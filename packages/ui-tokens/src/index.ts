@@ -25,6 +25,12 @@ export const tokens = {
     errorSoft: "#ef575322",
     info: "#4f86ff",
     infoSoft: "#4f86ff22",
+    feedbackLoadingBg: "#1b2550",
+    feedbackEmptyBg: "#1a1a37",
+    feedbackErrorBg: "#3a1e30",
+    disabledBg: "#2e3348",
+    disabledBorder: "#4c5270",
+    disabledInk: "#c5cbdf",
     overlay: "rgba(6, 7, 14, 0.72)"
   },
   spacing: {
@@ -143,9 +149,9 @@ export const tokens = {
       axis: "inkMuted"
     },
     feedback: {
-      loading: "infoSoft",
-      empty: "surfaceMuted",
-      error: "errorSoft"
+      loading: "feedbackLoadingBg",
+      empty: "feedbackEmptyBg",
+      error: "feedbackErrorBg"
     }
   }
 } as const;
@@ -177,5 +183,11 @@ export const webCssVariables: Record<string, string> = {
   "--hiro-color-error": tokens.color.error,
   "--hiro-color-error-soft": tokens.color.errorSoft,
   "--hiro-color-info": tokens.color.info,
-  "--hiro-color-info-soft": tokens.color.infoSoft
+  "--hiro-color-info-soft": tokens.color.infoSoft,
+  "--hiro-color-feedback-loading-bg": tokens.color.feedbackLoadingBg,
+  "--hiro-color-feedback-empty-bg": tokens.color.feedbackEmptyBg,
+  "--hiro-color-feedback-error-bg": tokens.color.feedbackErrorBg,
+  "--hiro-color-disabled-bg": tokens.color.disabledBg,
+  "--hiro-color-disabled-border": tokens.color.disabledBorder,
+  "--hiro-color-disabled-ink": tokens.color.disabledInk
 };
