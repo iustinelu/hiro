@@ -1,64 +1,187 @@
 export const tokens = {
   color: {
-    bg: "#f7f5ef",
-    surface: "#ffffff",
-    surfaceMuted: "#eef3f5",
-    textPrimary: "#1f2a30",
-    textSecondary: "#596a72",
-    accent: "#1f8a70",
-    border: "#d3dde1"
-  },
-  semantic: {
-    success: {
-      bg: "#e8f5ee",
-      fg: "#217a4b",
-      border: "#9dd8b7"
-    },
-    warning: {
-      bg: "#fff4db",
-      fg: "#a66700",
-      border: "#f0cd80"
-    },
-    error: {
-      bg: "#feeceb",
-      fg: "#b42318",
-      border: "#f6b1ac"
-    },
-    info: {
-      bg: "#e8f1ff",
-      fg: "#2563eb",
-      border: "#9dbdfc"
-    }
+    bg: "#0b0a14",
+    bgElevated: "#111022",
+    bgCanvasTop: "#0f0d1e",
+    bgCanvasBottom: "#090913",
+    surface: "#161425",
+    surfaceMuted: "#1d1a31",
+    surfaceStrong: "#262242",
+    ink: "#ffffff",
+    inkMuted: "#a6acc4",
+    inkSoft: "#6e7390",
+    accent: "#ff6d24",
+    accentStrong: "#e64f1a",
+    accentSoft: "#ff6d2422",
+    accentInk: "#ffac7e",
+    accentAlt: "#8d5cff",
+    border: "#2d2b42",
+    borderStrong: "#464161",
+    success: "#18c58f",
+    successSoft: "#18c58f22",
+    warning: "#f4b247",
+    warningSoft: "#f4b24722",
+    error: "#ef5753",
+    errorSoft: "#ef575322",
+    info: "#4f86ff",
+    infoSoft: "#4f86ff22",
+    feedbackLoadingBg: "#1b2550",
+    feedbackEmptyBg: "#1a1a37",
+    feedbackErrorBg: "#3a1e30",
+    disabledBg: "#2e3348",
+    disabledBorder: "#4c5270",
+    disabledInk: "#c5cbdf",
+    overlay: "rgba(6, 7, 14, 0.72)"
   },
   spacing: {
+    xxs: 2,
     xs: 4,
     sm: 8,
     md: 12,
     lg: 16,
     xl: 24,
-    xxl: 32
+    xxl: 32,
+    xxxl: 40,
+    xxxxl: 56
   },
   radius: {
-    sm: 6,
-    md: 10,
-    lg: 16
+    sm: 8,
+    md: 12,
+    lg: 18,
+    xl: 24,
+    xxl: 32,
+    pill: 999
+  },
+  size: {
+    touchMin: 44,
+    iconSm: 16,
+    iconMd: 20,
+    iconLg: 24,
+    contentMax: 1100
   },
   elevation: {
-    low: "0 1px 2px rgba(0,0,0,0.08)",
-    mid: "0 6px 20px rgba(0,0,0,0.10)",
-    high: "0 10px 30px rgba(0,0,0,0.14)"
+    low: "0 4px 10px rgba(0, 0, 0, 0.28)",
+    mid: "0 12px 26px rgba(0, 0, 0, 0.36)",
+    high: "0 20px 40px rgba(0, 0, 0, 0.45)"
+  },
+  motion: {
+    duration: {
+      fast: 120,
+      normal: 220,
+      slow: 320
+    },
+    easing: {
+      standard: "ease",
+      emphasized: "cubic-bezier(0.2, 0.8, 0.2, 1)"
+    },
+    scale: {
+      press: 0.98,
+      hover: 1.01
+    }
   },
   typography: {
-    fontFamilyWeb: "'Manrope', 'Avenir Next', sans-serif",
+    fontFamily: "'Inter', 'Manrope', 'Avenir Next', sans-serif",
     fontFamilyMobile: "System",
-    titleSize: 24,
+    fontFamilyMono: "'IBM Plex Mono', 'JetBrains Mono', 'SFMono-Regular', monospace",
+    displaySize: 52,
+    headlineSize: 34,
+    titleSize: 26,
+    subtitleSize: 21,
     bodySize: 16,
-    labelSize: 14,
-    titleLineHeight: 32,
-    bodyLineHeight: 24,
-    labelLineHeight: 20,
-    weightRegular: "400",
-    weightSemibold: "600"
+    bodySmallSize: 14,
+    labelSize: 12,
+    lineHeightDisplay: 58,
+    lineHeightHeadline: 40,
+    lineHeightBody: 23,
+    lineHeightLabel: 17
+  },
+  semantic: {
+    success: "success",
+    warning: "warning",
+    error: "error",
+    info: "info"
+  },
+  component: {
+    button: {
+      primary: {
+        bg: "accent",
+        fg: "ink",
+        border: "accentStrong"
+      },
+      secondary: {
+        bg: "surfaceStrong",
+        fg: "ink",
+        border: "borderStrong"
+      },
+      ghost: {
+        bg: "surfaceMuted",
+        fg: "accent",
+        border: "border"
+      },
+      danger: {
+        bg: "error",
+        fg: "ink",
+        border: "error"
+      }
+    },
+    input: {
+      bg: "surfaceMuted",
+      fg: "ink",
+      border: "border",
+      focusBorder: "accent",
+      errorBorder: "error",
+      successBorder: "success"
+    },
+    card: {
+      bg: "surface",
+      fg: "ink",
+      border: "border",
+      accentBg: "surfaceStrong",
+      warningBg: "warningSoft"
+    },
+    listRow: {
+      bg: "surfaceMuted",
+      fg: "ink",
+      border: "border",
+      pressedBg: "surfaceStrong"
+    },
+    modalSheet: {
+      bg: "bgElevated",
+      fg: "ink",
+      border: "borderStrong",
+      overlay: "overlay"
+    },
+    chartContainer: {
+      bg: "surface",
+      border: "border",
+      axis: "inkMuted"
+    },
+    surface: {
+      panelBg: "bgElevated",
+      panelBorder: "border",
+      dotGridOpacity: 0.18
+    },
+    navigation: {
+      activeIndicatorFrom: "accentAlt",
+      activeIndicatorTo: "accent"
+    },
+    switch: {
+      trackOn: "accent",
+      trackOff: "surfaceStrong",
+      thumbOn: "ink",
+      thumbOff: "inkMuted"
+    },
+    chip: {
+      activeBg: "accentSoft",
+      activeBorder: "accent",
+      inactiveBg: "surfaceStrong",
+      inactiveBorder: "borderStrong"
+    },
+    feedback: {
+      loading: "feedbackLoadingBg",
+      empty: "feedbackEmptyBg",
+      error: "feedbackErrorBg"
+    }
   }
 } as const;
 
@@ -66,39 +189,34 @@ export type Tokens = typeof tokens;
 
 export const webCssVariables: Record<string, string> = {
   "--hiro-color-bg": tokens.color.bg,
+  "--hiro-color-bg-elevated": tokens.color.bgElevated,
+  "--hiro-color-bg-canvas-top": tokens.color.bgCanvasTop,
+  "--hiro-color-bg-canvas-bottom": tokens.color.bgCanvasBottom,
   "--hiro-color-surface": tokens.color.surface,
   "--hiro-color-surface-muted": tokens.color.surfaceMuted,
-  "--hiro-color-text-primary": tokens.color.textPrimary,
-  "--hiro-color-text-secondary": tokens.color.textSecondary,
+  "--hiro-color-surface-strong": tokens.color.surfaceStrong,
+  "--hiro-color-ink": tokens.color.ink,
+  "--hiro-color-ink-muted": tokens.color.inkMuted,
+  "--hiro-color-ink-soft": tokens.color.inkSoft,
   "--hiro-color-accent": tokens.color.accent,
+  "--hiro-color-accent-strong": tokens.color.accentStrong,
+  "--hiro-color-accent-soft": tokens.color.accentSoft,
+  "--hiro-color-accent-ink": tokens.color.accentInk,
+  "--hiro-color-accent-alt": tokens.color.accentAlt,
   "--hiro-color-border": tokens.color.border,
-  "--hiro-semantic-success-bg": tokens.semantic.success.bg,
-  "--hiro-semantic-success-fg": tokens.semantic.success.fg,
-  "--hiro-semantic-warning-bg": tokens.semantic.warning.bg,
-  "--hiro-semantic-warning-fg": tokens.semantic.warning.fg,
-  "--hiro-semantic-error-bg": tokens.semantic.error.bg,
-  "--hiro-semantic-error-fg": tokens.semantic.error.fg,
-  "--hiro-semantic-info-bg": tokens.semantic.info.bg,
-  "--hiro-semantic-info-fg": tokens.semantic.info.fg,
-  "--hiro-spacing-xs": `${tokens.spacing.xs}px`,
-  "--hiro-spacing-sm": `${tokens.spacing.sm}px`,
-  "--hiro-spacing-md": `${tokens.spacing.md}px`,
-  "--hiro-spacing-lg": `${tokens.spacing.lg}px`,
-  "--hiro-spacing-xl": `${tokens.spacing.xl}px`,
-  "--hiro-spacing-xxl": `${tokens.spacing.xxl}px`,
-  "--hiro-radius-sm": `${tokens.radius.sm}px`,
-  "--hiro-radius-md": `${tokens.radius.md}px`,
-  "--hiro-radius-lg": `${tokens.radius.lg}px`,
-  "--hiro-elevation-low": tokens.elevation.low,
-  "--hiro-elevation-mid": tokens.elevation.mid,
-  "--hiro-elevation-high": tokens.elevation.high,
-  "--hiro-font-family": tokens.typography.fontFamilyWeb,
-  "--hiro-font-size-title": `${tokens.typography.titleSize}px`,
-  "--hiro-font-size-body": `${tokens.typography.bodySize}px`,
-  "--hiro-font-size-label": `${tokens.typography.labelSize}px`,
-  "--hiro-line-height-title": `${tokens.typography.titleLineHeight}px`,
-  "--hiro-line-height-body": `${tokens.typography.bodyLineHeight}px`,
-  "--hiro-line-height-label": `${tokens.typography.labelLineHeight}px`,
-  "--hiro-font-weight-regular": tokens.typography.weightRegular,
-  "--hiro-font-weight-semibold": tokens.typography.weightSemibold
+  "--hiro-color-border-strong": tokens.color.borderStrong,
+  "--hiro-color-success": tokens.color.success,
+  "--hiro-color-success-soft": tokens.color.successSoft,
+  "--hiro-color-warning": tokens.color.warning,
+  "--hiro-color-warning-soft": tokens.color.warningSoft,
+  "--hiro-color-error": tokens.color.error,
+  "--hiro-color-error-soft": tokens.color.errorSoft,
+  "--hiro-color-info": tokens.color.info,
+  "--hiro-color-info-soft": tokens.color.infoSoft,
+  "--hiro-color-feedback-loading-bg": tokens.color.feedbackLoadingBg,
+  "--hiro-color-feedback-empty-bg": tokens.color.feedbackEmptyBg,
+  "--hiro-color-feedback-error-bg": tokens.color.feedbackErrorBg,
+  "--hiro-color-disabled-bg": tokens.color.disabledBg,
+  "--hiro-color-disabled-border": tokens.color.disabledBorder,
+  "--hiro-color-disabled-ink": tokens.color.disabledInk
 };

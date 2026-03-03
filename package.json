@@ -9,16 +9,13 @@
   "scripts": {
     "dev:web": "npm run dev --workspace @hiro/web",
     "dev:mobile": "npm run dev --workspace @hiro/mobile",
-    "mobile:cache:clear": "rm -rf apps/mobile/.expo /tmp/metro-*",
-    "dev:mobile:fresh": "npm run mobile:cache:clear && npm run dev --workspace @hiro/mobile -- --clear --port 8081",
     "lint": "node scripts/lint.mjs",
     "typecheck": "node scripts/typecheck.mjs",
     "test": "node scripts/test.mjs",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:governance": "node scripts/check-governance.mjs",
     "check:pr-governance": "node scripts/check-pr-governance.mjs",
-    "check:pr-governance:local": "node scripts/check-pr-governance.mjs --file /tmp/pr-body.md",
-    "check:pr-governance:stdin": "node scripts/check-pr-governance.mjs --stdin",
-    "check": "npm run check:boundaries && npm run check:governance && npm run lint && npm run typecheck && npm run test"
+    "check:mobile-runtime": "node scripts/check-mobile-runtime.mjs",
+    "check": "node scripts/check.mjs"
   }
 }

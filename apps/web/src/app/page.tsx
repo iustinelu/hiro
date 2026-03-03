@@ -1,63 +1,50 @@
-import { appSections } from "@hiro/domain";
+import Link from "next/link";
+import { tokens } from "@hiro/ui-tokens";
 
 export default function WebShellPage() {
   return (
     <main
       style={{
-        maxWidth: "720px",
+        display: "grid",
+        gap: tokens.spacing.lg,
+        maxWidth: 760,
         margin: "0 auto",
-        padding: "var(--hiro-spacing-xxl)",
-        borderRadius: "var(--hiro-radius-lg)",
-        border: "1px solid var(--hiro-color-border)",
-        backgroundColor: "var(--hiro-color-surface)",
-        boxShadow: "var(--hiro-elevation-low)"
+        padding: tokens.spacing.xl
       }}
     >
       <h1
         style={{
-          marginTop: 0,
-          marginBottom: "var(--hiro-spacing-sm)",
-          fontSize: "var(--hiro-font-size-title)",
-          lineHeight: "var(--hiro-line-height-title)",
-          fontWeight: "var(--hiro-font-weight-semibold)"
+          margin: 0,
+          fontFamily: tokens.typography.fontFamily,
+          color: tokens.color.ink
         }}
       >
         Hiro Web Shell
       </h1>
       <p
         style={{
-          marginTop: 0,
-          marginBottom: "var(--hiro-spacing-xl)",
-          color: "var(--hiro-color-text-secondary)",
-          fontSize: "var(--hiro-font-size-body)",
-          lineHeight: "var(--hiro-line-height-body)"
-        }}
-      >
-        Responsive starter shell with shared IA tabs.
-      </p>
-      <ul
-        style={{
           margin: 0,
-          padding: 0,
-          listStyle: "none",
-          display: "grid",
-          gap: "var(--hiro-spacing-sm)"
+          fontFamily: tokens.typography.fontFamily,
+          color: tokens.color.inkMuted
         }}
       >
-        {appSections.map((tab) => (
-          <li
-            key={tab}
-            style={{
-              padding: "var(--hiro-spacing-sm) var(--hiro-spacing-md)",
-              borderRadius: "var(--hiro-radius-md)",
-              border: "1px solid var(--hiro-color-border)",
-              backgroundColor: "var(--hiro-color-surface-muted)"
-            }}
-          >
-            {tab}
-          </li>
-        ))}
-      </ul>
+        Core navigation shell is active. Open the design-system gallery for HIR-31 QA.
+      </p>
+      <Link
+        href="/design-system"
+        style={{
+          width: "fit-content",
+          textDecoration: "none",
+          padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
+          borderRadius: tokens.radius.pill,
+          border: `1px solid ${tokens.color.borderStrong}`,
+          color: tokens.color.ink,
+          fontFamily: tokens.typography.fontFamily,
+          fontWeight: 700
+        }}
+      >
+        Open Design System Gallery
+      </Link>
     </main>
   );
 }

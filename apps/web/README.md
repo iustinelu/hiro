@@ -8,3 +8,8 @@
 
 - From repo root: `npm run dev:web`
 - From this folder: `npm run dev`
+
+## HIR-31 Design Gallery
+
+- Route: `/design-system`
+- Purpose: founder QA validation of primitive variants, feedback states, modal sheet, and chart wrapper.

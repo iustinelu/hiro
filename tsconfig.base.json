@@ -13,6 +13,8 @@
       "@hiro/domain": ["packages/domain/src/index.ts"],
       "@hiro/ui-tokens": ["packages/ui-tokens/src/index.ts"],
       "@hiro/ui-primitives": ["packages/ui-primitives/src/index.ts"],
+      "@hiro/ui-primitives/web": ["packages/ui-primitives/src/web.ts"],
+      "@hiro/ui-primitives/mobile": ["packages/ui-primitives/src/mobile.ts"],
       "@hiro/runtime": ["packages/runtime/src/index.ts"],
       "@hiro/supabase-clients": ["packages/supabase-clients/src/index.ts"]
     }
