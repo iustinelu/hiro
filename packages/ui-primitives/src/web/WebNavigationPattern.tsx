@@ -7,10 +7,10 @@ export function WebNavigationPattern({ activeTabLabel = "TAB_BAR_ACTIVE_STATE", 
     <section style={{ display: "grid", gap: tokens.spacing.md }}>
       <header style={{ display: "flex", alignItems: "center", gap: tokens.spacing.sm }}>
         <span style={{ color: resolveColor("accent"), fontSize: 22 }}>▲</span>
-        <strong style={{ color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamily, fontSize: 32, textTransform: "uppercase" }}>Navigation Patterns</strong>
+        <strong style={{ color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.titleSize, textTransform: "uppercase" }}>Navigation Patterns</strong>
       </header>
       <div style={{ borderRadius: tokens.radius.xl, border: `1px solid ${resolveColor("border")}`, backgroundColor: "rgba(11, 15, 29, 0.92)", padding: tokens.spacing.xl, display: "grid", gap: tokens.spacing.lg }}>
-        <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: 22 }}>{activeTabLabel}</span>
+        <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize }}>{activeTabLabel}</span>
         <div style={{ display: "grid", gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))`, gap: tokens.spacing.md }}>
           {tabs.map((tab) => {
             const active = tab.id === activeTab;
@@ -33,14 +33,14 @@ export function WebNavigationPattern({ activeTabLabel = "TAB_BAR_ACTIVE_STATE", 
                   }}
                 />
                 <span style={{ fontSize: 22 }}>{active ? "▦" : "◻"}</span>
-                <span style={{ textTransform: "uppercase", fontFamily: tokens.typography.fontFamilyMono, fontSize: 18 }}>{tab.label}</span>
+                <span style={{ textTransform: "uppercase", fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize }}>{tab.label}</span>
               </button>
             );
           })}
         </div>
         <article style={{ borderRadius: tokens.radius.lg, backgroundColor: "rgba(4, 7, 16, 0.95)", padding: tokens.spacing.lg, border: `1px solid ${resolveColor("border")}`, display: "grid", gap: tokens.spacing.sm }}>
-          <span style={{ color: resolveColor("accentAlt"), fontFamily: tokens.typography.fontFamilyMono, fontSize: 24 }}>Indicator Logic</span>
-          <p style={{ margin: 0, color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamily, fontSize: 34, lineHeight: "44px" }}>
+          <span style={{ color: resolveColor("accentAlt"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySize }}>Indicator Logic</span>
+          <p style={{ margin: 0, color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.bodySize, lineHeight: `${tokens.typography.lineHeightBody}px` }}>
             Active tab uses cobalt-to-orange gradient bar (32x4dp) anchored to top border with 8px blur glow.
           </p>
         </article>

@@ -11,7 +11,14 @@ export function WebEmptyStatePanel({
   return (
     <section style={{ display: "grid", gap: tokens.spacing.md }}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ color: resolveColor("ink"), fontWeight: 800, fontSize: 34, fontFamily: tokens.typography.fontFamily }}>
+        <span
+          style={{
+            color: resolveColor("ink"),
+            fontWeight: 800,
+            fontSize: tokens.typography.titleSize,
+            fontFamily: tokens.typography.fontFamily
+          }}
+        >
           EMPTY STATE
         </span>
         <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, letterSpacing: 2 }}>{subtitle}</span>
@@ -38,19 +45,26 @@ export function WebEmptyStatePanel({
               color: resolveColor("inkSoft"),
               display: "grid",
               placeItems: "center",
-              fontSize: 40
+              fontSize: tokens.typography.titleSize
             }}
           >
             {icon}
           </span>
-          <strong style={{ color: resolveColor("inkMuted"), fontSize: 42, fontFamily: tokens.typography.fontFamily, fontWeight: 700 }}>
+          <strong
+            style={{
+              color: resolveColor("inkMuted"),
+              fontSize: tokens.typography.headlineSize,
+              fontFamily: tokens.typography.fontFamily,
+              fontWeight: 700
+            }}
+          >
             {title}
           </strong>
           <span
             style={{
               color: resolveColor("inkSoft"),
               fontFamily: tokens.typography.fontFamilyMono,
-              fontSize: 24,
+              fontSize: tokens.typography.bodySize,
               letterSpacing: 2,
               textTransform: "uppercase"
             }}

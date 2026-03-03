@@ -43,7 +43,7 @@ export function MobileEmptyStatePanel({
           >
             <Text style={{ color: resolveColor("inkSoft"), fontSize: 28 }}>{icon}</Text>
           </View>
-          <Text style={{ color: resolveColor("inkMuted"), fontSize: 36, fontFamily: tokens.typography.fontFamily, fontWeight: "700" }}>{title}</Text>
+          <Text style={{ color: resolveColor("inkMuted"), fontSize: tokens.typography.titleSize, fontFamily: tokens.typography.fontFamily, fontWeight: "700" }}>{title}</Text>
           <Text
             style={{
               color: resolveColor("inkSoft"),

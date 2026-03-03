@@ -92,8 +92,6 @@ export default function DesignSystemGalleryPage() {
           <WebCard title="Button States" description="Default, hover intent, pressed, loading, and disabled.">
             <div style={{ display: "grid", gap: tokens.spacing.sm }}>
               <WebButton label="Action" variant="primary" fullWidth />
-              <WebButton label="Action" variant="primary" fullWidth size="lg" />
-              <WebButton label="Action" variant="primary" fullWidth size="sm" />
               <WebButton label="Processing" variant="secondary" loading fullWidth />
               <WebButton label="Action Unavailable" variant="primary" disabled fullWidth />
             </div>
@@ -199,7 +197,7 @@ export default function DesignSystemGalleryPage() {
             </WebChartContainer>
             <article style={{ borderRadius: tokens.radius.xl, border: `1px solid ${tokens.color.border}`, overflow: "hidden", background: "linear-gradient(180deg, rgba(14,20,36,0.9) 0%, rgba(10,12,24,0.95) 100%)", padding: tokens.spacing.lg, display: "grid", gap: tokens.spacing.sm }}>
               <span style={{ alignSelf: "start", padding: `${tokens.spacing.xs}px ${tokens.spacing.sm}px`, borderRadius: tokens.radius.sm, border: `1px solid ${tokens.color.accentStrong}`, color: tokens.color.accent, fontFamily: tokens.typography.fontFamilyMono, fontWeight: 700, fontSize: 12 }}>PREMIUM</span>
-              <strong style={{ color: tokens.color.ink, fontSize: 40, lineHeight: "46px", fontFamily: tokens.typography.fontFamily }}>Dark Mode Elements</strong>
+              <strong style={{ color: tokens.color.ink, fontSize: tokens.typography.titleSize, lineHeight: `${tokens.typography.lineHeightHeadline}px`, fontFamily: tokens.typography.fontFamily }}>Dark Mode Elements</strong>
               <span style={{ color: tokens.color.inkMuted, fontFamily: tokens.typography.fontFamily }}>High contrast components</span>
             </article>
           </div>

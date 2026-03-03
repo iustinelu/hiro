@@ -76,8 +76,6 @@ export function DesignSystemGalleryScreen() {
           <MobileCard title="Button States" description="Default, pressed intent, loading, disabled.">
             <View style={{ gap: tokens.spacing.sm }}>
               <MobileButton label="Action" variant="primary" fullWidth />
-              <MobileButton label="Action" variant="primary" size="sm" fullWidth />
-              <MobileButton label="Action" variant="primary" size="lg" fullWidth />
               <MobileButton label="Processing" variant="secondary" loading fullWidth />
               <MobileButton label="Action Unavailable" variant="primary" disabled fullWidth />
             </View>
