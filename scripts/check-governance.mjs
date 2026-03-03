@@ -44,6 +44,18 @@ if (!issueTemplate.includes("Do not mark this ticket Done")) {
   console.error("Issue template must include explicit do-not-close language");
   process.exit(1);
 }
+if (!issueTemplate.includes("Founder QA Quick Cycle")) {
+  console.error("Issue template must include Founder QA Quick Cycle");
+  process.exit(1);
+}
+if (!issueTemplate.includes("Commands (exact)")) {
+  console.error("Issue template must require exact founder QA commands");
+  process.exit(1);
+}
+if (!issueTemplate.includes("Pass/Fail")) {
+  console.error("Issue template must require pass/fail founder QA criteria");
+  process.exit(1);
+}
 
 const prTemplate = readFileSync(".github/PULL_REQUEST_TEMPLATE.md", "utf8");
 if (!prTemplate.includes("Founder QA Gate")) {
@@ -57,6 +69,18 @@ if (!prTemplate.includes("Compliance Checklist")) {
 }
 if (!prTemplate.includes("must not be treated as final complete")) {
   console.error("PR template must include explicit founder QA gate language");
+  process.exit(1);
+}
+if (!prTemplate.includes("Founder QA Quick Cycle")) {
+  console.error("PR template must include Founder QA Quick Cycle");
+  process.exit(1);
+}
+if (!prTemplate.includes("Commands (exact)")) {
+  console.error("PR template must require exact founder QA commands");
+  process.exit(1);
+}
+if (!prTemplate.includes("Pass/Fail")) {
+  console.error("PR template must require pass/fail founder QA criteria");
   process.exit(1);
 }
 
@@ -73,6 +97,10 @@ if (!agents.includes("Agent Execution Contract")) {
 }
 if (!agents.includes("do not mark `Done`")) {
   console.error("AGENTS.md must enforce founder QA stop-point behavior.");
+  process.exit(1);
+}
+if (!agents.includes("Founder QA Quick Cycle")) {
+  console.error("AGENTS.md must require Founder QA Quick Cycle in handoff.");
   process.exit(1);
 }
 

@@ -15,6 +15,7 @@
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:governance": "node scripts/check-governance.mjs",
     "check:pr-governance": "node scripts/check-pr-governance.mjs",
-    "check": "npm run check:boundaries && npm run check:governance && npm run lint && npm run typecheck && npm run test"
+    "check:mobile-runtime": "node scripts/check-mobile-runtime.mjs",
+    "check": "node scripts/check.mjs"
   }
 }

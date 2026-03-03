@@ -1,12 +1,23 @@
 :root {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Inter", "Manrope", "Avenir Next", sans-serif;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
-  padding: 1.5rem;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  color: var(--hiro-color-ink);
+  background: linear-gradient(
+    180deg,
+    var(--hiro-color-bg-canvas-top) 0%,
+    var(--hiro-color-bg-canvas-bottom) 100%
+  );
 }
