@@ -25,14 +25,11 @@ Branch protection must require `quality` and `pr-governance` checks before merge
 
 - `npm run dev:web`
 - `npm run dev:mobile`
-- `npm run dev:mobile:fresh`
-- `npm run mobile:cache:clear`
 - `npm run lint`
 - `npm run typecheck`
 - `npm run test`
 - `npm run check:boundaries`
 - `npm run check:governance`
-- `npm run check:pr-governance`
-- `npm run check:pr-governance:local`
-- `npm run check:pr-governance:stdin`
 - `npm run check`
+
+`npm run check` now prints an emoji/color quick summary and includes mobile runtime SDK preflight to catch Expo Go compatibility issues early.

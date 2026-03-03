@@ -1,4 +1,4 @@
-export type FeedbackState = "loading" | "empty" | "error";
+import type { FeedbackState } from "./types";
 
 export interface StateMessage {
   title: string;
@@ -7,7 +7,14 @@ export interface StateMessage {
 }
 
 export const defaultStateMessages: Record<FeedbackState, StateMessage> = {
-  loading: { title: "Loading..." },
-  empty: { title: "Nothing here yet", description: "Add your first item to get started." },
-  error: { title: "Something went wrong", description: "Please try again.", retryLabel: "Retry" }
+  loading: { title: "Loading...", description: "Just a moment while we gather your updates." },
+  empty: {
+    title: "Nothing here yet",
+    description: "Add your first item to bring this area to life."
+  },
+  error: {
+    title: "Something went wrong",
+    description: "Please retry. If this keeps happening, refresh the page.",
+    retryLabel: "Retry"
+  }
 };

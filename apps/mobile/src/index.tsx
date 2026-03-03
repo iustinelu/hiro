@@ -1,31 +1,13 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, StatusBar } from "react-native";
+import { tokens } from "@hiro/ui-tokens";
 import { AppShellScreen } from "./screens/AppShell";
-import { MobileThemeProvider } from "./theme/ThemeProvider";
-import { mobileTheme } from "./theme/theme";
 
 export default function App() {
   return (
-    <MobileThemeProvider>
-      <SafeAreaProvider>
-        <SafeAreaView style={styles.safeArea}>
-          <View style={styles.content}>
-            <AppShellScreen />
-          </View>
-        </SafeAreaView>
-      </SafeAreaProvider>
-    </MobileThemeProvider>
+    <SafeAreaView style={{ flex: 1, backgroundColor: tokens.color.bg }}>
+      <StatusBar barStyle="dark-content" />
+      <AppShellScreen />
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.bg
-  },
-  content: {
-    flex: 1,
-    backgroundColor: mobileTheme.colors.bg
-  }
-});

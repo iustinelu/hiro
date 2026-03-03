@@ -20,6 +20,14 @@ All implementation agents must follow this contract for every issue.
 2. Include checklist completion status.
 3. Include command results for `npm run check`.
 4. State explicit founder QA stop-point; do not mark `Done`.
+5. Include a **Founder QA Quick Cycle** with exact commands, where to validate, and pass/fail cues.
+
+Founder QA Quick Cycle format (mandatory):
+
+- Commands: exact terminal commands to run (copy/paste ready).
+- Validate: exact route/screen/component or flow to open.
+- Look for: concise visual/behavior checks.
+- Pass/Fail: explicit criteria to decide quickly.
 
 ## Prohibited
 

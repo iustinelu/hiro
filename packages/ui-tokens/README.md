@@ -2,6 +2,19 @@
 
 - Purpose: Canonical design token source for web/mobile.
 - Feature-level hardcoded visual constants are disallowed.
-- Includes: color, semantic, spacing, radius, elevation, and typography token categories.
-- Web integration: `apps/web/src/theme/theme.ts` applies `webCssVariables`.
-- Mobile integration: `apps/mobile/src/theme/theme.ts` and `apps/mobile/src/theme/ThemeProvider.tsx` consume shared tokens.
+
+## Token Domains
+
+- `color`: semantic palette (background, surface, ink, status colors, overlays).
+- `spacing`: layout and component spacing scale.
+- `radius`: corner geometry scale.
+- `size`: shared control sizing (including touch minimum).
+- `elevation`: layered shadow system.
+- `motion`: duration/easing/press-scale semantics.
+- `typography`: family and size/line-height primitives.
+- `component`: semantic color mapping for button/input/card/list-row/sheet/chart/feedback.
+
+## Web Theme Variables
+
+- `webCssVariables` maps key color semantics to CSS custom properties.
+- `apps/web` applies these via `applyWebTheme()` at bootstrap.
