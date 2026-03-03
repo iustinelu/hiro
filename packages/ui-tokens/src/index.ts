@@ -81,6 +81,7 @@ export const tokens = {
   },
   typography: {
     fontFamily: "'Inter', 'Manrope', 'Avenir Next', sans-serif",
+    fontFamilyMobile: "System",
     fontFamilyMono: "'IBM Plex Mono', 'JetBrains Mono', 'SFMono-Regular', monospace",
     displaySize: 52,
     headlineSize: 34,
@@ -93,6 +94,12 @@ export const tokens = {
     lineHeightHeadline: 40,
     lineHeightBody: 23,
     lineHeightLabel: 17
+  },
+  semantic: {
+    success: "success",
+    warning: "warning",
+    error: "error",
+    info: "info"
   },
   component: {
     button: {
