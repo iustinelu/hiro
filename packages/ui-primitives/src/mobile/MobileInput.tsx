@@ -11,7 +11,8 @@ export function MobileInput({
   state = "default",
   helperText,
   onChangeText,
-  secureTextEntry
+  secureTextEntry,
+  forceFocused
 }: InputProps) {
   const borderColor =
     state === "error"
@@ -46,13 +47,16 @@ export function MobileInput({
           minHeight: tokens.size.touchMin,
           borderRadius: tokens.radius.lg,
           borderWidth: 1,
-          borderColor,
+          borderColor: forceFocused ? resolveColor("accent") : borderColor,
           backgroundColor: resolveColor(tokens.component.input.bg),
           color: resolveColor(tokens.component.input.fg),
           paddingHorizontal: tokens.spacing.md,
           paddingVertical: tokens.spacing.sm,
           fontFamily: tokens.typography.fontFamily,
-          fontSize: tokens.typography.bodySize
+          fontSize: tokens.typography.bodySize,
+          shadowColor: forceFocused ? resolveColor("accent") : "transparent",
+          shadowOpacity: forceFocused ? 0.3 : 0,
+          shadowRadius: forceFocused ? 10 : 0
         }}
       />
       {helperText ? (

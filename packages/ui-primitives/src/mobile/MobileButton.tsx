@@ -9,21 +9,24 @@ export function MobileButton({
   variant = "primary",
   size = "md",
   disabled,
+  loading,
+  loadingLabel,
   fullWidth,
   onPress
 }: ButtonProps) {
   const colors = getButtonColors(variant);
+  const busy = Boolean(disabled || loading);
   return (
     <TouchableOpacity
-      disabled={disabled}
+      disabled={busy}
       onPress={onPress}
       activeOpacity={0.88}
       style={{
         minHeight: tokens.size.touchMin,
         borderRadius: tokens.radius.lg,
         borderWidth: 1,
-        borderColor: disabled ? resolveColor("disabledBorder") : colors.border,
-        backgroundColor: disabled ? resolveColor("disabledBg") : colors.background,
+        borderColor: busy ? resolveColor("disabledBorder") : colors.border,
+        backgroundColor: busy ? resolveColor("disabledBg") : colors.background,
         opacity: 1,
         alignItems: "center",
         justifyContent: "center",
@@ -33,14 +36,14 @@ export function MobileButton({
     >
       <Text
         style={{
-          color: disabled ? resolveColor("disabledInk") : colors.foreground,
+          color: busy ? resolveColor("disabledInk") : colors.foreground,
           fontFamily: tokens.typography.fontFamily,
           fontWeight: "800",
           fontSize: tokens.typography.bodySmallSize,
           letterSpacing: 0.2
         }}
       >
-        {label}
+        {loading ? `◌ ${loadingLabel ?? "Processing"}` : label}
       </Text>
     </TouchableOpacity>
   );

@@ -16,7 +16,7 @@ export function MobileSwitchRow({ label, value, onToggle }: SwitchRowProps) {
         borderRadius: tokens.radius.md,
         borderWidth: 1,
         borderColor: resolveColor("border"),
-        backgroundColor: "rgba(255,255,255,0.02)"
+        backgroundColor: "rgba(15, 18, 30, 0.72)"
       }}
     >
       <Text
@@ -35,7 +35,7 @@ export function MobileSwitchRow({ label, value, onToggle }: SwitchRowProps) {
           width: 38,
           height: 22,
           borderRadius: tokens.radius.pill,
-          backgroundColor: value ? resolveColor("accent") : "rgba(255,255,255,0.12)",
+          backgroundColor: value ? resolveColor("accent") : resolveColor("surfaceStrong"),
           position: "relative"
         }}
       >
@@ -47,7 +47,7 @@ export function MobileSwitchRow({ label, value, onToggle }: SwitchRowProps) {
             width: 18,
             height: 18,
             borderRadius: tokens.radius.pill,
-            backgroundColor: resolveColor("ink")
+            backgroundColor: value ? resolveColor("ink") : resolveColor("inkMuted")
           }}
         />
       </Pressable>

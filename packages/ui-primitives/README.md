@@ -11,8 +11,8 @@
 
 ## Primitive API Summary
 
-- `Button`: variants `primary | secondary | ghost | danger`, sizes `sm | md | lg`.
-- `Input`: state `default | success | error | disabled` with helper text support.
+- `Button`: variants `primary | secondary | ghost | danger`, sizes `sm | md | lg`, optional loading state.
+- `Input`: state `default | success | error | disabled` with helper text and optional forced focus glow.
 - `Card`: tone `default | accent | warning`.
 - `ListRow`: density `comfortable | compact`, long-text truncation support.
 - `ModalSheet`: open/close, title/description, primary/secondary actions.
@@ -24,6 +24,10 @@
 - `StatusBadge`: semantic status pill for operational states.
 - `SwitchRow`: labeled toggle row for system options.
 - `InteractiveChip`: selectable/removable chip tokens.
+- `EmptyStatePanel`: technical empty-state spec card.
+- `SpacingMatrix`: token spacing visualization matrix.
+- `IconographySpec`: icon grid/stroke contract panel.
+- `NavigationPattern`: tab indicator + safe-area pattern reference.
 
 ## Usage Examples
 

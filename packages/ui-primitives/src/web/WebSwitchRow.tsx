@@ -12,7 +12,7 @@ export function WebSwitchRow({ label, value, onToggle }: SwitchRowProps) {
         padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
         borderRadius: tokens.radius.md,
         border: `1px solid ${resolveColor("border")}`,
-        backgroundColor: "rgba(255,255,255,0.02)"
+        backgroundColor: "rgba(15, 18, 30, 0.72)"
       }}
     >
       <span
@@ -34,7 +34,8 @@ export function WebSwitchRow({ label, value, onToggle }: SwitchRowProps) {
           height: 22,
           borderRadius: tokens.radius.pill,
           border: "none",
-          backgroundColor: value ? resolveColor("accent") : "rgba(255,255,255,0.12)",
+          backgroundColor: value ? resolveColor("accent") : resolveColor("surfaceStrong"),
+          boxShadow: value ? `0 0 12px ${resolveColor("accentSoft")}` : "none",
           position: "relative",
           cursor: "pointer"
         }}
@@ -47,7 +48,7 @@ export function WebSwitchRow({ label, value, onToggle }: SwitchRowProps) {
             width: 18,
             height: 18,
             borderRadius: tokens.radius.pill,
-            backgroundColor: resolveColor("ink"),
+            backgroundColor: value ? resolveColor("ink") : resolveColor("inkMuted"),
             transition: `left ${tokens.motion.duration.fast}ms ${tokens.motion.easing.standard}`
           }}
         />

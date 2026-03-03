@@ -9,7 +9,8 @@ export function WebInput({
   state = "default",
   helperText,
   onChangeText,
-  secureTextEntry
+  secureTextEntry,
+  forceFocused
 }: InputProps) {
   const borderColor =
     state === "error"
@@ -51,7 +52,10 @@ export function WebInput({
           fontFamily: tokens.typography.fontFamily,
           fontSize: tokens.typography.bodySize,
           outlineColor: resolveColor(tokens.component.input.focusBorder),
-          boxShadow: `inset 0 0 0 1px ${resolveColor("accentSoft")}`,
+          boxShadow:
+            forceFocused || state === "default"
+              ? `inset 0 0 0 1px ${resolveColor("accentSoft")}, 0 0 0 2px ${forceFocused ? resolveColor("accentSoft") : "transparent"}`
+              : "none",
           transition: `all ${tokens.motion.duration.fast}ms ${tokens.motion.easing.standard}`
         }}
       />

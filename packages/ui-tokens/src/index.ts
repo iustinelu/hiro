@@ -81,6 +81,7 @@ export const tokens = {
   },
   typography: {
     fontFamily: "'Inter', 'Manrope', 'Avenir Next', sans-serif",
+    fontFamilyMono: "'IBM Plex Mono', 'JetBrains Mono', 'SFMono-Regular', monospace",
     displaySize: 52,
     headlineSize: 34,
     titleSize: 26,
@@ -147,6 +148,27 @@ export const tokens = {
       bg: "surface",
       border: "border",
       axis: "inkMuted"
+    },
+    surface: {
+      panelBg: "bgElevated",
+      panelBorder: "border",
+      dotGridOpacity: 0.18
+    },
+    navigation: {
+      activeIndicatorFrom: "accentAlt",
+      activeIndicatorTo: "accent"
+    },
+    switch: {
+      trackOn: "accent",
+      trackOff: "surfaceStrong",
+      thumbOn: "ink",
+      thumbOff: "inkMuted"
+    },
+    chip: {
+      activeBg: "accentSoft",
+      activeBorder: "accent",
+      inactiveBg: "surfaceStrong",
+      inactiveBorder: "borderStrong"
     },
     feedback: {
       loading: "feedbackLoadingBg",

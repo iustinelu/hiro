@@ -8,6 +8,8 @@ export function WebButton({
   variant = "primary",
   size = "md",
   disabled,
+  loading,
+  loadingLabel,
   fullWidth,
   onPress
 }: ButtonProps) {
@@ -16,10 +18,13 @@ export function WebButton({
   const colors = getButtonColors(variant);
   const scale = pressed ? tokens.motion.scale.press : hovered ? tokens.motion.scale.hover : 1;
 
+  const busy = Boolean(disabled || loading);
+  const shownLabel = loading ? loadingLabel ?? "Processing" : label;
+
   return (
     <button
       type="button"
-      disabled={disabled}
+      disabled={busy}
       onClick={onPress}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => {
@@ -33,22 +38,22 @@ export function WebButton({
         minHeight: buttonMinHeightBySize[size],
         padding: buttonPaddingBySize[size],
         borderRadius: tokens.radius.lg,
-        border: `1px solid ${disabled ? resolveColor("disabledBorder") : colors.border}`,
-        background: disabled
+        border: `1px solid ${busy ? resolveColor("disabledBorder") : colors.border}`,
+        background: busy
           ? resolveColor("disabledBg")
           : variant === "primary"
             ? `linear-gradient(90deg, ${resolveColor("accent")} 0%, ${resolveColor("accentStrong")} 100%)`
             : colors.background,
-        color: disabled ? resolveColor("disabledInk") : colors.foreground,
+        color: busy ? resolveColor("disabledInk") : colors.foreground,
         fontFamily: tokens.typography.fontFamily,
         fontSize: tokens.typography.bodySmallSize,
         letterSpacing: 0.2,
         fontWeight: 800,
-        cursor: disabled ? "not-allowed" : "pointer",
+        cursor: busy ? "not-allowed" : "pointer",
         transform: `scale(${scale})`,
         opacity: 1,
         boxShadow:
-          disabled
+          busy
             ? "none"
             : variant === "primary"
             ? `0 0 16px ${resolveColor("accentSoft")}`
@@ -58,7 +63,10 @@ export function WebButton({
         transition: `all ${tokens.motion.duration.fast}ms ${tokens.motion.easing.standard}`
       }}
     >
-      {label}
+      <span style={{ display: "inline-flex", alignItems: "center", gap: tokens.spacing.xs }}>
+        {loading ? <span style={{ fontSize: 14, lineHeight: "14px" }}>◌</span> : null}
+        {shownLabel}
+      </span>
     </button>
   );
 }

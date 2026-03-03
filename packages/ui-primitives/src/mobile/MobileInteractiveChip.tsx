@@ -20,10 +20,10 @@ export function MobileInteractiveChip({
         alignItems: "center",
         gap: tokens.spacing.xs,
         borderRadius: tokens.radius.pill,
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: active ? resolveColor("accent") : resolveColor("borderStrong"),
-        backgroundColor: active ? resolveColor("accentSoft") : "rgba(255,255,255,0.05)",
-        paddingVertical: tokens.spacing.xs,
+        backgroundColor: active ? "rgba(255,109,36,0.12)" : "rgba(20, 24, 40, 0.92)",
+        paddingVertical: tokens.spacing.sm,
         paddingHorizontal: tokens.spacing.md
       }}
     >

@@ -29,10 +29,10 @@ export function MobileStatusBadge({ label, tone = "neutral" }: StatusBadgeProps)
       <Text
         style={{
           color: tone === "neutral" ? resolveColor("inkMuted") : toneColor,
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: tokens.typography.fontFamilyMono,
           fontSize: 10,
           fontWeight: "700",
-          letterSpacing: 0.6,
+          letterSpacing: 0.8,
           textTransform: "uppercase"
         }}
       >

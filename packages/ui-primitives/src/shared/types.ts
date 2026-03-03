@@ -14,6 +14,8 @@ export interface ButtonProps {
   variant?: ButtonVariant;
   size?: PrimitiveSize;
   disabled?: boolean;
+  loading?: boolean;
+  loadingLabel?: string;
   fullWidth?: boolean;
   onPress?: () => void;
 }
@@ -26,6 +28,7 @@ export interface InputProps {
   helperText?: string;
   onChangeText?: (nextValue: string) => void;
   secureTextEntry?: boolean;
+  forceFocused?: boolean;
 }
 
 export interface CardProps {
@@ -114,4 +117,26 @@ export interface InteractiveChipProps {
   removable?: boolean;
   onPress?: () => void;
   onRemove?: () => void;
+}
+
+export interface EmptyStatePanelProps {
+  title: string;
+  description: string;
+  icon?: string;
+  subtitle?: string;
+}
+
+export interface SpacingMatrixProps {
+  title?: string;
+}
+
+export interface IconographySpecProps {
+  title?: string;
+}
+
+export interface NavigationPatternProps {
+  activeTabLabel?: string;
+  tabs: Array<{ id: string; label: string }>;
+  activeTab: string;
+  onChange?: (nextTab: string) => void;
 }

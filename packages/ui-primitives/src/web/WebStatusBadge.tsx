@@ -21,10 +21,10 @@ export function WebStatusBadge({ label, tone = "neutral" }: StatusBadgeProps) {
         border: `1px solid ${tone === "neutral" ? resolveColor("borderStrong") : `${toneColor}66`}`,
         backgroundColor: tone === "neutral" ? "rgba(255,255,255,0.05)" : `${toneColor}22`,
         color: tone === "neutral" ? resolveColor("inkMuted") : toneColor,
-        fontFamily: tokens.typography.fontFamily,
+        fontFamily: tokens.typography.fontFamilyMono,
         fontSize: 10,
         fontWeight: 700,
-        letterSpacing: 0.6,
+        letterSpacing: 0.8,
         textTransform: "uppercase"
       }}
     >

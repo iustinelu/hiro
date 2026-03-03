@@ -14,7 +14,7 @@ export function MobileSegmentedControl({ options, value, onChange }: SegmentedCo
         borderRadius: tokens.radius.md,
         borderWidth: 1,
         borderColor: resolveColor("border"),
-        backgroundColor: "rgba(255,255,255,0.04)"
+        backgroundColor: "rgba(17, 20, 33, 0.9)"
       }}
     >
       {options.map((option) => {
@@ -28,7 +28,7 @@ export function MobileSegmentedControl({ options, value, onChange }: SegmentedCo
               borderRadius: tokens.radius.sm,
               paddingVertical: tokens.spacing.sm,
               paddingHorizontal: tokens.spacing.md,
-              backgroundColor: active ? resolveColor("surfaceStrong") : "transparent"
+              backgroundColor: active ? resolveColor("accent") : "transparent"
             }}
           >
             <Text
