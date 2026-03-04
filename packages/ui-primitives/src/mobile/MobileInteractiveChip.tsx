@@ -1,7 +1,8 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text } from "react-native";
 import { tokens } from "@hiro/ui-tokens";
 import type { InteractiveChipProps } from "../shared/types";
+import { MobileIcon } from "./MobileIcon";
 import { resolveColor } from "./utils";
 
 export function MobileInteractiveChip({
@@ -27,7 +28,7 @@ export function MobileInteractiveChip({
         paddingHorizontal: tokens.spacing.md
       }}
     >
-      {leadingIcon ? <Text style={{ color: active ? resolveColor("accent") : resolveColor("ink"), fontSize: 12 }}>{leadingIcon}</Text> : null}
+      {leadingIcon ? <MobileIcon name={leadingIcon} size={14} color={active ? resolveColor("accent") : resolveColor("ink")} /> : null}
       <Text
         style={{
           color: active ? resolveColor("accent") : resolveColor("ink"),
@@ -40,7 +41,7 @@ export function MobileInteractiveChip({
       </Text>
       {removable ? (
         <Pressable onPress={onRemove}>
-          <Text style={{ color: resolveColor("inkSoft"), fontSize: 12 }}>x</Text>
+          <MobileIcon name="close" size={12} color={resolveColor("inkSoft")} />
         </Pressable>
       ) : null}
     </Pressable>

@@ -8,6 +8,18 @@ export type ListRowDensity = "comfortable" | "compact";
 export type FeedbackState = "loading" | "empty" | "error";
 export type BadgeTone = "success" | "warning" | "error" | "neutral";
 export type PresenceStatus = "online" | "idle" | "offline";
+export type IconName =
+  | "spark"
+  | "shield"
+  | "integrations"
+  | "empty"
+  | "loading"
+  | "error"
+  | "home"
+  | "strokeOutline"
+  | "strokeFill"
+  | "close"
+  | "navigation";
 
 export interface ButtonProps {
   label: string;
@@ -113,7 +125,7 @@ export interface SwitchRowProps {
 export interface InteractiveChipProps {
   label: string;
   active?: boolean;
-  leadingIcon?: string;
+  leadingIcon?: IconName;
   removable?: boolean;
   onPress?: () => void;
   onRemove?: () => void;
@@ -122,7 +134,7 @@ export interface InteractiveChipProps {
 export interface EmptyStatePanelProps {
   title: string;
   description: string;
-  icon?: string;
+  icon?: IconName;
   subtitle?: string;
 }
 

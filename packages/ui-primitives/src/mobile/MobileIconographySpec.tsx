@@ -2,6 +2,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import { tokens } from "@hiro/ui-tokens";
 import type { IconographySpecProps } from "../shared/types";
+import { MobileIcon } from "./MobileIcon";
 import { resolveColor } from "./utils";
 
 export function MobileIconographySpec({ title = "Iconography Standards" }: IconographySpecProps) {
@@ -19,7 +20,7 @@ export function MobileIconographySpec({ title = "Iconography Standards" }: Icono
           </View>
           <View style={{ height: 120, borderRadius: tokens.radius.md, borderWidth: 1, borderColor: resolveColor("borderStrong"), alignItems: "center", justifyContent: "center" }}>
             <View style={{ width: 52, height: 52, borderRadius: tokens.radius.pill, borderWidth: 3, borderColor: resolveColor("accent"), alignItems: "center", justifyContent: "center" }}>
-              <Text style={{ color: resolveColor("ink"), fontSize: 22 }}>⌂</Text>
+              <MobileIcon name="home" size={22} color={resolveColor("ink")} />
             </View>
           </View>
           <Text style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamily, fontSize: 13 }}>Fixed 24px bounding box with 2px safe padding.</Text>
@@ -30,7 +31,10 @@ export function MobileIconographySpec({ title = "Iconography Standards" }: Icono
             <Text style={{ color: resolveColor("accent"), fontFamily: tokens.typography.fontFamilyMono }}>1.5px</Text>
           </View>
           <View style={{ height: 120, borderRadius: tokens.radius.md, backgroundColor: "rgba(7, 10, 18, 0.95)", alignItems: "center", justifyContent: "center", gap: tokens.spacing.sm }}>
-            <Text style={{ color: resolveColor("ink"), fontSize: 26 }}>◌  ◉</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: tokens.spacing.sm }}>
+              <MobileIcon name="strokeOutline" size={24} color={resolveColor("ink")} />
+              <MobileIcon name="strokeFill" size={24} color={resolveColor("ink")} />
+            </View>
             <View style={{ width: 100, height: 4, borderRadius: tokens.radius.pill, backgroundColor: resolveColor("accent") }} />
           </View>
           <Text style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamily, fontSize: 13 }}>Outlined inactive to filled active transition.</Text>

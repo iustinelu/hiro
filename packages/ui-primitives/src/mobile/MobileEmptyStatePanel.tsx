@@ -2,12 +2,13 @@ import React from "react";
 import { Text, View } from "react-native";
 import { tokens } from "@hiro/ui-tokens";
 import type { EmptyStatePanelProps } from "../shared/types";
+import { MobileIcon } from "./MobileIcon";
 import { resolveColor } from "./utils";
 
 export function MobileEmptyStatePanel({
   title,
   description,
-  icon = "▦",
+  icon = "empty",
   subtitle = "SPEC 04.3"
 }: EmptyStatePanelProps) {
   return (
@@ -41,7 +42,7 @@ export function MobileEmptyStatePanel({
               justifyContent: "center"
             }}
           >
-            <Text style={{ color: resolveColor("inkSoft"), fontSize: 28 }}>{icon}</Text>
+            <MobileIcon name={icon} size={28} color={resolveColor("inkSoft")} />
           </View>
           <Text style={{ color: resolveColor("inkMuted"), fontSize: tokens.typography.titleSize, fontFamily: tokens.typography.fontFamily, fontWeight: "700" }}>{title}</Text>
           <Text

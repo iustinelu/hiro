@@ -1,5 +1,6 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { IconographySpecProps } from "../shared/types";
+import { WebIcon } from "./WebIcon";
 import { resolveColor } from "./utils";
 
 export function WebIconographySpec({ title = "Iconography Standards" }: IconographySpecProps) {
@@ -16,7 +17,9 @@ export function WebIconographySpec({ title = "Iconography Standards" }: Iconogra
             <span style={{ color: resolveColor("accent"), fontFamily: tokens.typography.fontFamilyMono }}>24px</span>
           </div>
           <div style={{ height: 170, borderRadius: tokens.radius.md, border: `1px solid ${resolveColor("borderStrong")}`, backgroundImage: "radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px)", backgroundSize: "8px 8px", display: "grid", placeItems: "center" }}>
-            <span style={{ width: 58, height: 58, borderRadius: tokens.radius.pill, border: `3px solid ${resolveColor("accent")}`, display: "grid", placeItems: "center", color: resolveColor("ink"), fontSize: 28 }}>⌂</span>
+            <span style={{ width: 58, height: 58, borderRadius: tokens.radius.pill, border: `3px solid ${resolveColor("accent")}`, display: "grid", placeItems: "center" }}>
+              <WebIcon name="home" size={28} color={resolveColor("ink")} />
+            </span>
           </div>
           <p style={{ margin: 0, color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.bodySize }}>Fixed 24px bounding box with 2px safe padding.</p>
         </article>
@@ -26,7 +29,10 @@ export function WebIconographySpec({ title = "Iconography Standards" }: Iconogra
             <span style={{ color: resolveColor("accent"), fontFamily: tokens.typography.fontFamilyMono }}>1.5px</span>
           </div>
           <div style={{ height: 170, borderRadius: tokens.radius.md, backgroundColor: "rgba(7, 10, 18, 0.95)", display: "grid", placeItems: "center", gap: tokens.spacing.sm }}>
-            <span style={{ color: resolveColor("ink"), fontSize: tokens.typography.titleSize }}>◌  ◉</span>
+            <span style={{ color: resolveColor("ink"), display: "flex", alignItems: "center", gap: tokens.spacing.sm }}>
+              <WebIcon name="strokeOutline" size={24} color={resolveColor("ink")} />
+              <WebIcon name="strokeFill" size={24} color={resolveColor("ink")} />
+            </span>
             <span style={{ width: 120, height: 4, borderRadius: tokens.radius.pill, backgroundColor: resolveColor("accent") }} />
           </div>
           <p style={{ margin: 0, color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.bodySize }}>Outlined inactive to filled active transition.</p>

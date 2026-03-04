@@ -2,13 +2,14 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { tokens } from "@hiro/ui-tokens";
 import type { NavigationPatternProps } from "../shared/types";
+import { MobileIcon } from "./MobileIcon";
 import { resolveColor } from "./utils";
 
 export function MobileNavigationPattern({ activeTabLabel = "TAB_BAR_ACTIVE_STATE", tabs, activeTab, onChange }: NavigationPatternProps) {
   return (
     <View style={{ gap: tokens.spacing.md }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: tokens.spacing.sm }}>
-        <Text style={{ color: resolveColor("accent"), fontSize: 14 }}>▲</Text>
+        <MobileIcon name="navigation" size={16} color={resolveColor("accent")} />
         <Text style={{ color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamily, fontSize: 18, textTransform: "uppercase", fontWeight: "800" }}>Navigation Patterns</Text>
       </View>
       <View style={{ borderRadius: tokens.radius.xl, borderWidth: 1, borderColor: resolveColor("border"), backgroundColor: "rgba(11, 15, 29, 0.92)", padding: tokens.spacing.lg, gap: tokens.spacing.lg }}>
@@ -26,7 +27,7 @@ export function MobileNavigationPattern({ activeTabLabel = "TAB_BAR_ACTIVE_STATE
                     backgroundColor: active ? resolveColor("accent") : "transparent"
                   }}
                 />
-                <Text style={{ color: active ? resolveColor("ink") : resolveColor("inkSoft"), fontSize: 16 }}>{active ? "▦" : "◻"}</Text>
+                <MobileIcon name={active ? "strokeFill" : "strokeOutline"} size={16} color={active ? resolveColor("ink") : resolveColor("inkSoft")} />
                 <Text style={{ color: active ? resolveColor("ink") : resolveColor("inkSoft"), textTransform: "uppercase", fontFamily: tokens.typography.fontFamilyMono, fontSize: 11 }}>{tab.label}</Text>
               </Pressable>
             );

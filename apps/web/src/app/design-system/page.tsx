@@ -157,9 +157,9 @@ export default function DesignSystemGalleryPage() {
 
           <WebCard title="Interactive Chips" description="Selectable and removable chips.">
             <div style={{ display: "flex", gap: tokens.spacing.sm, flexWrap: "wrap" }}>
-              <WebInteractiveChip label="Performance" leadingIcon="⚡" />
-              <WebInteractiveChip label="Security" leadingIcon="✹" active />
-              <WebInteractiveChip label="Integrations" leadingIcon="✣" removable />
+              <WebInteractiveChip label="Performance" leadingIcon="spark" />
+              <WebInteractiveChip label="Security" leadingIcon="shield" active />
+              <WebInteractiveChip label="Integrations" leadingIcon="integrations" removable />
             </div>
           </WebCard>
 

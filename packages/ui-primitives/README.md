@@ -29,6 +29,24 @@
 - `IconographySpec`: icon grid/stroke contract panel.
 - `NavigationPattern`: tab indicator + safe-area pattern reference.
 
+## Icon Mapping Matrix
+
+Use shared `IconName` values in primitives instead of raw unicode glyphs:
+
+| IconName | Web (`lucide-react`) | Mobile (`@expo/vector-icons`) |
+| --- | --- | --- |
+| `spark` | `Sparkles` | `sparkles-outline` |
+| `shield` | `ShieldCheck` | `shield-checkmark-outline` |
+| `integrations` | `Link2` | `link-outline` |
+| `empty` | `Inbox` | `file-tray-outline` |
+| `loading` | `LoaderCircle` | `sync-outline` |
+| `error` | `CircleAlert` | `alert-circle-outline` |
+| `home` | `House` | `home-outline` |
+| `strokeOutline` | `Circle` | `ellipse-outline` |
+| `strokeFill` | `CircleDot` | `ellipse` |
+| `close` | `X` | `close` |
+| `navigation` | `Compass` | `compass-outline` |
+
 ## Usage Examples
 
 ### Web

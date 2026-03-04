@@ -138,9 +138,9 @@ export function DesignSystemGalleryScreen() {
                 <MobileSwitchRow label="Idle" value={debugMode} onToggle={setDebugMode} />
               </View>
               <View style={{ flexDirection: "row", gap: tokens.spacing.sm, flexWrap: "wrap" }}>
-                <MobileInteractiveChip label="Performance" leadingIcon="⚡" />
-                <MobileInteractiveChip label="Security" leadingIcon="✹" active />
-                <MobileInteractiveChip label="Integrations" leadingIcon="✣" removable />
+                <MobileInteractiveChip label="Performance" leadingIcon="spark" />
+                <MobileInteractiveChip label="Security" leadingIcon="shield" active />
+                <MobileInteractiveChip label="Integrations" leadingIcon="integrations" removable />
               </View>
             </View>
           </MobileCard>

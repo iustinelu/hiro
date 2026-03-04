@@ -1,15 +1,16 @@
 import { useMemo } from "react";
 import { tokens } from "@hiro/ui-tokens";
 import { defaultStateMessages } from "../shared/states";
-import type { FeedbackStateProps } from "../shared/types";
+import type { FeedbackStateProps, IconName } from "../shared/types";
+import { WebIcon } from "./WebIcon";
 import { resolveColor } from "./utils";
 
 type FeedbackVariant = "loading" | "empty" | "error";
 
-const variantConfig: Record<FeedbackVariant, { icon: string; accent: string }> = {
-  loading: { icon: "●", accent: resolveColor("accent") },
-  empty: { icon: "◆", accent: resolveColor("inkSoft") },
-  error: { icon: "●", accent: resolveColor("error") }
+const variantConfig: Record<FeedbackVariant, { icon: IconName; accent: string }> = {
+  loading: { icon: "loading", accent: resolveColor("accent") },
+  empty: { icon: "empty", accent: resolveColor("inkSoft") },
+  error: { icon: "error", accent: resolveColor("error") }
 };
 
 function WebFeedbackState({
@@ -38,15 +39,8 @@ function WebFeedbackState({
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: tokens.spacing.sm }}>
-        <span
-          style={{
-            color: config.accent,
-            fontSize: 18,
-            lineHeight: "18px",
-            filter: variant === "loading" ? `drop-shadow(0 0 6px ${config.accent})` : "none"
-          }}
-        >
-          {config.icon}
+        <span style={{ display: "grid", color: config.accent, filter: variant === "loading" ? `drop-shadow(0 0 6px ${config.accent})` : "none" }}>
+          <WebIcon name={config.icon} size={18} color={config.accent} />
         </span>
         <strong
           style={{

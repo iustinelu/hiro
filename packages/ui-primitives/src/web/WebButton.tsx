@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { tokens } from "@hiro/ui-tokens";
 import type { ButtonProps } from "../shared/types";
+import { WebIcon } from "./WebIcon";
 import { buttonMinHeightBySize, buttonPaddingBySize, getButtonColors, resolveColor } from "./utils";
 
 export function WebButton({
@@ -64,7 +65,7 @@ export function WebButton({
       }}
     >
       <span style={{ display: "inline-flex", alignItems: "center", gap: tokens.spacing.xs }}>
-        {loading ? <span style={{ fontSize: 14, lineHeight: "14px" }}>◌</span> : null}
+        {loading ? <WebIcon name="loading" size={14} color={busy ? resolveColor("disabledInk") : colors.foreground} /> : null}
         {shownLabel}
       </span>
     </button>
