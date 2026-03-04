@@ -8,9 +8,12 @@ const requiredFiles = [
   "CODEOWNERS",
   ".github/ISSUE_TEMPLATE/implementation.md",
   ".github/PULL_REQUEST_TEMPLATE.md",
+  ".npmrc",
   "scripts/check-pr-governance.mjs",
   "scripts/prepare-pr-body.mjs",
   "scripts/create-pr.mjs",
+  "scripts/check-expo-root-artifacts.mjs",
+  "scripts/mobile-orbital-reset.mjs",
   "docs/skills/pr-governance/SKILL.md",
   "docs/skills/pr-governance/agents/openai.yaml",
   "docs/skills/linear-implementation-flow/SKILL.md",
@@ -39,6 +42,12 @@ if (!readme.includes("docs/architecture-standards.md")) {
 }
 if (!readme.includes("docs/architecture/founder-qa-workflow.md")) {
   console.error("README.md must link to docs/architecture/founder-qa-workflow.md");
+  process.exit(1);
+}
+
+const npmrc = readFileSync(".npmrc", "utf8");
+if (!npmrc.includes("legacy-peer-deps=true")) {
+  console.error(".npmrc must pin legacy-peer-deps=true for Expo workspace runtime stability.");
   process.exit(1);
 }
 

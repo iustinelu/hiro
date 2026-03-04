@@ -19,6 +19,7 @@ function color(text, code) {
 const checks = [
   { name: "Boundaries", command: ["npm", "run", "check:boundaries"] },
   { name: "Governance", command: ["npm", "run", "check:governance"] },
+  { name: "Expo Root Artifacts", command: ["npm", "run", "check:expo-root-artifacts"] },
   { name: "Mobile Runtime", command: ["npm", "run", "check:mobile-runtime"] },
   { name: "Lint", command: ["npm", "run", "lint"] },
   { name: "Typecheck", command: ["npm", "run", "typecheck"] },
