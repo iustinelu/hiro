@@ -11,7 +11,8 @@ const requiredFiles = [
   "scripts/check-pr-governance.mjs",
   "scripts/prepare-pr-body.mjs",
   "scripts/create-pr.mjs",
-  "docs/skills/pr-governance/SKILL.md"
+  "docs/skills/pr-governance/SKILL.md",
+  "docs/skills/pr-governance/agents/openai.yaml"
 ];
 
 for (const file of requiredFiles) {

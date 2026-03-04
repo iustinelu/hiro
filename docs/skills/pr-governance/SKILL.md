@@ -1,33 +1,33 @@
-# PR Governance Skill
+---
+name: pr-governance
+description: Create or update pull requests in this repository using the mandatory governance template and validation flow. Use whenever preparing a PR body, creating a PR, or remediating PR governance/template failures.
+---
 
-Purpose: create and update pull requests without violating repository governance rules.
+# PR Governance
 
-## When to use
+Follow this exact flow for every PR.
 
-- Any time you are creating a PR
-- Any time you are editing a PR body
+## Execute
 
-## Required flow
-
-1. Prepare body from template:
+1. Prepare a fresh body from the repo template.
    - `npm run pr:prepare`
-2. Edit `/tmp/pr_body.md` and keep all template section headers exactly.
-3. Validate body/title:
+2. Fill `/tmp/pr_body.md` without renaming/removing template sections.
+3. Validate body and title before any PR create/update action.
    - `npm run pr:validate -- --file /tmp/pr_body.md --title "HIR-XX: ..."`
-4. Create PR using the guarded wrapper:
+4. Create the PR through the guarded wrapper.
    - `npm run pr:create -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md`
 
-## Rules
+## Enforce
 
 - Never call `gh pr create` directly.
-- Never create a PR via API/MCP with a body that has not passed `pr:validate`.
-- Keep checklist items checked (`[x]`) when complete.
-- Include Founder QA Gate and Founder QA Quick Cycle fields exactly.
+- Never create/update a PR body through API/MCP unless the exact body/title pair passed `pr:validate`.
+- Keep all compliance checklist items checked (`[x]`) when complete.
+- Keep Founder QA Gate and Founder QA Quick Cycle sections present and populated.
 
-## Recovery
+## Recover
 
-If a PR already exists with a non-compliant body:
+When an existing PR body fails governance:
 
-1. Regenerate body from template using `npm run pr:prepare`
-2. Fill details and validate with `npm run pr:validate`
-3. Update PR body with the validated content
+1. Regenerate body from template: `npm run pr:prepare`
+2. Refill body and validate: `npm run pr:validate -- --file /tmp/pr_body.md --title "HIR-XX: ..."`
+3. Update the PR body with the validated text.
