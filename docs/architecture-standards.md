@@ -122,6 +122,9 @@ Rules:
 - Navigation config must be centralized and typed.
 - Screen files should compose primitives and hooks, not contain data-layer logic.
 - Respect safe area and minimum touch targets.
+- Expo native/prebuild commands must be executed from `apps/mobile` only.
+- Root-level Expo artifacts are prohibited: `/android`, `/ios`, and root `app.json`.
+- npm workspace installs must honor repo `.npmrc` policy (`legacy-peer-deps=true`) to prevent peer auto-install drift into Expo SDK-incompatible native dependency majors.
 
 ## 11. Agent Collaboration Rules
 

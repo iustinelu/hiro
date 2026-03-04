@@ -25,11 +25,16 @@ Branch protection must require `quality` and `pr-governance` checks before merge
 
 - `npm run dev:web`
 - `npm run dev:mobile`
+- `npm run dev --workspace @hiro/mobile -- --clear --tunnel`
+- `npm run mobile:reset`
 - `npm run lint`
 - `npm run typecheck`
 - `npm run test`
 - `npm run check:boundaries`
 - `npm run check:governance`
+- `npm run check:expo-root-artifacts`
 - `npm run check`
 
 `npm run check` now prints an emoji/color quick summary and includes mobile runtime SDK preflight to catch Expo Go compatibility issues early.
+Mobile runtime governance also fails when forbidden root Expo artifacts (`android`, `ios`, root `app.json`) are present or runtime package versions drift into unsafe combinations.
+This workspace pins npm install behavior with `.npmrc` (`legacy-peer-deps=true`) to prevent peer auto-installs from introducing Expo SDK-incompatible native module majors.

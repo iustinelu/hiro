@@ -8,7 +8,24 @@
 
 - From repo root: `npm run dev:mobile`
 - From this folder: `npm run dev`
+- From repo root with Expo flags: `npm run dev --workspace @hiro/mobile -- --clear --tunnel`
 - Preflight health: `npx expo-doctor`
+
+## Runtime Guardrails
+
+- Run Expo native/prebuild commands from `apps/mobile` only.
+- Do not create root-level Expo artifacts (`/android`, `/ios`, root `app.json`).
+- Workspace install policy is pinned by root `.npmrc` (`legacy-peer-deps=true`) to avoid npm peer auto-installs introducing SDK-incompatible native module versions.
+- Validate runtime consistency from repo root:
+  - `npm run check:expo-root-artifacts`
+  - `npm run check:mobile-runtime`
+
+## Recovery Flow (Known-Good Reset)
+
+- From repo root:
+  - `npm run mobile:reset`
+- Then start mobile server:
+  - `npm run dev --workspace @hiro/mobile -- --clear --tunnel`
 
 ## HIR-31 Design Gallery
 
