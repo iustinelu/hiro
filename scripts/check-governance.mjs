@@ -8,7 +8,19 @@ const requiredFiles = [
   "CODEOWNERS",
   ".github/ISSUE_TEMPLATE/implementation.md",
   ".github/PULL_REQUEST_TEMPLATE.md",
-  "scripts/check-pr-governance.mjs"
+  "scripts/check-pr-governance.mjs",
+  "scripts/prepare-pr-body.mjs",
+  "scripts/create-pr.mjs",
+  "docs/skills/pr-governance/SKILL.md",
+  "docs/skills/pr-governance/agents/openai.yaml",
+  "docs/skills/linear-implementation-flow/SKILL.md",
+  "docs/skills/linear-implementation-flow/agents/openai.yaml",
+  "docs/skills/founder-qa-handoff/SKILL.md",
+  "docs/skills/founder-qa-handoff/agents/openai.yaml",
+  "docs/skills/branch-pr-lifecycle/SKILL.md",
+  "docs/skills/branch-pr-lifecycle/agents/openai.yaml",
+  "docs/skills/design-system-change-gate/SKILL.md",
+  "docs/skills/design-system-change-gate/agents/openai.yaml"
 ];
 
 for (const file of requiredFiles) {
@@ -101,6 +113,46 @@ if (!agents.includes("do not mark `Done`")) {
 }
 if (!agents.includes("Founder QA Quick Cycle")) {
   console.error("AGENTS.md must require Founder QA Quick Cycle in handoff.");
+  process.exit(1);
+}
+if (!agents.includes("PR Creation Protocol")) {
+  console.error("AGENTS.md must define a PR Creation Protocol.");
+  process.exit(1);
+}
+if (!agents.includes("npm run pr:prepare")) {
+  console.error("AGENTS.md must require using npm run pr:prepare.");
+  process.exit(1);
+}
+if (!agents.includes("npm run pr:create")) {
+  console.error("AGENTS.md must require using npm run pr:create.");
+  process.exit(1);
+}
+if (!agents.includes("Do not use `gh pr create` directly")) {
+  console.error("AGENTS.md must explicitly prohibit direct gh pr create usage.");
+  process.exit(1);
+}
+if (!agents.includes("Repository Skills (Mandatory)")) {
+  console.error("AGENTS.md must define repository skill requirements.");
+  process.exit(1);
+}
+if (!agents.includes("docs/skills/linear-implementation-flow/SKILL.md")) {
+  console.error("AGENTS.md must reference linear-implementation-flow skill.");
+  process.exit(1);
+}
+if (!agents.includes("docs/skills/founder-qa-handoff/SKILL.md")) {
+  console.error("AGENTS.md must reference founder-qa-handoff skill.");
+  process.exit(1);
+}
+if (!agents.includes("docs/skills/branch-pr-lifecycle/SKILL.md")) {
+  console.error("AGENTS.md must reference branch-pr-lifecycle skill.");
+  process.exit(1);
+}
+if (!agents.includes("docs/skills/design-system-change-gate/SKILL.md")) {
+  console.error("AGENTS.md must reference design-system-change-gate skill.");
+  process.exit(1);
+}
+if (!agents.includes("docs/skills/pr-governance/SKILL.md")) {
+  console.error("AGENTS.md must reference pr-governance skill.");
   process.exit(1);
 }
 

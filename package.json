@@ -16,6 +16,9 @@
     "check:governance": "node scripts/check-governance.mjs",
     "check:pr-governance": "node scripts/check-pr-governance.mjs",
     "check:mobile-runtime": "node scripts/check-mobile-runtime.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "pr:prepare": "node scripts/prepare-pr-body.mjs --out /tmp/pr_body.md",
+    "pr:validate": "node scripts/check-pr-governance.mjs",
+    "pr:create": "node scripts/create-pr.mjs"
   }
 }

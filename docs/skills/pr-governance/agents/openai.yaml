@@ -1,0 +1,4 @@
+version: 1
+display_name: PR Governance
+short_description: Enforce template-valid PR creation
+default_prompt: Create or update a PR using the repository template and pass pr:validate before submission.
