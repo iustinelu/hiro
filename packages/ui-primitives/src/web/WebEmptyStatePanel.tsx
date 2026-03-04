@@ -1,11 +1,12 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { EmptyStatePanelProps } from "../shared/types";
+import { WebIcon } from "./WebIcon";
 import { resolveColor } from "./utils";
 
 export function WebEmptyStatePanel({
   title,
   description,
-  icon = "▦",
+  icon = "empty",
   subtitle = "SPEC 04.3"
 }: EmptyStatePanelProps) {
   return (
@@ -48,7 +49,7 @@ export function WebEmptyStatePanel({
               fontSize: tokens.typography.titleSize
             }}
           >
-            {icon}
+            <WebIcon name={icon} size={28} color={resolveColor("inkSoft")} />
           </span>
           <strong
             style={{

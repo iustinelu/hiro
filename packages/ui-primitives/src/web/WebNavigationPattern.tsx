@@ -1,12 +1,15 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { NavigationPatternProps } from "../shared/types";
+import { WebIcon } from "./WebIcon";
 import { resolveColor } from "./utils";
 
 export function WebNavigationPattern({ activeTabLabel = "TAB_BAR_ACTIVE_STATE", tabs, activeTab, onChange }: NavigationPatternProps) {
   return (
     <section style={{ display: "grid", gap: tokens.spacing.md }}>
       <header style={{ display: "flex", alignItems: "center", gap: tokens.spacing.sm }}>
-        <span style={{ color: resolveColor("accent"), fontSize: 22 }}>▲</span>
+        <span style={{ display: "grid", color: resolveColor("accent") }}>
+          <WebIcon name="navigation" size={20} color={resolveColor("accent")} />
+        </span>
         <strong style={{ color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.titleSize, textTransform: "uppercase" }}>Navigation Patterns</strong>
       </header>
       <div style={{ borderRadius: tokens.radius.xl, border: `1px solid ${resolveColor("border")}`, backgroundColor: "rgba(11, 15, 29, 0.92)", padding: tokens.spacing.xl, display: "grid", gap: tokens.spacing.lg }}>
@@ -32,7 +35,9 @@ export function WebNavigationPattern({ activeTabLabel = "TAB_BAR_ACTIVE_STATE", 
                     boxShadow: active ? `0 0 8px ${resolveColor("accentSoft")}` : "none"
                   }}
                 />
-                <span style={{ fontSize: 22 }}>{active ? "▦" : "◻"}</span>
+                <span style={{ display: "grid" }}>
+                  <WebIcon name={active ? "strokeFill" : "strokeOutline"} size={22} color={active ? resolveColor("ink") : resolveColor("inkSoft")} />
+                </span>
                 <span style={{ textTransform: "uppercase", fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize }}>{tab.label}</span>
               </button>
             );

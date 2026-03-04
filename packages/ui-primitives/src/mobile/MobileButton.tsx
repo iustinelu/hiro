@@ -1,7 +1,8 @@
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { tokens } from "@hiro/ui-tokens";
 import type { ButtonProps } from "../shared/types";
+import { MobileIcon } from "./MobileIcon";
 import { buttonPaddingBySize, getButtonColors, resolveColor } from "./utils";
 
 export function MobileButton({
@@ -34,17 +35,20 @@ export function MobileButton({
         ...buttonPaddingBySize[size]
       }}
     >
-      <Text
-        style={{
-          color: busy ? resolveColor("disabledInk") : colors.foreground,
-          fontFamily: tokens.typography.fontFamily,
-          fontWeight: "800",
-          fontSize: tokens.typography.bodySmallSize,
-          letterSpacing: 0.2
-        }}
-      >
-        {loading ? `◌ ${loadingLabel ?? "Processing"}` : label}
-      </Text>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: tokens.spacing.xs }}>
+        {loading ? <MobileIcon name="loading" size={14} color={busy ? resolveColor("disabledInk") : colors.foreground} /> : null}
+        <Text
+          style={{
+            color: busy ? resolveColor("disabledInk") : colors.foreground,
+            fontFamily: tokens.typography.fontFamily,
+            fontWeight: "800",
+            fontSize: tokens.typography.bodySmallSize,
+            letterSpacing: 0.2
+          }}
+        >
+          {loading ? loadingLabel ?? "Processing" : label}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 }

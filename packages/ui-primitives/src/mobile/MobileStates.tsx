@@ -2,15 +2,16 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { tokens } from "@hiro/ui-tokens";
 import { defaultStateMessages } from "../shared/states";
-import type { FeedbackStateProps } from "../shared/types";
+import type { FeedbackStateProps, IconName } from "../shared/types";
+import { MobileIcon } from "./MobileIcon";
 import { resolveColor } from "./utils";
 
 type FeedbackVariant = "loading" | "empty" | "error";
 
-const variantConfig: Record<FeedbackVariant, { icon: string; accent: string }> = {
-  loading: { icon: "●", accent: resolveColor("accent") },
-  empty: { icon: "◆", accent: resolveColor("inkSoft") },
-  error: { icon: "●", accent: resolveColor("error") }
+const variantConfig: Record<FeedbackVariant, { icon: IconName; accent: string }> = {
+  loading: { icon: "loading", accent: resolveColor("accent") },
+  empty: { icon: "empty", accent: resolveColor("inkSoft") },
+  error: { icon: "error", accent: resolveColor("error") }
 };
 
 function MobileFeedbackState({
@@ -38,15 +39,9 @@ function MobileFeedbackState({
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: tokens.spacing.sm }}>
-        <Text
-          style={{
-            color: config.accent,
-            fontSize: 18,
-            lineHeight: 18
-          }}
-        >
-          {config.icon}
-        </Text>
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <MobileIcon name={config.icon} size={18} color={config.accent} />
+        </View>
         <Text
           style={{
             color: config.accent,

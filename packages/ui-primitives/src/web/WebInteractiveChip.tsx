@@ -1,5 +1,6 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { InteractiveChipProps } from "../shared/types";
+import { WebIcon } from "./WebIcon";
 import { resolveColor } from "./utils";
 
 export function WebInteractiveChip({
@@ -30,7 +31,7 @@ export function WebInteractiveChip({
         fontWeight: 600
       }}
     >
-      {leadingIcon ? <span style={{ fontSize: 12 }}>{leadingIcon}</span> : null}
+      {leadingIcon ? <WebIcon name={leadingIcon} size={14} color={active ? resolveColor("accent") : resolveColor("ink")} /> : null}
       <span>{label}</span>
       {removable ? (
         <span
@@ -39,9 +40,9 @@ export function WebInteractiveChip({
             event.stopPropagation();
             onRemove?.();
           }}
-          style={{ opacity: 0.72, fontSize: 12 }}
+          style={{ opacity: 0.72, display: "grid" }}
         >
-          x
+          <WebIcon name="close" size={12} color={resolveColor("inkSoft")} />
         </span>
       ) : null}
     </button>
