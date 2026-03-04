@@ -14,13 +14,16 @@ Follow this exact flow for every PR.
 2. Fill `/tmp/pr_body.md` without renaming/removing template sections.
 3. Validate body and title before any PR create/update action.
    - `npm run pr:validate -- --file /tmp/pr_body.md --title "HIR-XX: ..."`
-4. Create the PR through the guarded wrapper.
+4. Create or update the PR using GitHub MCP tools (preferred) only after step 3 passes for the exact title/body pair.
+5. If MCP is unavailable, create the PR through the guarded wrapper (fallback only).
    - `npm run pr:create -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md`
 
 ## Enforce
 
 - Never call `gh pr create` directly.
+- Prefer GitHub MCP tools for PR create/update operations in this repository.
 - Never create/update a PR body through API/MCP unless the exact body/title pair passed `pr:validate`.
+- Use `npm run pr:create` only when MCP is unavailable or blocked.
 - Keep all compliance checklist items checked (`[x]`) when complete.
 - Keep Founder QA Gate and Founder QA Quick Cycle sections present and populated.
 

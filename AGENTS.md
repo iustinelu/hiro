@@ -43,14 +43,16 @@ Required sequence:
 1. `npm run pr:prepare` (creates `/tmp/pr_body.md` from `.github/PULL_REQUEST_TEMPLATE.md`)
 2. Fill in `/tmp/pr_body.md` using the template sections exactly.
 3. `npm run pr:validate -- --file /tmp/pr_body.md --title "HIR-XX: ..."`
-4. `npm run pr:create -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md`
-5. Follow the reusable playbook in `docs/skills/pr-governance/SKILL.md`.
+4. Create or update the PR/MR using GitHub MCP tools (preferred), only after step 3 passes for the exact title/body pair.
+5. If MCP is unavailable, use `npm run pr:create -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md`.
+6. Follow the reusable playbook in `docs/skills/pr-governance/SKILL.md`.
 
 Hard rules:
 
 1. Do not use `gh pr create` directly.
-2. Do not use MCP PR creation tools unless the same template validation command has passed for the exact body/title.
-3. PR body must preserve template section names/order and checked compliance items.
+2. Prefer GitHub MCP tools for PR/MR create or update operations in this repository.
+3. Do not use MCP PR creation/update tools unless the same template validation command has passed for the exact body/title.
+4. PR body must preserve template section names/order and checked compliance items.
 
 ## Repository Skills (Mandatory)
 
