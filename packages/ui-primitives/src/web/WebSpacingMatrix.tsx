@@ -16,7 +16,7 @@ export function WebSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixProp
     <section style={{ display: "grid", gap: tokens.spacing.md }}>
       <header style={{ display: "flex", justifyContent: "space-between" }}>
         <strong style={{ color: resolveColor("ink"), fontSize: tokens.typography.titleSize, fontFamily: tokens.typography.fontFamily, textTransform: "uppercase" }}>{title}</strong>
-        <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, letterSpacing: 1.4 }}>SPEC 05.1</span>
+        <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px`, letterSpacing: 1.4 }}>SPEC 05.1</span>
       </header>
       <div style={{ display: "grid", gap: tokens.spacing.sm }}>
         {spacingRows.map((row) => (
@@ -33,7 +33,7 @@ export function WebSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixProp
               gap: tokens.spacing.md
             }}
           >
-            <span style={{ color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySize, fontWeight: 700 }}>{row.px}px</span>
+            <span style={{ color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px`, fontWeight: 700 }}>{row.px}px</span>
             <div style={{ display: "flex", alignItems: "center", gap: tokens.spacing.md }}>
               <span
                 style={{
@@ -46,7 +46,7 @@ export function WebSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixProp
               />
               <span style={{ flex: 1, height: 1, backgroundColor: "rgba(255,255,255,0.08)" }} />
             </div>
-            <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySize }}>{row.token}</span>
+            <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px` }}>{row.token}</span>
           </div>
         ))}
       </div>

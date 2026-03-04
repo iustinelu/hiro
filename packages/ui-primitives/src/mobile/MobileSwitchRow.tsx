@@ -21,10 +21,13 @@ export function MobileSwitchRow({ label, value, onToggle }: SwitchRowProps) {
     >
       <Text
         style={{
-          color: resolveColor("inkMuted"),
+          color: resolveColor("ink"),
           fontFamily: tokens.typography.fontFamily,
           fontSize: tokens.typography.bodySmallSize,
-          fontWeight: "600"
+          lineHeight: tokens.typography.lineHeightBody,
+          fontWeight: "600",
+          flex: 1,
+          paddingRight: tokens.spacing.sm
         }}
       >
         {label}

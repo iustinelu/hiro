@@ -20,12 +20,16 @@ export function WebStatusBadge({ label, tone = "neutral" }: StatusBadgeProps) {
         borderRadius: tokens.radius.sm,
         border: `1px solid ${tone === "neutral" ? resolveColor("borderStrong") : `${toneColor}66`}`,
         backgroundColor: tone === "neutral" ? "rgba(255,255,255,0.05)" : `${toneColor}22`,
-        color: tone === "neutral" ? resolveColor("inkMuted") : toneColor,
+        color: tone === "neutral" ? resolveColor("ink") : toneColor,
         fontFamily: tokens.typography.fontFamilyMono,
-        fontSize: 10,
+        fontSize: tokens.typography.labelSize,
+        lineHeight: `${tokens.typography.lineHeightLabel}px`,
         fontWeight: 700,
         letterSpacing: 0.8,
-        textTransform: "uppercase"
+        textTransform: "uppercase",
+        maxWidth: "100%",
+        whiteSpace: "normal",
+        overflowWrap: "anywhere"
       }}
     >
       {label}

@@ -24,10 +24,10 @@ import { tokens } from "@hiro/ui-tokens";
 function DotGridBackdrop() {
   const dots = useMemo(() => Array.from({ length: 180 }, (_, idx) => idx), []);
   return (
-    <View style={{ position: "absolute", inset: 0, opacity: 0.2 }} pointerEvents="none">
+    <View style={{ position: "absolute", inset: 0, opacity: 0.3 }} pointerEvents="none">
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 14, padding: 8 }}>
         {dots.map((dot) => (
-          <View key={dot} style={{ width: 2, height: 2, borderRadius: 999, backgroundColor: "rgba(255,255,255,0.4)" }} />
+          <View key={dot} style={{ width: 2, height: 2, borderRadius: 999, backgroundColor: "rgba(255,255,255,0.56)" }} />
         ))}
       </View>
     </View>
@@ -41,6 +41,8 @@ export function DesignSystemGalleryScreen() {
   const [activeListeners, setActiveListeners] = useState(true);
   const [debugMode, setDebugMode] = useState(false);
   const [tabValue, setTabValue] = useState("active");
+  const [a11ySegmentValue, setA11ySegmentValue] = useState("contrast_review");
+  const [a11yReadabilityEnabled, setA11yReadabilityEnabled] = useState(true);
 
   return (
     <>
@@ -98,7 +100,7 @@ export function DesignSystemGalleryScreen() {
 
           <MobileCard title="Segmented Controls" description="Active hover state treatment.">
             <View style={{ gap: tokens.spacing.sm }}>
-              <Text style={{ color: tokens.color.accent, fontFamily: tokens.typography.fontFamilyMono, fontSize: 14, fontStyle: "italic" }}>
+              <Text style={{ color: tokens.color.accent, fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: tokens.typography.lineHeightLabel, fontStyle: "italic" }}>
                 // active_hover_state
               </Text>
               <MobileSegmentedControl
@@ -192,10 +194,32 @@ export function DesignSystemGalleryScreen() {
                 </View>
               </MobileChartContainer>
               <View style={{ borderRadius: tokens.radius.xl, borderWidth: 1, borderColor: tokens.color.border, overflow: "hidden", backgroundColor: "rgba(10,12,24,0.95)", padding: tokens.spacing.lg, gap: tokens.spacing.sm }}>
-                <Text style={{ alignSelf: "flex-start", paddingVertical: tokens.spacing.xs, paddingHorizontal: tokens.spacing.sm, borderRadius: tokens.radius.sm, borderWidth: 1, borderColor: tokens.color.accentStrong, color: tokens.color.accent, fontFamily: tokens.typography.fontFamilyMono, fontWeight: "700", fontSize: 12 }}>PREMIUM</Text>
-                <Text style={{ color: tokens.color.ink, fontFamily: tokens.typography.fontFamily, fontSize: 30, lineHeight: 36, fontWeight: "700" }}>Dark Mode Elements</Text>
-                <Text style={{ color: tokens.color.inkMuted, fontFamily: tokens.typography.fontFamily }}>High contrast components</Text>
+                <Text style={{ alignSelf: "flex-start", paddingVertical: tokens.spacing.xs, paddingHorizontal: tokens.spacing.sm, borderRadius: tokens.radius.sm, borderWidth: 1, borderColor: tokens.color.accentStrong, color: tokens.color.accent, fontFamily: tokens.typography.fontFamilyMono, fontWeight: "700", fontSize: tokens.typography.labelSize, lineHeight: tokens.typography.lineHeightLabel }}>
+                  PREMIUM
+                </Text>
+                <Text style={{ color: tokens.color.ink, fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.titleSize, lineHeight: tokens.typography.lineHeightHeadline, fontWeight: "700" }}>Dark Mode Elements</Text>
+                <Text style={{ color: tokens.color.inkMuted, fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.bodySmallSize, lineHeight: tokens.typography.lineHeightBody }}>High contrast components</Text>
               </View>
+            </View>
+          </MobileCard>
+
+          <MobileCard title="Accessibility Stress Check" description="Long labels and readability checks on dark controls.">
+            <View style={{ gap: tokens.spacing.md }}>
+              <MobileSegmentedControl
+                options={[
+                  { label: "Contrast review", value: "contrast_review" },
+                  { label: "Dynamic text scaling", value: "dynamic_text_scaling" },
+                  { label: "Long label overflow validation", value: "long_label_overflow_validation" }
+                ]}
+                value={a11ySegmentValue}
+                onChange={setA11ySegmentValue}
+              />
+              <MobileSwitchRow
+                label="Enable high-priority readability telemetry for extended checklist labels"
+                value={a11yReadabilityEnabled}
+                onToggle={setA11yReadabilityEnabled}
+              />
+              <MobileStatusBadge label="Readability baseline for multi-token labels is stable" tone="neutral" />
             </View>
           </MobileCard>
         </ScrollView>

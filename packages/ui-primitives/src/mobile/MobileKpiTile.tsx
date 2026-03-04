@@ -38,10 +38,12 @@ export function MobileKpiTile({
           style={{
             color: resolveColor("inkMuted"),
             fontFamily: tokens.typography.fontFamily,
-            fontSize: 10,
+            fontSize: tokens.typography.labelSize,
+            lineHeight: tokens.typography.lineHeightLabel,
             textTransform: "uppercase",
             letterSpacing: 0.6,
-            fontWeight: "700"
+            fontWeight: "700",
+            flex: 1
           }}
         >
           {title}
@@ -51,7 +53,8 @@ export function MobileKpiTile({
             style={{
               color: deltaTone === "neutral" ? resolveColor("inkSoft") : deltaColor,
               fontFamily: tokens.typography.fontFamily,
-              fontSize: 11,
+              fontSize: tokens.typography.labelSize,
+              lineHeight: tokens.typography.lineHeightLabel,
               fontWeight: "700"
             }}
           >
@@ -59,7 +62,15 @@ export function MobileKpiTile({
           </Text>
         ) : null}
       </View>
-      <Text style={{ color: resolveColor("ink"), fontFamily: tokens.typography.fontFamily, fontSize: 30, fontWeight: "800" }}>
+      <Text
+        style={{
+          color: resolveColor("ink"),
+          fontFamily: tokens.typography.fontFamily,
+          fontSize: tokens.typography.titleSize,
+          lineHeight: tokens.typography.lineHeightHeadline,
+          fontWeight: "800"
+        }}
+      >
         {value}
       </Text>
       <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 3, height: 34 }}>

@@ -17,8 +17,8 @@ export function MobileSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixP
   return (
     <View style={{ gap: tokens.spacing.md }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={{ color: resolveColor("ink"), fontSize: 18, fontFamily: tokens.typography.fontFamily, fontWeight: "800", textTransform: "uppercase" }}>{title}</Text>
-        <Text style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, letterSpacing: 1.4 }}>SPEC 05.1</Text>
+        <Text style={{ color: resolveColor("ink"), fontSize: tokens.typography.titleSize, lineHeight: tokens.typography.lineHeightHeadline, fontFamily: tokens.typography.fontFamily, fontWeight: "800", textTransform: "uppercase", flex: 1, paddingRight: tokens.spacing.sm }}>{title}</Text>
+        <Text style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: tokens.typography.lineHeightLabel, letterSpacing: 1.4 }}>SPEC 05.1</Text>
       </View>
       <View style={{ gap: tokens.spacing.sm }}>
         {spacingRows.map((row) => (
@@ -36,7 +36,7 @@ export function MobileSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixP
               gap: tokens.spacing.md
             }}
           >
-            <Text style={{ width: 56, color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamilyMono, fontSize: 13, fontWeight: "700" }}>{row.px}px</Text>
+            <Text style={{ width: 56, color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: tokens.typography.lineHeightLabel, fontWeight: "700" }}>{row.px}px</Text>
             <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: tokens.spacing.md }}>
               <View
                 style={{
@@ -48,7 +48,7 @@ export function MobileSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixP
               />
               <View style={{ flex: 1, height: 1, backgroundColor: "rgba(255,255,255,0.08)" }} />
             </View>
-            <Text style={{ width: 76, textAlign: "right", color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: 12 }}>{row.token}</Text>
+            <Text style={{ width: 76, textAlign: "right", color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: tokens.typography.lineHeightLabel }}>{row.token}</Text>
           </View>
         ))}
       </View>

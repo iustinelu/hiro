@@ -38,9 +38,11 @@ export function WebCard({ title, description, tone = "default", children }: Card
             margin: 0,
             fontFamily: tokens.typography.fontFamily,
             fontSize: tokens.typography.subtitleSize,
+            lineHeight: `${tokens.typography.lineHeightHeadline}px`,
             color: resolveColor(tokens.component.card.fg),
             fontWeight: 800,
-            position: "relative"
+            position: "relative",
+            overflowWrap: "anywhere"
           }}
         >
           {title}
@@ -53,7 +55,9 @@ export function WebCard({ title, description, tone = "default", children }: Card
             fontFamily: tokens.typography.fontFamily,
             color: resolveColor("inkMuted"),
             fontSize: tokens.typography.bodySmallSize,
-            position: "relative"
+            lineHeight: `${tokens.typography.lineHeightBody}px`,
+            position: "relative",
+            overflowWrap: "anywhere"
           }}
         >
           {description}
