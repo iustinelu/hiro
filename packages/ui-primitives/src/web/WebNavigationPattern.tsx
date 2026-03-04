@@ -10,10 +10,10 @@ export function WebNavigationPattern({ activeTabLabel = "TAB_BAR_ACTIVE_STATE", 
         <span style={{ display: "grid", color: resolveColor("accent") }}>
           <WebIcon name="navigation" size={20} color={resolveColor("accent")} />
         </span>
-        <strong style={{ color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.titleSize, textTransform: "uppercase" }}>Navigation Patterns</strong>
+        <strong style={{ color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.titleSize, lineHeight: `${tokens.typography.lineHeightHeadline}px`, textTransform: "uppercase" }}>Navigation Patterns</strong>
       </header>
       <div style={{ borderRadius: tokens.radius.xl, border: `1px solid ${resolveColor("border")}`, backgroundColor: "rgba(11, 15, 29, 0.92)", padding: tokens.spacing.xl, display: "grid", gap: tokens.spacing.lg }}>
-        <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize }}>{activeTabLabel}</span>
+        <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px` }}>{activeTabLabel}</span>
         <div style={{ display: "grid", gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))`, gap: tokens.spacing.md }}>
           {tabs.map((tab) => {
             const active = tab.id === activeTab;
@@ -22,7 +22,7 @@ export function WebNavigationPattern({ activeTabLabel = "TAB_BAR_ACTIVE_STATE", 
                 key={tab.id}
                 type="button"
                 onClick={() => onChange?.(tab.id)}
-                style={{ border: "none", background: "transparent", color: active ? resolveColor("ink") : resolveColor("inkSoft"), display: "grid", justifyItems: "center", gap: 8, cursor: "pointer", padding: tokens.spacing.sm }}
+                style={{ border: "none", background: "transparent", color: active ? resolveColor("ink") : resolveColor("inkMuted"), display: "grid", justifyItems: "center", gap: 8, cursor: "pointer", padding: tokens.spacing.sm, minWidth: 0 }}
               >
                 <span
                   style={{
@@ -38,7 +38,7 @@ export function WebNavigationPattern({ activeTabLabel = "TAB_BAR_ACTIVE_STATE", 
                 <span style={{ display: "grid" }}>
                   <WebIcon name={active ? "strokeFill" : "strokeOutline"} size={22} color={active ? resolveColor("ink") : resolveColor("inkSoft")} />
                 </span>
-                <span style={{ textTransform: "uppercase", fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize }}>{tab.label}</span>
+                <span style={{ textTransform: "uppercase", fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px`, overflowWrap: "anywhere", textAlign: "center" }}>{tab.label}</span>
               </button>
             );
           })}
@@ -49,7 +49,7 @@ export function WebNavigationPattern({ activeTabLabel = "TAB_BAR_ACTIVE_STATE", 
             Active tab uses cobalt-to-orange gradient bar (32x4dp) anchored to top border with 8px blur glow.
           </p>
         </article>
-        <footer style={{ borderTop: `1px solid ${resolveColor("accentStrong")}`, backgroundColor: "rgba(92, 42, 20, 0.28)", borderRadius: tokens.radius.md, textAlign: "center", padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`, color: resolveColor("accent"), fontFamily: tokens.typography.fontFamilyMono, letterSpacing: 2 }}>
+        <footer style={{ borderTop: `1px solid ${resolveColor("accentStrong")}`, backgroundColor: "rgba(92, 42, 20, 0.28)", borderRadius: tokens.radius.md, textAlign: "center", padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`, color: resolveColor("accent"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px`, letterSpacing: 2 }}>
           IOS SAFE AREA (34PT)
         </footer>
       </div>

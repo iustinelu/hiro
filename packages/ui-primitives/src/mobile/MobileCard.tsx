@@ -36,6 +36,8 @@ export function MobileCard({ title, description, tone = "default", children }: C
             color: resolveColor(tokens.component.card.fg),
             fontFamily: tokens.typography.fontFamily,
             fontSize: tokens.typography.subtitleSize,
+            lineHeight: tokens.typography.lineHeightHeadline,
+            flexShrink: 1,
             fontWeight: "800"
           }}
         >
@@ -47,7 +49,9 @@ export function MobileCard({ title, description, tone = "default", children }: C
           style={{
             color: resolveColor("inkMuted"),
             fontFamily: tokens.typography.fontFamily,
-            fontSize: tokens.typography.bodySmallSize
+            fontSize: tokens.typography.bodySmallSize,
+            lineHeight: tokens.typography.lineHeightBody,
+            flexShrink: 1
           }}
         >
           {description}

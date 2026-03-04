@@ -29,6 +29,8 @@ export default function DesignSystemGalleryPage() {
   const [activeListeners, setActiveListeners] = useState(true);
   const [debugMode, setDebugMode] = useState(false);
   const [tabValue, setTabValue] = useState("active");
+  const [a11ySegmentValue, setA11ySegmentValue] = useState("contrast_review");
+  const [a11yReadabilityEnabled, setA11yReadabilityEnabled] = useState(true);
 
   return (
     <main style={{ minHeight: "100vh", padding: tokens.spacing.xl, position: "relative" }}>
@@ -45,9 +47,9 @@ export default function DesignSystemGalleryPage() {
           position: "absolute",
           inset: 0,
           zIndex: -2,
-          backgroundImage: "radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px)",
           backgroundSize: "18px 18px",
-          opacity: 0.24,
+          opacity: 0.34,
           pointerEvents: "none"
         }}
       />
@@ -111,7 +113,7 @@ export default function DesignSystemGalleryPage() {
 
         <WebCard title="Segmented Controls" description="Active hover state treatment.">
           <div style={{ display: "grid", gap: tokens.spacing.sm }}>
-            <p style={{ margin: 0, color: tokens.color.accent, fontFamily: tokens.typography.fontFamilyMono, fontSize: 16, fontStyle: "italic" }}>
+            <p style={{ margin: 0, color: tokens.color.accent, fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px`, fontStyle: "italic" }}>
               // active_hover_state
             </p>
             <WebSegmentedControl
@@ -196,10 +198,30 @@ export default function DesignSystemGalleryPage() {
               </div>
             </WebChartContainer>
             <article style={{ borderRadius: tokens.radius.xl, border: `1px solid ${tokens.color.border}`, overflow: "hidden", background: "linear-gradient(180deg, rgba(14,20,36,0.9) 0%, rgba(10,12,24,0.95) 100%)", padding: tokens.spacing.lg, display: "grid", gap: tokens.spacing.sm }}>
-              <span style={{ alignSelf: "start", padding: `${tokens.spacing.xs}px ${tokens.spacing.sm}px`, borderRadius: tokens.radius.sm, border: `1px solid ${tokens.color.accentStrong}`, color: tokens.color.accent, fontFamily: tokens.typography.fontFamilyMono, fontWeight: 700, fontSize: 12 }}>PREMIUM</span>
+              <span style={{ alignSelf: "start", padding: `${tokens.spacing.xs}px ${tokens.spacing.sm}px`, borderRadius: tokens.radius.sm, border: `1px solid ${tokens.color.accentStrong}`, color: tokens.color.accent, fontFamily: tokens.typography.fontFamilyMono, fontWeight: 700, fontSize: tokens.typography.labelSize, lineHeight: `${tokens.typography.lineHeightLabel}px` }}>PREMIUM</span>
               <strong style={{ color: tokens.color.ink, fontSize: tokens.typography.titleSize, lineHeight: `${tokens.typography.lineHeightHeadline}px`, fontFamily: tokens.typography.fontFamily }}>Dark Mode Elements</strong>
-              <span style={{ color: tokens.color.inkMuted, fontFamily: tokens.typography.fontFamily }}>High contrast components</span>
+              <span style={{ color: tokens.color.inkMuted, fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightBody}px` }}>High contrast components</span>
             </article>
+          </div>
+        </WebCard>
+
+        <WebCard title="Accessibility Stress Check" description="Long labels and readability checks on dark controls.">
+          <div style={{ display: "grid", gap: tokens.spacing.md }}>
+            <WebSegmentedControl
+              options={[
+                { label: "Contrast review", value: "contrast_review" },
+                { label: "Dynamic text scaling", value: "dynamic_text_scaling" },
+                { label: "Long label overflow validation", value: "long_label_overflow_validation" }
+              ]}
+              value={a11ySegmentValue}
+              onChange={setA11ySegmentValue}
+            />
+            <WebSwitchRow
+              label="Enable high-priority readability telemetry for extended checklist labels"
+              value={a11yReadabilityEnabled}
+              onToggle={setA11yReadabilityEnabled}
+            />
+            <WebStatusBadge label="Readability baseline for multi-token labels is stable" tone="neutral" />
           </div>
         </WebCard>
 

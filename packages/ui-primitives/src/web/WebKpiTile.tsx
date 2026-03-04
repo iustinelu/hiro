@@ -36,10 +36,13 @@ export function WebKpiTile({
           style={{
             color: resolveColor("inkMuted"),
             fontFamily: tokens.typography.fontFamily,
-            fontSize: 10,
+            fontSize: tokens.typography.labelSize,
+            lineHeight: `${tokens.typography.lineHeightLabel}px`,
             textTransform: "uppercase",
             letterSpacing: 0.6,
-            fontWeight: 700
+            fontWeight: 700,
+            flex: 1,
+            overflowWrap: "anywhere"
           }}
         >
           {title}
@@ -49,7 +52,8 @@ export function WebKpiTile({
             style={{
               color: deltaTone === "neutral" ? resolveColor("inkSoft") : deltaColor,
               fontFamily: tokens.typography.fontFamily,
-              fontSize: 11,
+              fontSize: tokens.typography.labelSize,
+              lineHeight: `${tokens.typography.lineHeightLabel}px`,
               fontWeight: 700
             }}
           >
@@ -57,7 +61,15 @@ export function WebKpiTile({
           </span>
         ) : null}
       </div>
-      <div style={{ color: resolveColor("ink"), fontFamily: tokens.typography.fontFamily, fontSize: 30, fontWeight: 800 }}>
+      <div
+        style={{
+          color: resolveColor("ink"),
+          fontFamily: tokens.typography.fontFamily,
+          fontSize: tokens.typography.titleSize,
+          lineHeight: `${tokens.typography.lineHeightHeadline}px`,
+          fontWeight: 800
+        }}
+      >
         {value}
       </div>
       <div style={{ display: "flex", alignItems: "end", gap: 3, height: 34 }}>

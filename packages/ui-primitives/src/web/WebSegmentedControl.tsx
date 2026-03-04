@@ -26,16 +26,20 @@ export function WebSegmentedControl({ options, value, onChange }: SegmentedContr
             onClick={() => onChange?.(option.value)}
             style={{
               flex: 1,
+              minWidth: 0,
               border: "none",
               borderRadius: tokens.radius.sm,
               padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
               backgroundColor: active ? resolveColor("accent") : "transparent",
-              color: active ? resolveColor("ink") : resolveColor("inkSoft"),
+              color: active ? resolveColor("ink") : resolveColor("inkMuted"),
               boxShadow: active ? `0 0 16px ${resolveColor("accentSoft")}` : "none",
               cursor: "pointer",
               fontFamily: tokens.typography.fontFamily,
               fontSize: tokens.typography.bodySmallSize,
-              fontWeight: 700
+              lineHeight: `${tokens.typography.lineHeightLabel}px`,
+              fontWeight: 700,
+              whiteSpace: "normal",
+              overflowWrap: "anywhere"
             }}
           >
             {option.label}

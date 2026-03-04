@@ -34,10 +34,12 @@ export function MobileSegmentedControl({ options, value, onChange }: SegmentedCo
             <Text
               style={{
                 textAlign: "center",
-                color: active ? resolveColor("ink") : resolveColor("inkSoft"),
+                color: active ? resolveColor("ink") : resolveColor("inkMuted"),
                 fontFamily: tokens.typography.fontFamily,
                 fontSize: tokens.typography.bodySmallSize,
-                fontWeight: "700"
+                lineHeight: tokens.typography.lineHeightLabel,
+                fontWeight: "700",
+                flexShrink: 1
               }}
             >
               {option.label}

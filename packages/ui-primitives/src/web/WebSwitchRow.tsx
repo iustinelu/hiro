@@ -17,10 +17,14 @@ export function WebSwitchRow({ label, value, onToggle }: SwitchRowProps) {
     >
       <span
         style={{
-          color: resolveColor("inkMuted"),
+          color: resolveColor("ink"),
           fontFamily: tokens.typography.fontFamily,
           fontSize: tokens.typography.bodySmallSize,
-          fontWeight: 600
+          lineHeight: `${tokens.typography.lineHeightBody}px`,
+          fontWeight: 600,
+          flex: 1,
+          paddingRight: tokens.spacing.sm,
+          overflowWrap: "anywhere"
         }}
       >
         {label}
