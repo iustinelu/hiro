@@ -1,0 +1,4 @@
+version: 1
+display_name: Branch PR Lifecycle
+short_description: Standardize branch-to-merge workflow
+default_prompt: Run the safe branch and PR lifecycle, including mandatory PR template validation and post-merge branch hygiene.

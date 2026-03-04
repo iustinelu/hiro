@@ -1,0 +1,4 @@
+version: 1
+display_name: Linear Implementation Flow
+short_description: Enforce required HIR execution steps
+default_prompt: Execute this ticket using the required Linear state, dependency, check, and founder QA handoff workflow.

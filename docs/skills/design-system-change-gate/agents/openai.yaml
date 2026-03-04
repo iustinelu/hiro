@@ -1,0 +1,4 @@
+version: 1
+display_name: Design System Change Gate
+short_description: Enforce DS parity and readability gates
+default_prompt: Apply design-system change checks for token use, web/mobile parity, contrast, typography, and overflow before handoff.

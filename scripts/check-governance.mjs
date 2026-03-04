@@ -12,7 +12,15 @@ const requiredFiles = [
   "scripts/prepare-pr-body.mjs",
   "scripts/create-pr.mjs",
   "docs/skills/pr-governance/SKILL.md",
-  "docs/skills/pr-governance/agents/openai.yaml"
+  "docs/skills/pr-governance/agents/openai.yaml",
+  "docs/skills/linear-implementation-flow/SKILL.md",
+  "docs/skills/linear-implementation-flow/agents/openai.yaml",
+  "docs/skills/founder-qa-handoff/SKILL.md",
+  "docs/skills/founder-qa-handoff/agents/openai.yaml",
+  "docs/skills/branch-pr-lifecycle/SKILL.md",
+  "docs/skills/branch-pr-lifecycle/agents/openai.yaml",
+  "docs/skills/design-system-change-gate/SKILL.md",
+  "docs/skills/design-system-change-gate/agents/openai.yaml"
 ];
 
 for (const file of requiredFiles) {
@@ -121,6 +129,30 @@ if (!agents.includes("npm run pr:create")) {
 }
 if (!agents.includes("Do not use `gh pr create` directly")) {
   console.error("AGENTS.md must explicitly prohibit direct gh pr create usage.");
+  process.exit(1);
+}
+if (!agents.includes("Repository Skills (Mandatory)")) {
+  console.error("AGENTS.md must define repository skill requirements.");
+  process.exit(1);
+}
+if (!agents.includes("docs/skills/linear-implementation-flow/SKILL.md")) {
+  console.error("AGENTS.md must reference linear-implementation-flow skill.");
+  process.exit(1);
+}
+if (!agents.includes("docs/skills/founder-qa-handoff/SKILL.md")) {
+  console.error("AGENTS.md must reference founder-qa-handoff skill.");
+  process.exit(1);
+}
+if (!agents.includes("docs/skills/branch-pr-lifecycle/SKILL.md")) {
+  console.error("AGENTS.md must reference branch-pr-lifecycle skill.");
+  process.exit(1);
+}
+if (!agents.includes("docs/skills/design-system-change-gate/SKILL.md")) {
+  console.error("AGENTS.md must reference design-system-change-gate skill.");
+  process.exit(1);
+}
+if (!agents.includes("docs/skills/pr-governance/SKILL.md")) {
+  console.error("AGENTS.md must reference pr-governance skill.");
   process.exit(1);
 }
 

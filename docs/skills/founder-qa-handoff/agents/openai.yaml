@@ -1,0 +1,4 @@
+version: 1
+display_name: Founder QA Handoff
+short_description: Generate compliant founder QA gate blocks
+default_prompt: Produce the required founder QA stop-point and quick cycle content with exact commands and pass/fail criteria.
