@@ -8,7 +8,10 @@ const requiredFiles = [
   "CODEOWNERS",
   ".github/ISSUE_TEMPLATE/implementation.md",
   ".github/PULL_REQUEST_TEMPLATE.md",
-  "scripts/check-pr-governance.mjs"
+  "scripts/check-pr-governance.mjs",
+  "scripts/prepare-pr-body.mjs",
+  "scripts/create-pr.mjs",
+  "docs/skills/pr-governance/SKILL.md"
 ];
 
 for (const file of requiredFiles) {
@@ -101,6 +104,22 @@ if (!agents.includes("do not mark `Done`")) {
 }
 if (!agents.includes("Founder QA Quick Cycle")) {
   console.error("AGENTS.md must require Founder QA Quick Cycle in handoff.");
+  process.exit(1);
+}
+if (!agents.includes("PR Creation Protocol")) {
+  console.error("AGENTS.md must define a PR Creation Protocol.");
+  process.exit(1);
+}
+if (!agents.includes("npm run pr:prepare")) {
+  console.error("AGENTS.md must require using npm run pr:prepare.");
+  process.exit(1);
+}
+if (!agents.includes("npm run pr:create")) {
+  console.error("AGENTS.md must require using npm run pr:create.");
+  process.exit(1);
+}
+if (!agents.includes("Do not use `gh pr create` directly")) {
+  console.error("AGENTS.md must explicitly prohibit direct gh pr create usage.");
   process.exit(1);
 }
 

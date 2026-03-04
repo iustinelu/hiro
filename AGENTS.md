@@ -33,3 +33,21 @@ Founder QA Quick Cycle format (mandatory):
 
 1. Closing implementation issues without founder QA sign-off.
 2. Skipping compliance checklist items without documented emergency deviation.
+
+## PR Creation Protocol (Mandatory)
+
+All agents must use the repository PR workflow commands and template gate. Do not create PRs with ad-hoc bodies.
+
+Required sequence:
+
+1. `npm run pr:prepare` (creates `/tmp/pr_body.md` from `.github/PULL_REQUEST_TEMPLATE.md`)
+2. Fill in `/tmp/pr_body.md` using the template sections exactly.
+3. `npm run pr:validate -- --file /tmp/pr_body.md --title "HIR-XX: ..."`
+4. `npm run pr:create -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md`
+5. Follow the reusable playbook in `docs/skills/pr-governance/SKILL.md`.
+
+Hard rules:
+
+1. Do not use `gh pr create` directly.
+2. Do not use MCP PR creation tools unless the same template validation command has passed for the exact body/title.
+3. PR body must preserve template section names/order and checked compliance items.
