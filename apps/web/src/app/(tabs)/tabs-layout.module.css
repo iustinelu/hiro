@@ -1,0 +1,147 @@
+.shell {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--hiro-color-bg-canvas-top) 0%, var(--hiro-color-bg-canvas-bottom) 100%);
+  color: var(--hiro-color-ink);
+}
+
+.mobileHeader {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--hiro-color-border);
+  background: rgba(17, 16, 34, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+.desktopRail {
+  display: none;
+}
+
+.main {
+  padding: 16px;
+  padding-bottom: 88px;
+}
+
+.contentCard {
+  border: 1px solid var(--hiro-color-border);
+  border-radius: 24px;
+  background: rgba(22, 20, 37, 0.86);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.36);
+  padding: 24px;
+}
+
+.title {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.description {
+  margin: 12px 0 0;
+  color: var(--hiro-color-ink-muted);
+  line-height: 1.45;
+}
+
+.actionButton {
+  min-width: 130px;
+}
+
+.mobileTabs {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--hiro-color-border);
+  background: rgba(17, 16, 34, 0.96);
+  backdrop-filter: blur(12px);
+}
+
+.tabLink {
+  text-decoration: none;
+  color: var(--hiro-color-ink-muted);
+  text-align: center;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  padding: 8px 4px;
+  font-size: 12px;
+  line-height: 1.2;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', 'SFMono-Regular', monospace;
+  text-transform: uppercase;
+}
+
+.tabLinkActive {
+  color: var(--hiro-color-ink);
+  border-color: var(--hiro-color-accent);
+  background: var(--hiro-color-accent-soft);
+}
+
+@media (min-width: 960px) {
+  .shell {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+
+  .desktopRail {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-right: 1px solid var(--hiro-color-border);
+    padding: 24px 16px;
+    background: rgba(17, 16, 34, 0.78);
+  }
+
+  .brand {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--hiro-color-accent);
+  }
+
+  .desktopTabs {
+    display: grid;
+    gap: 8px;
+  }
+
+  .desktopLink {
+    text-decoration: none;
+    color: var(--hiro-color-ink-muted);
+    border: 1px solid transparent;
+    border-radius: 14px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .desktopLinkActive {
+    color: var(--hiro-color-ink);
+    border-color: var(--hiro-color-accent);
+    background: var(--hiro-color-accent-soft);
+  }
+
+  .mobileHeader {
+    position: static;
+    border-bottom: none;
+    background: transparent;
+    backdrop-filter: none;
+    padding: 24px 24px 0;
+  }
+
+  .main {
+    padding: 0 24px 24px;
+  }
+
+  .mobileTabs {
+    display: none;
+  }
+}

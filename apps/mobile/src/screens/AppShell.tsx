@@ -1,6 +1,6 @@
 import React from "react";
-import { DesignSystemGalleryScreen } from "./DesignSystemGallery";
+import { AppTabs } from "../navigation/AppTabs";
 
 export function AppShellScreen() {
-  return <DesignSystemGalleryScreen />;
+  return <AppTabs />;
 }

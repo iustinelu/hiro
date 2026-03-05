@@ -13,6 +13,8 @@ All implementation agents must follow this contract for every issue.
 1. Keep all changes within approved repo boundaries.
 2. Update docs/checklists when architecture or workflow is touched.
 3. Run `npm run check` before handoff.
+4. Use design-system primitives/tokens for all app UI elements; avoid raw platform interactive elements in `apps/*`.
+5. If required UI is missing from design system, implement it in `packages/ui-primitives` (web + mobile parity unless documented platform-specific) first, then consume it from apps.
 
 ## Required In Final Handoff
 
