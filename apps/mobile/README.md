@@ -27,9 +27,16 @@
 - Then start mobile server:
   - `npm run dev --workspace @hiro/mobile -- --clear --tunnel`
 
+## HIR-32 Navigation Shell
+
+- Entry point: `AppShellScreen` renders `AppTabs`.
+- Tabs: Home, Tasks, Progress, Budget, More.
+- Pattern: title-left header with per-tab primary action on the right.
+- QA focus: bottom-tab parity, safe-area spacing, and keyboard overlap behavior (`tabBarHideOnKeyboard`).
+
 ## HIR-31 Design Gallery
 
-- Entry point: `AppShellScreen` currently renders `DesignSystemGalleryScreen`
+- Entry point file: `src/screens/DesignSystemGallery.tsx`
 - Purpose: founder QA validation of primitive variants, states, and tap comfort.
 
 ## Founder QA Mobile Runtime Quick Cycle

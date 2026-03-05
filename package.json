@@ -21,6 +21,7 @@
     "check": "node scripts/check.mjs",
     "pr:prepare": "node scripts/prepare-pr-body.mjs --out /tmp/pr_body.md",
     "pr:validate": "node scripts/check-pr-governance.mjs",
+    "pr:create:fallback": "node scripts/create-pr.mjs",
     "pr:create": "node scripts/create-pr.mjs"
   }
 }

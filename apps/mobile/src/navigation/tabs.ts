@@ -1,4 +1,4 @@
-import { appSections } from "@hiro/domain";
+import { appShellSections, type AppShellSectionId } from "@hiro/domain";
 
-export const mobileTabs = appSections;
-export type MobileTab = (typeof mobileTabs)[number];
+export const mobileTabs = appShellSections;
+export type MobileTabId = AppShellSectionId;

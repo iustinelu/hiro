@@ -9,6 +9,13 @@
 - From repo root: `npm run dev:web`
 - From this folder: `npm run dev`
 
+## HIR-32 Responsive Shell
+
+- Routes: `/home`, `/tasks`, `/progress`, `/budget`, `/more`.
+- Root route `/` redirects to `/home`.
+- Layout: desktop side nav + top header/action, mobile top header + bottom tab bar.
+- Pattern: title-left header with per-tab primary action on the right across all sections.
+
 ## HIR-31 Design Gallery
 
 - Route: `/design-system`

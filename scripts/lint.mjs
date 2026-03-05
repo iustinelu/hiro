@@ -6,6 +6,17 @@ const lintableExtensions = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"
 const maxLinesPerFile = 400;
 const ignoredDirNames = new Set(["node_modules", ".next", "dist", "build", "coverage"]);
 const violations = [];
+const mobileDisallowedInteractivePrimitives = new Set([
+  "Pressable",
+  "TouchableOpacity",
+  "TouchableHighlight",
+  "TouchableWithoutFeedback",
+  "TouchableNativeFeedback",
+  "TextInput",
+  "Switch",
+  "Modal"
+]);
+const webDisallowedIntrinsicInteractiveTags = ["button", "input", "select", "textarea", "form"];
 
 function hasLintableExtension(path) {
   return [...lintableExtensions].some((ext) => path.endsWith(ext));
@@ -39,6 +50,31 @@ function walk(dir) {
     const isTokenSource = full.startsWith("packages/ui-tokens/");
     if (!isTokenSource && /#[0-9a-fA-F]{3,8}\b/.test(content)) {
       violations.push(`${full}: hardcoded hex color found; use packages/ui-tokens`);
+    }
+
+    // Enforce DS primitives for app-level interactive controls.
+    if (full.startsWith("apps/mobile/src/")) {
+      const reactNativeImportMatch = content.match(/import\s*{([^}]*)}\s*from\s*["']react-native["']/m);
+      if (reactNativeImportMatch) {
+        const importedNames = reactNativeImportMatch[1]
+          .split(",")
+          .map((item) => item.trim().split(/\s+as\s+/)[0])
+          .filter(Boolean);
+        for (const name of importedNames) {
+          if (mobileDisallowedInteractivePrimitives.has(name)) {
+            violations.push(`${full}: do not import react-native ${name} in app layer; use @hiro/ui-primitives/mobile`);
+          }
+        }
+      }
+    }
+
+    if (full.startsWith("apps/web/src/") && (full.endsWith(".tsx") || full.endsWith(".jsx"))) {
+      for (const tag of webDisallowedIntrinsicInteractiveTags) {
+        const regex = new RegExp(`<\\s*${tag}\\b`, "i");
+        if (regex.test(content)) {
+          violations.push(`${full}: raw <${tag}> in app layer is disallowed; use @hiro/ui-primitives/web`);
+        }
+      }
     }
   }
 }

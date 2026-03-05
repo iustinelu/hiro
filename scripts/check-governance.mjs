@@ -132,8 +132,8 @@ if (!agents.includes("npm run pr:prepare")) {
   console.error("AGENTS.md must require using npm run pr:prepare.");
   process.exit(1);
 }
-if (!agents.includes("npm run pr:create")) {
-  console.error("AGENTS.md must require using npm run pr:create.");
+if (!agents.includes("npm run pr:create:fallback")) {
+  console.error("AGENTS.md must require using npm run pr:create:fallback.");
   process.exit(1);
 }
 if (!agents.includes("Do not use `gh pr create` directly")) {
@@ -162,6 +162,24 @@ if (!agents.includes("docs/skills/design-system-change-gate/SKILL.md")) {
 }
 if (!agents.includes("docs/skills/pr-governance/SKILL.md")) {
   console.error("AGENTS.md must reference pr-governance skill.");
+  process.exit(1);
+}
+if (!agents.includes("Use design-system primitives/tokens for all app UI elements")) {
+  console.error("AGENTS.md must require design-system-first UI usage.");
+  process.exit(1);
+}
+if (!agents.includes("implement it in `packages/ui-primitives`")) {
+  console.error("AGENTS.md must require adding missing primitives to packages/ui-primitives first.");
+  process.exit(1);
+}
+
+const architectureStandards = readFileSync("docs/architecture-standards.md", "utf8");
+if (!architectureStandards.includes("must not introduce raw platform interactive elements")) {
+  console.error("Architecture standards must prohibit raw app-layer platform interactive elements.");
+  process.exit(1);
+}
+if (!architectureStandards.includes("implement the primitive in `packages/ui-primitives` first")) {
+  console.error("Architecture standards must require implementing missing primitives in packages/ui-primitives first.");
   process.exit(1);
 }
 

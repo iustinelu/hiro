@@ -27,5 +27,16 @@ export interface HouseholdMember {
   updatedAt: string;
 }
 
+export const appShellSections = [
+  { id: "home", label: "Home", path: "/home", headerActionLabel: "Add task" },
+  { id: "tasks", label: "Tasks", path: "/tasks", headerActionLabel: "New task" },
+  { id: "progress", label: "Progress", path: "/progress", headerActionLabel: "View report" },
+  { id: "budget", label: "Budget", path: "/budget", headerActionLabel: "Add expense" },
+  { id: "more", label: "More", path: "/more", headerActionLabel: "Manage" }
+] as const;
+
+export type AppShellSection = (typeof appShellSections)[number];
+export type AppShellSectionId = AppShellSection["id"];
+
 export const appSections = ["Home", "Tasks", "Progress", "Budget", "More"] as const;
 export type AppSection = (typeof appSections)[number];

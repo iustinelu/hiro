@@ -13,6 +13,8 @@ All implementation agents must follow this contract for every issue.
 1. Keep all changes within approved repo boundaries.
 2. Update docs/checklists when architecture or workflow is touched.
 3. Run `npm run check` before handoff.
+4. Use design-system primitives/tokens for all app UI elements; avoid raw platform interactive elements in `apps/*`.
+5. If required UI is missing from design system, implement it in `packages/ui-primitives` (web + mobile parity unless documented platform-specific) first, then consume it from apps.
 
 ## Required In Final Handoff
 
@@ -44,7 +46,7 @@ Required sequence:
 2. Fill in `/tmp/pr_body.md` using the template sections exactly.
 3. `npm run pr:validate -- --file /tmp/pr_body.md --title "HIR-XX: ..."`
 4. Create or update the PR/MR using GitHub MCP tools (preferred), only after step 3 passes for the exact title/body pair.
-5. If MCP is unavailable, use `npm run pr:create -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md`.
+5. If MCP is unavailable, use `npm run pr:create:fallback -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md`.
 6. Follow the reusable playbook in `docs/skills/pr-governance/SKILL.md`.
 
 Hard rules:
@@ -52,7 +54,8 @@ Hard rules:
 1. Do not use `gh pr create` directly.
 2. Prefer GitHub MCP tools for PR/MR create or update operations in this repository.
 3. Do not use MCP PR creation/update tools unless the same template validation command has passed for the exact body/title.
-4. PR body must preserve template section names/order and checked compliance items.
+4. Use `npm run pr:create:fallback` only when MCP is unavailable or blocked.
+5. PR body must preserve template section names/order and checked compliance items.
 
 ## Repository Skills (Mandatory)
 
