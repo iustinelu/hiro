@@ -23,7 +23,7 @@ Use this lifecycle for every implementation branch.
 1. Run `npm run pr:prepare`.
 2. Fill `/tmp/pr_body.md`.
 3. Run `npm run pr:validate -- --file /tmp/pr_body.md --title "HIR-XX: ..."` .
-4. Run `npm run pr:create -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md`.
+4. Run `npm run pr:create:fallback -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md` only when MCP is unavailable.
 
 ## Post-merge
 

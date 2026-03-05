@@ -132,8 +132,8 @@ if (!agents.includes("npm run pr:prepare")) {
   console.error("AGENTS.md must require using npm run pr:prepare.");
   process.exit(1);
 }
-if (!agents.includes("npm run pr:create")) {
-  console.error("AGENTS.md must require using npm run pr:create.");
+if (!agents.includes("npm run pr:create:fallback")) {
+  console.error("AGENTS.md must require using npm run pr:create:fallback.");
   process.exit(1);
 }
 if (!agents.includes("Do not use `gh pr create` directly")) {
