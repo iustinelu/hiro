@@ -9,8 +9,12 @@
   },
   "dependencies": {
     "@hiro/domain": "0.1.0",
+    "@hiro/runtime": "0.1.0",
+    "@hiro/supabase-clients": "0.1.0",
     "@hiro/ui-primitives": "0.1.0",
     "@hiro/ui-tokens": "0.1.0",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.49.1",
     "next": "15.2.0",
     "react": "19.1.0",
     "react-dom": "19.1.0"
