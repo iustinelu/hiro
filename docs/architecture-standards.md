@@ -72,6 +72,15 @@ Ownership:
 
 ## 5. Schema, Migration, and RLS Standards
 
+**CRITICAL: Migrations and RLS policies are the hardest class of change to fix once deployed. A bad migration requires data surgery. A misconfigured RLS policy silently leaks cross-household data. Treat every schema/RLS change as a production deploy.**
+
+Agent obligations (non-negotiable):
+- Read the full migration file before applying.
+- After every apply: verify via `list_migrations`, `list_tables` (RLS enabled), and `pg_policies` count.
+- Write and run a denial test for every new RLS policy before closing the ticket.
+- Never assume it worked — prove it.
+
+Schema rules:
 - SQL migrations are single source of truth for schema changes.
 - All primary keys are UUID unless documented exception.
 - All tables include `created_at` and `updated_at` timestamptz.
@@ -79,7 +88,6 @@ Ownership:
 - Enable RLS on all household-scoped tables.
 
 RLS conventions:
-
 - Policies must deny cross-household reads/writes by default.
 - Prefer explicit `USING` and `WITH CHECK` clauses.
 - Keep policy names deterministic: `<table>_<action>_<scope>`.

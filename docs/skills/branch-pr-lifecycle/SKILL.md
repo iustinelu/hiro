@@ -10,7 +10,7 @@ Use this lifecycle for every implementation branch.
 ## Branch
 
 1. Start from updated `main`.
-2. Create a dedicated branch for the ticket.
+2. Create a dedicated branch using the short format: `hir-{number}/{short-slug}` (e.g. `hir-34/schema-rls`). Never use the auto-generated Linear branch name — it is too long.
 3. Keep branch scoped to one ticket or tightly coupled follow-ups.
 
 ## Validate
