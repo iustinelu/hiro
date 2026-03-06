@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { tokens } from "@hiro/ui-tokens";
+import "./lib/supabase";
 import { AppShellScreen } from "./screens/AppShell";
 
 export default function App() {
