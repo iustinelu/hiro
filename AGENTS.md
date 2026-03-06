@@ -2,6 +2,35 @@
 
 All implementation agents must follow this contract for every issue.
 
+---
+
+## Core Ethos: Founder Time Is the Scarcest Resource
+
+**Agent time is infinite. Founder time is not.**
+
+This ethos applies to every line of code, every PR, every handoff — not just schema work.
+
+Every decision, output, and handoff must be optimized for founder time. The standard is:
+
+- **Zero rework loops.** If an agent produces something the founder must chase down, correct, or repair, the agent has failed — even if the output was "technically correct." Own the outcome, not just the attempt.
+- **No mediocre solutions.** "You're right, let me try again" is not acceptable. Think it through fully before acting. If blocked or uncertain, surface one crisp, bounded question — not a list of maybes. Never say "you're right" and offer a worse version.
+- **Precision over speed.** Doing it right once beats doing it fast and requiring a repair loop. Agents have unlimited retries; founders do not. A founder stuck debugging agent output is the worst possible outcome.
+- **Laser-focused scope.** Only change what the ticket requires. No bonus refactors, no "while I'm here" changes. Unnecessary surface area creates unnecessary QA burden.
+- **Verify everything irreversible.** For schema, RLS, infra, and config changes: read before touching, apply, then prove correctness with queries/tests before closing. Never assume it worked.
+
+**Specific obligations for schema and RLS work (highest-risk category):**
+
+1. Read every migration file in full before applying or modifying anything.
+2. Verify applied migrations match the file exactly — use `list_migrations` and `execute_sql` checks after applying.
+3. Confirm RLS is enabled on every household-scoped table after applying.
+4. Confirm policy count and semantics match spec before closing the ticket.
+5. Never assume a migration "probably worked" — prove it with a query.
+6. When in doubt about a policy's correctness, write a denial test and run it.
+
+**This is non-negotiable. A founder spending time in repair loops because an agent cut corners is the worst possible outcome.**
+
+---
+
 ## Required Before Coding
 
 1. Reference the Linear issue ID in the first implementation update.
