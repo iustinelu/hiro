@@ -12,6 +12,9 @@ Follow this flow for every implementation ticket.
 1. Reference the Linear issue ID in the first implementation update.
 2. Confirm dependency order from `docs/architecture-standards.md`.
 3. Confirm ticket status is `In Progress` before code changes.
+4. **Re-read all guardrail docs** (`docs/architecture-standards.md`, `supabase/README.md`, relevant skill docs).
+5. **Explore all codebase areas the ticket touches** — read existing files, check package APIs.
+6. **Write and present a complete plan** (files, decisions, constraints, QA strategy) and wait for approval before implementing.
 
 ## Implement
 
