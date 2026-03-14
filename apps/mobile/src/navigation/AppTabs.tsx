@@ -7,6 +7,7 @@ import { appShellSections, type AppShellSectionId } from "@hiro/domain";
 import { MobileButton } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
 import { SectionPlaceholderScreen } from "../screens/SectionPlaceholderScreen";
+import { MoreScreen } from "../screens/MoreScreen";
 import { logActivity } from "../lib/activityService";
 
 type AppTabParamList = Record<AppShellSectionId, undefined>;
@@ -112,11 +113,15 @@ export function AppTabs() {
           >
             {() => (
               <View style={{ flex: 1 }}>
-                <SectionPlaceholderScreen
-                  title={section.label}
-                  description={`${section.label} section shell`}
-                  actionLabel={section.headerActionLabel}
-                />
+                {section.id === "more" ? (
+                  <MoreScreen />
+                ) : (
+                  <SectionPlaceholderScreen
+                    title={section.label}
+                    description={`${section.label} section shell`}
+                    actionLabel={section.headerActionLabel}
+                  />
+                )}
                 {__DEV__ && section.id === "more" && <DevErrorTrigger />}
               </View>
             )}
