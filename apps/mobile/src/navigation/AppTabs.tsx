@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -7,16 +7,40 @@ import { appShellSections, type AppShellSectionId } from "@hiro/domain";
 import { MobileButton } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
 import { SectionPlaceholderScreen } from "../screens/SectionPlaceholderScreen";
+import { logActivity } from "../lib/activityService";
 
 type AppTabParamList = Record<AppShellSectionId, undefined>;
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
 
+function ThrowOnRender() {
+  throw new Error("Controlled test error — HIR-35 QA");
+  return null;
+}
+
+function DevErrorTrigger() {
+  const [shouldThrow, setShouldThrow] = useState(false);
+  if (shouldThrow) return <ThrowOnRender />;
+  return (
+    <View style={{ marginTop: tokens.spacing.lg, alignItems: "center" }}>
+      <MobileButton label="Trigger Error (dev only)" variant="danger" onPress={() => setShouldThrow(true)} />
+    </View>
+  );
+}
+
 export function AppTabs() {
   const insets = useSafeAreaInsets();
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      onStateChange={(state) => {
+        if (!state) return;
+        const activeRoute = state.routes[state.index];
+        if (activeRoute) {
+          void logActivity("tab_viewed", { tab: activeRoute.name });
+        }
+      }}
+    >
       <Tab.Navigator
         initialRouteName="home"
         screenOptions={({ route }) => {
@@ -87,11 +111,14 @@ export function AppTabs() {
             }}
           >
             {() => (
-              <SectionPlaceholderScreen
-                title={section.label}
-                description={`${section.label} section shell`}
-                actionLabel={section.headerActionLabel}
-              />
+              <View style={{ flex: 1 }}>
+                <SectionPlaceholderScreen
+                  title={section.label}
+                  description={`${section.label} section shell`}
+                  actionLabel={section.headerActionLabel}
+                />
+                {__DEV__ && section.id === "more" && <DevErrorTrigger />}
+              </View>
             )}
           </Tab.Screen>
         ))}

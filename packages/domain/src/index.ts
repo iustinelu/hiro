@@ -27,6 +27,16 @@ export interface HouseholdMember {
   updatedAt: string;
 }
 
+export interface ActivityEvent {
+  id: Uuid;
+  profileId: Uuid;
+  householdId: Uuid | null;
+  eventName: string;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const appShellSections = [
   { id: "home", label: "Home", path: "/home", headerActionLabel: "Add task" },
   { id: "tasks", label: "Tasks", path: "/tasks", headerActionLabel: "New task" },

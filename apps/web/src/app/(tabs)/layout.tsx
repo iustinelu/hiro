@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { appShellSections } from "@hiro/domain";
 import { WebButton } from "@hiro/ui-primitives/web";
+import { getSupabaseBrowserClient } from "../../lib/supabase/client";
+import { logActivity } from "../../lib/activityService";
 import styles from "./tabs-layout.module.css";
 import type { ReactNode } from "react";
 
@@ -14,6 +17,17 @@ function withActiveClass(isActive: boolean, baseClass: string, activeClass: stri
 export default function TabsLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const activeSection = appShellSections.find((section) => pathname === section.path) ?? appShellSections[0];
+  const mountedRef = useRef(false);
+
+  useEffect(() => {
+    // Skip the initial mount — only log navigation after the first render
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      return;
+    }
+    const client = getSupabaseBrowserClient();
+    void logActivity(client, "tab_viewed", { tab: activeSection.id });
+  }, [pathname, activeSection.id]);
 
   return (
     <div className={styles.shell}>
