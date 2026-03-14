@@ -24,10 +24,14 @@ Follow this flow for every implementation ticket.
 
 ## Handoff
 
+Order of operations: implement → check → commit → push → **open PR** (CI validates) → **founder QA on the open PR** → sign off → merge.
+
+Do not QA before opening the PR. The PR body is the QA spec; CI must be green first; fixes go on the open branch.
+
 1. Include Linear issue ID.
 2. Include checklist completion status.
 3. Include `npm run check` command results.
-4. State explicit founder QA stop-point; do not mark `Done`.
+4. State explicit founder QA stop-point; do not mark `Done` or merge until sign-off.
 5. Include Founder QA Quick Cycle with:
    - Commands
    - Validate
