@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "../../../lib/supabase/server";
-import { SectionPlaceholder } from "../SectionPlaceholder";
+import { createSupabaseServerClient } from "../../lib/supabase/server";
+import { CreateHouseholdForm } from "./CreateHouseholdForm";
 
-export default async function HomePage() {
+export default async function OnboardingPage() {
   const supabase = await createSupabaseServerClient();
 
   const { data: profileId } = await supabase.rpc("current_profile_id");
@@ -15,7 +15,7 @@ export default async function HomePage() {
     .limit(1)
     .maybeSingle();
 
-  if (!membership) redirect("/onboarding");
+  if (membership) redirect("/home");
 
-  return <SectionPlaceholder id="home" />;
+  return <CreateHouseholdForm />;
 }
