@@ -36,6 +36,29 @@ export interface HouseholdMemberWithProfile {
   profile: { id: Uuid; displayName: string | null };
 }
 
+export type InviteStatus = "pending" | "accepted" | "expired";
+
+export interface HouseholdInvite {
+  id: Uuid;
+  householdId: Uuid;
+  invitedEmail: string;
+  invitedByProfileId: Uuid;
+  token: string;
+  status: InviteStatus;
+  expiresAt: string;
+  acceptedByProfileId: Uuid | null;
+  acceptedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InviteDetails {
+  householdName: string;
+  inviterName: string | null;
+  status: InviteStatus;
+  expiresAt: string;
+}
+
 export interface ActivityEvent {
   id: Uuid;
   profileId: Uuid;

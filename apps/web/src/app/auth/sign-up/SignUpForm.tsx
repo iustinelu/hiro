@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { WebInput, WebButton } from "@hiro/ui-primitives/web";
 import { signUp } from "../../../lib/authService";
@@ -11,6 +11,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function SignUpForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -41,7 +43,7 @@ export function SignUpForm() {
       setError(authError);
       return;
     }
-    router.push("/home");
+    router.push(redirect && redirect.startsWith("/") ? redirect : "/home");
   }
 
   return (
