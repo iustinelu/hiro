@@ -34,13 +34,17 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const isAuthRoute = pathname.startsWith("/auth");
+  const isInviteRoute = pathname.startsWith("/invite");
 
-  if (!user && !isAuthRoute) {
+  if (!user && !isAuthRoute && !isInviteRoute) {
     return NextResponse.redirect(new URL("/auth/sign-in", request.url));
   }
 
   if (user && isAuthRoute) {
-    return NextResponse.redirect(new URL("/home", request.url));
+    // Preserve redirect param so post-auth lands on the right page
+    const redirect = request.nextUrl.searchParams.get("redirect");
+    const target = redirect && redirect.startsWith("/") ? redirect : "/home";
+    return NextResponse.redirect(new URL(target, request.url));
   }
 
   return response;
