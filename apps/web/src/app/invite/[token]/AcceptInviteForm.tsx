@@ -32,6 +32,8 @@ export function AcceptInviteForm({ token, isAuthenticated }: Props) {
     );
   }
 
+  const isHouseholdConflict = error?.includes("already") ?? false;
+
   async function handleAccept() {
     setError(null);
     setLoading(true);
@@ -46,25 +48,32 @@ export function AcceptInviteForm({ token, isAuthenticated }: Props) {
 
   return (
     <div style={{ display: "grid", gap: tokens.spacing.md }}>
-      <WebButton
-        label="Accept invite"
-        variant="primary"
-        fullWidth
-        loading={loading}
-        loadingLabel="Joining…"
-        onPress={() => void handleAccept()}
-      />
+      {!isHouseholdConflict && (
+        <WebButton
+          label="Accept invite"
+          variant="primary"
+          fullWidth
+          loading={loading}
+          loadingLabel="Joining…"
+          onPress={() => void handleAccept()}
+        />
+      )}
       {error && (
         <p
           style={{
             margin: 0,
             fontFamily: tokens.typography.fontFamily,
             fontSize: tokens.typography.bodySmallSize,
-            color: tokens.color.error,
+            color: isHouseholdConflict ? tokens.color.warning : tokens.color.error,
           }}
         >
           {error}
         </p>
+      )}
+      {isHouseholdConflict && (
+        <Link href="/home">
+          <WebButton label="Go to your household" variant="secondary" fullWidth />
+        </Link>
       )}
     </div>
   );

@@ -56,8 +56,17 @@ export async function acceptInvite(
     if (error.message.includes("INVITE_NOT_FOUND")) {
       return { householdId: null, error: "Invite not found." };
     }
+    if (error.message.includes("INVITE_ALREADY_ACCEPTED")) {
+      return { householdId: null, error: "This invite has already been used." };
+    }
     if (error.message.includes("INVITE_EXPIRED")) {
-      return { householdId: null, error: "This invite has expired." };
+      return { householdId: null, error: "This invite has expired. Ask the household owner to send a new one." };
+    }
+    if (error.message.includes("ALREADY_A_MEMBER")) {
+      return { householdId: null, error: "You're already a member of this household." };
+    }
+    if (error.message.includes("ALREADY_IN_HOUSEHOLD")) {
+      return { householdId: null, error: "You're already in another household. You need to leave it before joining a new one." };
     }
     return { householdId: null, error: error.message };
   }

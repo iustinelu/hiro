@@ -136,6 +136,13 @@ grant execute on function public.create_invite(uuid, text) to authenticated;
 
 
 -- Accept an invite by token. Caller must be authenticated.
+-- Returns the household_id on success.
+-- Raises:
+--   INVITE_NOT_FOUND        — invalid token
+--   INVITE_ALREADY_ACCEPTED — invite was already used
+--   INVITE_EXPIRED          — invite past expiry
+--   ALREADY_A_MEMBER        — caller already in THIS household
+--   ALREADY_IN_HOUSEHOLD    — caller already in a DIFFERENT household (MVP: single)
 create or replace function public.accept_invite(p_token uuid)
 returns uuid
 language plpgsql
@@ -145,6 +152,7 @@ as $$
 declare
   v_invite record;
   v_profile_id uuid;
+  v_existing_household_id uuid;
 begin
   v_profile_id := public.current_profile_id();
 
@@ -161,31 +169,38 @@ begin
   end if;
 
   if v_invite.status = 'accepted' then
-    -- Already accepted — return household silently
-    return v_invite.household_id;
+    raise exception 'INVITE_ALREADY_ACCEPTED';
   end if;
 
   if v_invite.status = 'expired' or v_invite.expires_at <= now() then
-    -- Mark expired if not already
     update public.household_invites
     set status = 'expired', updated_at = now()
     where id = v_invite.id and status = 'pending';
     raise exception 'INVITE_EXPIRED';
   end if;
 
-  -- Check caller is not already a member
+  -- Check caller is already a member of THIS household
   if exists (
     select 1 from public.household_members
     where household_id = v_invite.household_id and profile_id = v_profile_id
   ) then
-    -- Already a member — mark invite accepted and return
     update public.household_invites
     set status = 'accepted',
         accepted_by_profile_id = v_profile_id,
         accepted_at = now(),
         updated_at = now()
     where id = v_invite.id;
-    return v_invite.household_id;
+    raise exception 'ALREADY_A_MEMBER';
+  end if;
+
+  -- Check caller is already in a DIFFERENT household (MVP: single household)
+  select household_id into v_existing_household_id
+  from public.household_members
+  where profile_id = v_profile_id
+  limit 1;
+
+  if v_existing_household_id is not null then
+    raise exception 'ALREADY_IN_HOUSEHOLD';
   end if;
 
   -- Accept: update invite + add member

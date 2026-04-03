@@ -48,13 +48,14 @@ export default async function InvitePage({ params }: Props) {
       <Wrapper>
         <h1 style={headingStyle}>Already accepted</h1>
         <p style={bodyStyle}>
-          This invite to <strong>{invite.household_name}</strong> has already been accepted.
+          This invite to <strong>{invite.household_name}</strong> has already been used.
         </p>
       </Wrapper>
     );
   }
 
-  // Pending invite
+  // Pending invite — the AcceptInviteForm handles all edge cases
+  // (already a member, already in another household, etc.) via RPC errors
   return (
     <Wrapper>
       <h1 style={headingStyle}>You&apos;re invited</h1>
