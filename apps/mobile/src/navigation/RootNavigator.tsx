@@ -4,21 +4,46 @@ import { tokens } from "@hiro/ui-tokens";
 import { supabase } from "../lib/supabase";
 import { AuthScreen } from "../screens/auth/AuthScreen";
 import { AppShellScreen } from "../screens/AppShell";
+import { HouseholdOnboardingScreen } from "../screens/HouseholdOnboardingScreen";
 
-type AuthState = "loading" | "authed" | "unauthed";
+type AuthState = "loading" | "unauthed" | "authed-no-household" | "authed";
+
+async function checkHousehold(): Promise<boolean> {
+  const { data: profileId } = await supabase.rpc("current_profile_id");
+  if (!profileId) return false;
+  const { data } = await supabase
+    .from("household_members")
+    .select("household_id")
+    .eq("profile_id", profileId)
+    .limit(1)
+    .maybeSingle();
+  return !!data;
+}
 
 export function RootNavigator() {
   const [authState, setAuthState] = useState<AuthState>("loading");
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setAuthState(session ? "authed" : "unauthed");
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) {
+        setAuthState("unauthed");
+        return;
+      }
+      const hasHousehold = await checkHousehold();
+      setAuthState(hasHousehold ? "authed" : "authed-no-household");
     });
 
     // Subscribe to auth changes
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setAuthState(session ? "authed" : "unauthed");
+      if (!session) {
+        setAuthState("unauthed");
+        return;
+      }
+      setAuthState("loading");
+      checkHousehold().then((hasHousehold) => {
+        setAuthState(hasHousehold ? "authed" : "authed-no-household");
+      });
     });
 
     return () => listener.subscription.unsubscribe();
@@ -41,6 +66,12 @@ export function RootNavigator() {
 
   if (authState === "unauthed") {
     return <AuthScreen />;
+  }
+
+  if (authState === "authed-no-household") {
+    return (
+      <HouseholdOnboardingScreen onCreated={() => setAuthState("authed")} />
+    );
   }
 
   return <AppShellScreen />;

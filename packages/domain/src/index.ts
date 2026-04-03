@@ -27,6 +27,15 @@ export interface HouseholdMember {
   updatedAt: string;
 }
 
+export interface HouseholdMemberWithProfile {
+  id: Uuid;
+  householdId: Uuid;
+  profileId: Uuid;
+  role: HouseholdRole;
+  createdAt: string;
+  profile: { id: Uuid; displayName: string | null };
+}
+
 export interface ActivityEvent {
   id: Uuid;
   profileId: Uuid;
