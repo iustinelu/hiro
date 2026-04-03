@@ -16,12 +16,10 @@ export function CreateHouseholdForm() {
     if (!name.trim()) return;
     setError(null);
     setLoading(true);
-    const { error: createError } = await createHousehold(name.trim());
+    const { error: createError, alreadyExists } = await createHousehold(name.trim());
     setLoading(false);
-    if (createError) {
-      setError(createError);
-      return;
-    }
+    if (alreadyExists) { router.push("/home"); return; }
+    if (createError) { setError(createError); return; }
     router.push("/home");
   }
 

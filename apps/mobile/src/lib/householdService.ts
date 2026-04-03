@@ -3,17 +3,17 @@ import { supabase } from "./supabase";
 
 export async function createHousehold(
   name: string
-): Promise<{ householdId: string | null; error: string | null }> {
+): Promise<{ householdId: string | null; error: string | null; alreadyExists: boolean }> {
   const { data, error } = await supabase.rpc("create_household", {
     p_name: name,
   });
   if (error) {
     if (error.message.includes("HOUSEHOLD_ALREADY_EXISTS")) {
-      return { householdId: null, error: "You already have a household." };
+      return { householdId: null, error: null, alreadyExists: true };
     }
-    return { householdId: null, error: error.message };
+    return { householdId: null, error: error.message, alreadyExists: false };
   }
-  return { householdId: data as string, error: null };
+  return { householdId: data as string, error: null, alreadyExists: false };
 }
 
 export async function getMyHousehold(): Promise<{
