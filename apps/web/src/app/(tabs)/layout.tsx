@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { appShellSections } from "@hiro/domain";
-import { WebButton } from "@hiro/ui-primitives/web";
 import { getSupabaseBrowserClient } from "../../lib/supabase/client";
 import { logActivity } from "../../lib/activityService";
 import styles from "./tabs-layout.module.css";
@@ -52,9 +51,6 @@ export default function TabsLayout({ children }: { children: ReactNode }) {
       <div>
         <header className={styles.mobileHeader}>
           <h1 className={styles.title}>{activeSection.label}</h1>
-          <div className={styles.actionButton}>
-            <WebButton label={activeSection.headerActionLabel} variant="secondary" size="sm" />
-          </div>
         </header>
         <main className={styles.main}>{children}</main>
       </div>

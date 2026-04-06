@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
-import { SectionPlaceholder } from "../SectionPlaceholder";
+import HomeDashboard from "./HomeDashboard";
 
 export default async function HomePage() {
   const supabase = await createSupabaseServerClient();
@@ -22,5 +22,5 @@ export default async function HomePage() {
 
   if (!membership) redirect("/onboarding");
 
-  return <SectionPlaceholder id="home" />;
+  return <HomeDashboard householdId={membership.household_id} profileId={profileId} />;
 }

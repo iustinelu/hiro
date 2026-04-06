@@ -65,7 +65,7 @@ export function AppTabs() {
                   minWidth: 120
                 }}
               >
-                <MobileButton label={section?.headerActionLabel ?? "Action"} variant="secondary" size="sm" />
+                <MobileButton label="Action" variant="secondary" size="sm" />
               </View>
             ),
             tabBarHideOnKeyboard: true,
@@ -119,7 +119,7 @@ export function AppTabs() {
                   <SectionPlaceholderScreen
                     title={section.label}
                     description={`${section.label} section shell`}
-                    actionLabel={section.headerActionLabel}
+                    actionLabel={section.label}
                   />
                 )}
                 {__DEV__ && section.id === "more" && <DevErrorTrigger />}

@@ -1,4 +1,5 @@
 export * from "./WebButton";
+export * from "./WebDayChip";
 export * from "./WebCard";
 export * from "./WebChartContainer";
 export * from "./WebEmptyStatePanel";

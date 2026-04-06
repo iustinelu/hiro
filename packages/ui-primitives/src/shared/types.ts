@@ -142,6 +142,12 @@ export interface SpacingMatrixProps {
   title?: string;
 }
 
+export interface DayChipProps {
+  label: string;
+  active?: boolean;
+  onPress?: () => void;
+}
+
 export interface IconographySpecProps {
   title?: string;
 }
