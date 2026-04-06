@@ -1,0 +1,268 @@
+/* ─── Layout ──────────────────────────────────────────────────────────── */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.topActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ─── Cards ───────────────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--hiro-color-border);
+  border-radius: 18px;
+  background: var(--hiro-color-surface);
+  padding: 20px;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at 30% 0%, rgba(255, 109, 36, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ─── Task List ───────────────────────────────────────────────────────── */
+
+.taskList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.taskRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.taskRow:hover {
+  background: var(--hiro-color-surface-muted);
+}
+
+.taskRowDone {
+  opacity: 0.5;
+}
+
+.taskInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.taskName {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--hiro-color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskNameDone {
+  text-decoration: line-through;
+  color: var(--hiro-color-ink-muted);
+}
+
+.taskCadence {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--hiro-color-ink-muted);
+}
+
+.taskActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pointsBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--hiro-color-accent-soft);
+  color: var(--hiro-color-accent);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.doneButton {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 16px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--hiro-color-accent) 0%, var(--hiro-color-accent-strong) 100%);
+  color: var(--hiro-color-ink);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.doneButton:hover {
+  opacity: 0.9;
+}
+
+.doneButton:active {
+  transform: scale(0.96);
+}
+
+.doneButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.checkmark {
+  color: var(--hiro-color-success);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.archiveButton {
+  appearance: none;
+  border: 1px solid var(--hiro-color-border);
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--hiro-color-ink-muted);
+  font-size: 12px;
+  font-weight: 600;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.archiveButton:hover {
+  background: var(--hiro-color-surface-muted);
+  opacity: 0.8;
+}
+
+/* ─── Completed Section ───────────────────────────────────────────────── */
+
+.completedToggle {
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 8px 0;
+  color: var(--hiro-color-ink-muted);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.completedToggle:hover {
+  color: var(--hiro-color-ink);
+}
+
+.chevron {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+/* ─── Day Chips (Cadence Picker) ──────────────────────────────────────── */
+
+.dayChips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.dayChip {
+  appearance: none;
+  border: 2px solid var(--hiro-color-border);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: var(--hiro-color-ink-muted);
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.dayChip:hover {
+  border-color: var(--hiro-color-accent);
+}
+
+.dayChipActive {
+  border-color: var(--hiro-color-accent);
+  background: rgba(255, 109, 36, 0.12);
+  color: var(--hiro-color-accent);
+  box-shadow: 0 0 12px rgba(255, 109, 36, 0.25);
+}
+
+/* ─── Modal Form ──────────────────────────────────────────────────────── */
+
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--hiro-color-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+}
+
+.cadenceRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ─── Empty & Loading ─────────────────────────────────────────────────── */
+
+.emptyState {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--hiro-color-ink-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--hiro-color-ink-muted);
+  font-size: 15px;
+}

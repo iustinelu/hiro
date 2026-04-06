@@ -69,12 +69,53 @@ export interface ActivityEvent {
   updatedAt: string;
 }
 
+// ─── Task Domain ────────────────────────────────────────────────────────────
+
+export type TaskCadence = "daily" | "weekly" | "custom";
+
+export interface CadenceMeta {
+  day?: string;
+  days?: string[];
+}
+
+export interface RecurringTask {
+  id: Uuid;
+  householdId: Uuid;
+  name: string;
+  description: string | null;
+  points: number;
+  cadence: TaskCadence;
+  cadenceMeta: CadenceMeta;
+  createdByProfileId: Uuid;
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TaskCompletion {
+  id: Uuid;
+  taskId: Uuid;
+  completedByProfileId: Uuid;
+  householdId: Uuid;
+  pointsEarned: number;
+  completedAt: string;
+  createdAt: string;
+}
+
+export interface LeaderboardEntry {
+  profileId: Uuid;
+  displayName: string | null;
+  pointsThisWeek: number;
+}
+
+// ─── App Shell ──────────────────────────────────────────────────────────────
+
 export const appShellSections = [
-  { id: "home", label: "Home", path: "/home", headerActionLabel: "Add task" },
-  { id: "tasks", label: "Tasks", path: "/tasks", headerActionLabel: "New task" },
-  { id: "progress", label: "Progress", path: "/progress", headerActionLabel: "View report" },
-  { id: "budget", label: "Budget", path: "/budget", headerActionLabel: "Add expense" },
-  { id: "more", label: "More", path: "/more", headerActionLabel: "Manage" }
+  { id: "home", label: "Home", path: "/home" },
+  { id: "tasks", label: "Tasks", path: "/tasks" },
+  { id: "progress", label: "Progress", path: "/progress" },
+  { id: "budget", label: "Budget", path: "/budget" },
+  { id: "more", label: "More", path: "/more" }
 ] as const;
 
 export type AppShellSection = (typeof appShellSections)[number];
