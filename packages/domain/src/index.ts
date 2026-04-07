@@ -108,6 +108,30 @@ export interface LeaderboardEntry {
   pointsThisWeek: number;
 }
 
+// ─── Progress Domain ────────────────────────────────────────────────────────
+
+export interface DailyPoints {
+  date: string;
+  points: number;
+  completions: number;
+}
+
+export interface PersonalStats {
+  pointsThisWeek: number;
+  pointsLastWeek: number;
+  completionsThisWeek: number;
+  completionsLastWeek: number;
+  streak: number;
+  totalPointsAllTime: number;
+}
+
+export interface TaskStats {
+  taskId: Uuid;
+  taskName: string;
+  points: number;
+  completionsThisWeek: number;
+}
+
 // ─── App Shell ──────────────────────────────────────────────────────────────
 
 export const appShellSections = [

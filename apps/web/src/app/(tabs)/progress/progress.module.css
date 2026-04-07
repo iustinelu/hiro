@@ -1,0 +1,156 @@
+/* ─── Dashboard Layout ──────────────────────────────────────────────────── */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ─── Stats Grid ────────────────────────────────────────────────────────── */
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ─── Loading / Empty ───────────────────────────────────────────────────── */
+
+.loading {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--hiro-color-ink-muted);
+  font-size: 15px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--hiro-color-ink-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ─── Card ──────────────────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--hiro-color-border);
+  border-radius: 18px;
+  background: var(--hiro-color-surface);
+  padding: 20px;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at 30% 0%, rgba(255, 109, 36, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--hiro-color-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Weekly Chart Bars ─────────────────────────────────────────────────── */
+
+.chartBars {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 6px;
+  height: 120px;
+}
+
+.bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.barFill {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  background: var(--hiro-color-accent);
+  transition: height 0.3s ease;
+}
+
+.barLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hiro-color-ink-muted);
+  margin-top: 6px;
+}
+
+.barValue {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--hiro-color-ink-muted);
+  margin-bottom: 4px;
+}
+
+/* ─── Task Breakdown ────────────────────────────────────────────────────── */
+
+.taskBreakdownList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.taskRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.taskName {
+  flex: 0 0 auto;
+  max-width: 140px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--hiro-color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskBar {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--hiro-color-surface-muted);
+}
+
+.taskBarFill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--hiro-color-accent);
+  transition: width 0.3s ease;
+}
+
+.taskCount {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--hiro-color-ink-muted);
+  min-width: 32px;
+  text-align: right;
+}
