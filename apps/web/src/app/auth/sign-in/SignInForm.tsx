@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { WebInput, WebButton } from "@hiro/ui-primitives/web";
-import { signIn } from "../../../lib/authService";
+import { signIn, signInWithGoogle } from "../../../lib/authService";
 import { tokens } from "@hiro/ui-tokens";
 
 export function SignInForm() {
@@ -14,6 +14,7 @@ export function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSignIn() {
@@ -26,6 +27,15 @@ export function SignInForm() {
       return;
     }
     router.push(redirect && redirect.startsWith("/") ? redirect : "/home");
+  }
+
+  async function handleGoogleSignIn() {
+    setError(null);
+    setGoogleLoading(true);
+    const { error: authError } = await signInWithGoogle();
+    setGoogleLoading(false);
+    if (authError) setError(authError);
+    // On success, Supabase triggers a browser redirect — no further action needed.
   }
 
   return (
@@ -41,6 +51,30 @@ export function SignInForm() {
       >
         Sign in
       </h1>
+
+      <WebButton
+        label="Continue with Google"
+        variant="secondary"
+        fullWidth
+        loading={googleLoading}
+        loadingLabel="Redirecting…"
+        onPress={() => void handleGoogleSignIn()}
+      />
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: tokens.spacing.md,
+          fontFamily: tokens.typography.fontFamily,
+          fontSize: tokens.typography.bodySmallSize,
+          color: "var(--hiro-color-ink-muted)",
+        }}
+      >
+        <div style={{ flex: 1, height: 1, background: "var(--hiro-color-border)" }} />
+        <span>or</span>
+        <div style={{ flex: 1, height: 1, background: "var(--hiro-color-border)" }} />
+      </div>
 
       <WebInput
         label="Email"

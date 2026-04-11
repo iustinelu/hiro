@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { WebInput, WebButton } from "@hiro/ui-primitives/web";
-import { signUp } from "../../../lib/authService";
+import { signUp, signInWithGoogle } from "../../../lib/authService";
 import { tokens } from "@hiro/ui-tokens";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -18,6 +18,7 @@ export function SignUpForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSignUp() {
@@ -55,6 +56,14 @@ export function SignUpForm() {
     router.push(redirect && redirect.startsWith("/") ? redirect : "/home");
   }
 
+  async function handleGoogleSignIn() {
+    setError(null);
+    setGoogleLoading(true);
+    const { error: authError } = await signInWithGoogle();
+    setGoogleLoading(false);
+    if (authError) setError(authError);
+  }
+
   return (
     <div style={{ display: "grid", gap: tokens.spacing.lg }}>
       <h1
@@ -68,6 +77,30 @@ export function SignUpForm() {
       >
         Create account
       </h1>
+
+      <WebButton
+        label="Continue with Google"
+        variant="secondary"
+        fullWidth
+        loading={googleLoading}
+        loadingLabel="Redirecting…"
+        onPress={() => void handleGoogleSignIn()}
+      />
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: tokens.spacing.md,
+          fontFamily: tokens.typography.fontFamily,
+          fontSize: tokens.typography.bodySmallSize,
+          color: "var(--hiro-color-ink-muted)",
+        }}
+      >
+        <div style={{ flex: 1, height: 1, background: "var(--hiro-color-border)" }} />
+        <span>or create account manually</span>
+        <div style={{ flex: 1, height: 1, background: "var(--hiro-color-border)" }} />
+      </div>
 
       <WebInput
         label="Your name"
