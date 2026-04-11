@@ -17,8 +17,8 @@ export function MonthSummary({ breakdown, currency }: Props) {
   return (
     <>
       <div className={styles.statsGrid}>
-        <WebKpiTile title="Total Spent" value={formatCurrency(breakdown.totalAmount, currency)} />
-        <WebKpiTile title="Expenses" value={`${breakdown.expenseCount}`} />
+        <WebKpiTile title="Total Spent" value={formatCurrency(breakdown.totalAmount, currency)} bars={[]} />
+        <WebKpiTile title="Expenses" value={`${breakdown.expenseCount}`} bars={[]} />
       </div>
 
       <div className={styles.card}>
