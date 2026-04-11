@@ -1,14 +1,15 @@
 "use client";
 
 import { WebKpiTile } from "@hiro/ui-primitives/web";
-import type { MonthlyBreakdown } from "@hiro/domain";
+import { formatCurrency, type MonthlyBreakdown, type CurrencyCode } from "@hiro/domain";
 import styles from "./budget.module.css";
 
 interface Props {
   breakdown: MonthlyBreakdown | null;
+  currency: CurrencyCode;
 }
 
-export function MonthSummary({ breakdown }: Props) {
+export function MonthSummary({ breakdown, currency }: Props) {
   if (!breakdown) return null;
 
   const maxPayerTotal = Math.max(...breakdown.byPayer.map((p) => p.totalPaid), 1);
@@ -16,7 +17,7 @@ export function MonthSummary({ breakdown }: Props) {
   return (
     <>
       <div className={styles.statsGrid}>
-        <WebKpiTile title="Total Spent" value={`$${breakdown.totalAmount.toFixed(2)}`} />
+        <WebKpiTile title="Total Spent" value={formatCurrency(breakdown.totalAmount, currency)} />
         <WebKpiTile title="Expenses" value={`${breakdown.expenseCount}`} />
       </div>
 
@@ -38,7 +39,7 @@ export function MonthSummary({ breakdown }: Props) {
                 />
               </div>
               <span className={styles.payerAmount}>
-                ${payer.totalPaid.toFixed(2)}
+                {formatCurrency(payer.totalPaid, currency)}
               </span>
             </div>
           );

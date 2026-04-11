@@ -1,4 +1,16 @@
 export type Uuid = string;
+export type CurrencyCode = "EUR" | "GBP" | "RON" | "USD";
+
+const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
+  EUR: "\u20ac",
+  GBP: "\u00a3",
+  RON: "lei ",
+  USD: "$",
+};
+
+export function formatCurrency(amount: number, currency: CurrencyCode): string {
+  return `${CURRENCY_SYMBOLS[currency]}${amount.toFixed(2)}`;
+}
 
 export interface Profile {
   id: Uuid;
@@ -12,6 +24,7 @@ export interface Household {
   id: Uuid;
   name: string;
   ownerProfileId: Uuid;
+  currency: CurrencyCode;
   createdAt: string;
   updatedAt: string;
 }

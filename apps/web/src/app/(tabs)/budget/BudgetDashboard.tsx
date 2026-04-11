@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { WebButton } from "@hiro/ui-primitives/web";
-import type { Expense, HouseholdMemberWithProfile, MonthlyBreakdown } from "@hiro/domain";
+import type { Expense, HouseholdMemberWithProfile, MonthlyBreakdown, CurrencyCode } from "@hiro/domain";
 import { getMonthExpenses, getMonthlyBreakdown, createExpense, deleteExpense } from "../../../lib/expenseService";
-import { getHouseholdMembers } from "../../../lib/householdService";
+import { getHouseholdMembers, getMyHousehold } from "../../../lib/householdService";
 import { MonthSummary } from "./MonthSummary";
 import { ExpenseList } from "./ExpenseList";
 import { ExpenseAddModal } from "./ExpenseAddModal";
@@ -25,19 +25,22 @@ export function BudgetDashboard({ householdId, profileId }: Props) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [breakdown, setBreakdown] = useState<MonthlyBreakdown | null>(null);
   const [members, setMembers] = useState<HouseholdMemberWithProfile[]>([]);
+  const [currency, setCurrency] = useState<CurrencyCode>("EUR");
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const [expRes, bdRes, memRes] = await Promise.all([
+    const [expRes, bdRes, memRes, hhRes] = await Promise.all([
       getMonthExpenses(householdId, month.year, month.month),
       getMonthlyBreakdown(householdId, month.year, month.month),
       getHouseholdMembers(householdId),
+      getMyHousehold(),
     ]);
     setExpenses(expRes.expenses);
     setBreakdown(bdRes.breakdown);
     setMembers(memRes.members);
+    if (hhRes.household?.currency) setCurrency(hhRes.household.currency as CurrencyCode);
     setLoading(false);
   }, [householdId, month.year, month.month]);
 
@@ -100,8 +103,8 @@ export function BudgetDashboard({ householdId, profileId }: Props) {
         <div className={styles.emptyState}>No expenses this month.</div>
       ) : (
         <>
-          <MonthSummary breakdown={breakdown} />
-          <ExpenseList expenses={expenses} onDelete={handleDelete} />
+          <MonthSummary breakdown={breakdown} currency={currency} />
+          <ExpenseList expenses={expenses} currency={currency} onDelete={handleDelete} />
         </>
       )}
 

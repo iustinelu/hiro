@@ -13,6 +13,7 @@ export function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,6 +23,10 @@ export function SignUpForm() {
   async function handleSignUp() {
     setError(null);
 
+    if (!displayName.trim()) {
+      setError("Please enter your name.");
+      return;
+    }
     if (!EMAIL_RE.test(email)) {
       setError("Enter a valid email address.");
       return;
@@ -36,7 +41,7 @@ export function SignUpForm() {
     }
 
     setLoading(true);
-    const { error: authError } = await signUp(email, password);
+    const { error: authError } = await signUp(email, password, displayName.trim());
     setLoading(false);
 
     if (authError) {
@@ -59,6 +64,14 @@ export function SignUpForm() {
       >
         Create account
       </h1>
+
+      <WebInput
+        label="Your name"
+        placeholder="e.g. Alex"
+        value={displayName}
+        onChangeText={setDisplayName}
+        state={error && !displayName.trim() ? "error" : "default"}
+      />
 
       <WebInput
         label="Email"
