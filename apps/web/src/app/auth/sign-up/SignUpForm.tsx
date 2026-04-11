@@ -45,7 +45,11 @@ export function SignUpForm() {
     setLoading(false);
 
     if (authError) {
-      setError(authError);
+      if (/rate.?limit|too many|exceeded/i.test(authError)) {
+        setError("Too many sign-up attempts. Please wait a few minutes and try again.");
+      } else {
+        setError(authError);
+      }
       return;
     }
     router.push(redirect && redirect.startsWith("/") ? redirect : "/home");
