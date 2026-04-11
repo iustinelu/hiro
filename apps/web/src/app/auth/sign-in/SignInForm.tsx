@@ -41,7 +41,7 @@ export function SignInForm() {
   async function handleGoogleSignIn() {
     setError(null);
     setGoogleLoading(true);
-    const { error: authError } = await signInWithGoogle();
+    const { error: authError } = await signInWithGoogle(redirect ?? undefined);
     setGoogleLoading(false);
     if (authError) setError(authError);
     // On success, Supabase triggers a browser redirect — no further action needed.

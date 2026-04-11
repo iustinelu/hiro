@@ -68,7 +68,7 @@ export function SignUpForm() {
   async function handleGoogleSignIn() {
     setError(null);
     setGoogleLoading(true);
-    const { error: authError } = await signInWithGoogle();
+    const { error: authError } = await signInWithGoogle(redirect ?? undefined);
     setGoogleLoading(false);
     if (authError) setError(authError);
   }
