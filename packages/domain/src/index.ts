@@ -176,6 +176,29 @@ export interface MonthlyBreakdown {
   }>;
 }
 
+// ─── Rewards Domain ─────────────────────────────────────────────────────────
+
+export interface Reward {
+  id: Uuid;
+  householdId: Uuid;
+  title: string;
+  pointCost: number;
+  isArchived: boolean;
+  createdByProfileId: Uuid;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RewardRedemption {
+  id: Uuid;
+  rewardId: Uuid;
+  redeemedByProfileId: Uuid;
+  householdId: Uuid;
+  pointsSpent: number;
+  redeemedAt: string;
+  createdAt: string;
+}
+
 // ─── App Shell ──────────────────────────────────────────────────────────────
 
 export const appShellSections = [

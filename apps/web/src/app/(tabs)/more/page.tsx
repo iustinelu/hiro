@@ -13,6 +13,7 @@ import {
 import { createInvite, getHouseholdInvites } from "../../../lib/inviteService";
 import { tokens } from "@hiro/ui-tokens";
 import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
+import { RewardsSection } from "./RewardsSection";
 
 export default function MorePage() {
   const router = useRouter();
@@ -199,6 +200,10 @@ export default function MorePage() {
             ))}
           </div>
         </WebCard>
+      )}
+
+      {household && profileId && (
+        <RewardsSection householdId={household.id} profileId={profileId} />
       )}
 
       <WebCard title="Account" description={email ?? "Loading…"}>
