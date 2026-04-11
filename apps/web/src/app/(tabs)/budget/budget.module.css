@@ -1,0 +1,194 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.monthNav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.monthLabel {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--hiro-color-ink);
+  min-width: 160px;
+  text-align: center;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.card {
+  position: relative;
+  border: 1px solid var(--hiro-color-border);
+  border-radius: 18px;
+  background-color: var(--hiro-color-surface);
+  padding: 20px;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    var(--hiro-color-accent-soft) 0%,
+    transparent 70%
+  );
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cardTitle {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--hiro-color-ink-muted);
+  letter-spacing: 0.6px;
+}
+
+.payerRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.payerName {
+  font-size: 14px;
+  flex: 0 0 100px;
+  color: var(--hiro-color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.payerBarTrack {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background-color: var(--hiro-color-surface-muted);
+}
+
+.payerBarFill {
+  height: 100%;
+  border-radius: 4px;
+  background-color: var(--hiro-color-accent);
+}
+
+.payerAmount {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--hiro-color-ink-muted);
+  min-width: 80px;
+  text-align: right;
+}
+
+.expenseRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  transition: background-color 0.15s ease;
+}
+
+.expenseRow:hover {
+  background-color: var(--hiro-color-surface-muted);
+}
+
+.expenseInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.expenseTitle {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--hiro-color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.expenseSubtitle {
+  font-size: 12px;
+  color: var(--hiro-color-ink-muted);
+}
+
+.expenseRight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.expenseAmount {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--hiro-color-ink);
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fieldLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--hiro-color-ink-muted);
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: var(--hiro-color-ink-muted);
+  font-size: 14px;
+}
+
+.emptyState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: var(--hiro-color-ink-muted);
+  font-size: 14px;
+}

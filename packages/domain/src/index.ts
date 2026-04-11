@@ -132,6 +132,37 @@ export interface TaskStats {
   completionsThisWeek: number;
 }
 
+// ─── Expense / Budget Domain ────────────────────────────────────────────────
+
+export interface Expense {
+  id: Uuid;
+  householdId: Uuid;
+  title: string;
+  amount: number;
+  date: string;
+  payerProfileId: Uuid;
+  payerDisplayName: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ExpenseParticipant {
+  profileId: Uuid;
+  displayName: string | null;
+  share: number;
+}
+
+export interface MonthlyBreakdown {
+  month: string;
+  totalAmount: number;
+  expenseCount: number;
+  byPayer: Array<{
+    profileId: Uuid;
+    displayName: string | null;
+    totalPaid: number;
+  }>;
+}
+
 // ─── App Shell ──────────────────────────────────────────────────────────────
 
 export const appShellSections = [
