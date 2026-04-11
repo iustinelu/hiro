@@ -11,10 +11,15 @@ export async function signIn(
 
 export async function signUp(
   email: string,
-  password: string
+  password: string,
+  displayName: string
 ): Promise<{ error: string | null }> {
   const supabase = getSupabaseBrowserClient();
-  const { error } = await supabase.auth.signUp({ email, password });
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { display_name: displayName } },
+  });
   return { error: error?.message ?? null };
 }
 

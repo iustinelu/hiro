@@ -1,15 +1,16 @@
 "use client";
 
 import { WebButton } from "@hiro/ui-primitives/web";
-import type { Expense } from "@hiro/domain";
+import { formatCurrency, type Expense, type CurrencyCode } from "@hiro/domain";
 import styles from "./budget.module.css";
 
 interface Props {
   expenses: Expense[];
+  currency: CurrencyCode;
   onDelete: (id: string) => void;
 }
 
-export function ExpenseList({ expenses, onDelete }: Props) {
+export function ExpenseList({ expenses, currency, onDelete }: Props) {
   if (expenses.length === 0) return null;
 
   return (
@@ -31,7 +32,7 @@ export function ExpenseList({ expenses, onDelete }: Props) {
               </span>
             </div>
             <div className={styles.expenseRight}>
-              <span className={styles.expenseAmount}>${expense.amount.toFixed(2)}</span>
+              <span className={styles.expenseAmount}>{formatCurrency(expense.amount, currency)}</span>
               <WebButton label="Delete" variant="ghost" size="sm" onPress={() => onDelete(expense.id)} />
             </div>
           </div>

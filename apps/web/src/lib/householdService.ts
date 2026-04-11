@@ -1,14 +1,16 @@
 "use client";
 
-import type { Household, HouseholdMemberWithProfile } from "@hiro/domain";
+import type { Household, HouseholdMemberWithProfile, CurrencyCode } from "@hiro/domain";
 import { getSupabaseBrowserClient } from "./supabase/client";
 
 export async function createHousehold(
-  name: string
+  name: string,
+  currency: CurrencyCode = "EUR"
 ): Promise<{ householdId: string | null; error: string | null; alreadyExists: boolean }> {
   const supabase = getSupabaseBrowserClient();
   const { data, error } = await supabase.rpc("create_household", {
     p_name: name,
+    p_currency: currency,
   });
   if (error) {
     if (error.message.includes("HOUSEHOLD_ALREADY_EXISTS")) {
@@ -29,7 +31,7 @@ export async function getMyHousehold(): Promise<{
 
   const { data, error } = await supabase
     .from("household_members")
-    .select("households(id, name, owner_profile_id, created_at, updated_at)")
+    .select("households(id, name, owner_profile_id, currency, created_at, updated_at)")
     .eq("profile_id", profileId)
     .limit(1)
     .maybeSingle();
@@ -41,6 +43,7 @@ export async function getMyHousehold(): Promise<{
     id: string;
     name: string;
     owner_profile_id: string;
+    currency: string;
     created_at: string;
     updated_at: string;
   };
@@ -49,6 +52,7 @@ export async function getMyHousehold(): Promise<{
       id: h.id,
       name: h.name,
       ownerProfileId: h.owner_profile_id,
+      currency: (h.currency ?? "EUR") as CurrencyCode,
       createdAt: h.created_at,
       updatedAt: h.updated_at,
     },
