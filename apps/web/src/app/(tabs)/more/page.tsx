@@ -11,6 +11,7 @@ import {
   createHousehold,
 } from "../../../lib/householdService";
 import { createInvite, getHouseholdInvites } from "../../../lib/inviteService";
+import { getDisplayName, updateDisplayName } from "../../../lib/profileService";
 import { tokens } from "@hiro/ui-tokens";
 import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
 
@@ -33,13 +34,25 @@ export default function MorePage() {
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Display name state
+  const [displayName, setDisplayName] = useState("");
+  const [savingName, setSavingName] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [nameSaved, setNameSaved] = useState(false);
+
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
     supabase.auth.getUser().then(({ data }) => {
       if (data.user?.email) setEmail(data.user.email);
     });
     supabase.rpc("current_profile_id").then(({ data }) => {
-      if (data) setProfileId(data as string);
+      if (data) {
+        const id = data as string;
+        setProfileId(id);
+        getDisplayName(id).then(({ displayName: name }) => {
+          if (name) setDisplayName(name);
+        });
+      }
     });
 
     loadHousehold();
@@ -97,6 +110,20 @@ export default function MorePage() {
     await navigator.clipboard.writeText(inviteLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function handleSaveName() {
+    if (!profileId || !displayName.trim()) return;
+    setNameError(null);
+    setNameSaved(false);
+    setSavingName(true);
+    const { error } = await updateDisplayName(profileId, displayName);
+    setSavingName(false);
+    if (error) {
+      setNameError(error);
+    } else {
+      setNameSaved(true);
+    }
   }
 
   async function handleSignOut() {
@@ -202,11 +229,28 @@ export default function MorePage() {
       )}
 
       <WebCard title="Account" description={email ?? "Loading…"}>
-        <WebButton
-          label="Sign out"
-          variant="danger"
-          onPress={() => void handleSignOut()}
-        />
+        <div style={{ display: "grid", gap: tokens.spacing.md }}>
+          <WebInput
+            label="Display name"
+            placeholder="Your name"
+            value={displayName}
+            onChangeText={(text) => { setDisplayName(text); setNameSaved(false); }}
+            state={nameError ? "error" : nameSaved ? "success" : "default"}
+            helperText={nameError ?? (nameSaved ? "Saved!" : undefined)}
+          />
+          <WebButton
+            label="Save name"
+            variant="secondary"
+            loading={savingName}
+            loadingLabel="Saving…"
+            onPress={() => void handleSaveName()}
+          />
+          <WebButton
+            label="Sign out"
+            variant="danger"
+            onPress={() => void handleSignOut()}
+          />
+        </div>
       </WebCard>
     </div>
   );

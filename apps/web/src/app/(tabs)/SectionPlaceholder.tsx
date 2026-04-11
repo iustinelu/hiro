@@ -6,6 +6,7 @@ const sectionDescriptions: Record<AppShellSectionId, string> = {
   tasks: "Task workspace shell for capture, assign, and completion tracking.",
   progress: "Progress shell for goals, routines, and momentum indicators.",
   budget: "Budget shell for shared spend visibility and planning.",
+  rewards: "Rewards marketplace for spending points on household perks.",
   more: "Utilities shell for settings, members, and secondary workflows."
 };
 

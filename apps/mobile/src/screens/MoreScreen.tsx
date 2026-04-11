@@ -6,6 +6,7 @@ import { signOut } from "../lib/authService";
 import { supabase } from "../lib/supabase";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
 import { createInvite, getHouseholdInvites } from "../lib/inviteService";
+import { getDisplayName, updateDisplayName } from "../lib/profileService";
 import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
 
 // Web origin for invite links — update when deployed
@@ -23,12 +24,24 @@ export function MoreScreen() {
   const [inviting, setInviting] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
 
+  // Display name state
+  const [displayName, setDisplayName] = useState("");
+  const [savingName, setSavingName] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [nameSaved, setNameSaved] = useState(false);
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user?.email) setEmail(data.user.email);
     });
     supabase.rpc("current_profile_id").then(({ data }) => {
-      if (data) setProfileId(data as string);
+      if (data) {
+        const id = data as string;
+        setProfileId(id);
+        getDisplayName(id).then(({ displayName: name }) => {
+          if (name) setDisplayName(name);
+        });
+      }
     });
 
     loadHousehold();
@@ -70,6 +83,20 @@ export function MoreScreen() {
       } catch {
         Alert.alert("Invite link", link);
       }
+    }
+  }
+
+  async function handleSaveName() {
+    if (!profileId || !displayName.trim()) return;
+    setNameError(null);
+    setNameSaved(false);
+    setSavingName(true);
+    const { error } = await updateDisplayName(profileId, displayName);
+    setSavingName(false);
+    if (error) {
+      setNameError(error);
+    } else {
+      setNameSaved(true);
     }
   }
 
@@ -136,11 +163,28 @@ export function MoreScreen() {
       )}
 
       <MobileCard title="Account" description={email ?? "Loading…"}>
-        <MobileButton
-          label="Sign out"
-          variant="danger"
-          onPress={() => void handleSignOut()}
-        />
+        <View style={{ gap: tokens.spacing.md }}>
+          <MobileInput
+            label="Display name"
+            placeholder="Your name"
+            value={displayName}
+            onChangeText={(text) => { setDisplayName(text); setNameSaved(false); }}
+            state={nameError ? "error" : nameSaved ? "success" : "default"}
+            helperText={nameError ?? (nameSaved ? "Saved!" : undefined)}
+          />
+          <MobileButton
+            label="Save name"
+            variant="secondary"
+            loading={savingName}
+            loadingLabel="Saving…"
+            onPress={() => void handleSaveName()}
+          />
+          <MobileButton
+            label="Sign out"
+            variant="danger"
+            onPress={() => void handleSignOut()}
+          />
+        </View>
       </MobileCard>
     </ScrollView>
   );
