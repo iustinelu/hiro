@@ -199,6 +199,18 @@ export interface RewardRedemption {
   createdAt: string;
 }
 
+export interface RewardRedemptionWithDetails {
+  id: Uuid;
+  rewardId: Uuid;
+  redeemedByProfileId: Uuid;
+  redeemedByDisplayName: string | null;
+  householdId: Uuid;
+  rewardTitle: string;
+  pointsSpent: number;
+  redeemedAt: string;
+  createdAt: string;
+}
+
 // ─── App Shell ──────────────────────────────────────────────────────────────
 
 export const appShellSections = [
@@ -206,11 +218,12 @@ export const appShellSections = [
   { id: "tasks", label: "Tasks", path: "/tasks" },
   { id: "progress", label: "Progress", path: "/progress" },
   { id: "budget", label: "Budget", path: "/budget" },
+  { id: "rewards", label: "Rewards", path: "/rewards" },
   { id: "more", label: "More", path: "/more" }
 ] as const;
 
 export type AppShellSection = (typeof appShellSections)[number];
 export type AppShellSectionId = AppShellSection["id"];
 
-export const appSections = ["Home", "Tasks", "Progress", "Budget", "More"] as const;
+export const appSections = ["Home", "Tasks", "Progress", "Budget", "Rewards", "More"] as const;
 export type AppSection = (typeof appSections)[number];

@@ -1,6 +1,6 @@
 "use client";
 
-import type { Reward, RewardRedemption } from "@hiro/domain";
+import type { Reward, RewardRedemption, RewardRedemptionWithDetails } from "@hiro/domain";
 import { getSupabaseBrowserClient } from "./supabase/client";
 
 export async function createReward(
@@ -131,27 +131,39 @@ export async function getPointBalance(
 }
 
 export async function getRedemptionHistory(
-  householdId: string
-): Promise<{ redemptions: RewardRedemption[]; error: string | null }> {
+  householdId: string,
+  limit = 20
+): Promise<{ redemptions: RewardRedemptionWithDetails[]; error: string | null }> {
   const supabase = getSupabaseBrowserClient();
   const { data, error } = await supabase
     .from("reward_redemptions")
-    .select("*")
+    .select(`
+      id, reward_id, redeemed_by_profile_id, household_id,
+      points_spent, redeemed_at, created_at,
+      profiles:redeemed_by_profile_id ( display_name ),
+      rewards:reward_id ( title )
+    `)
     .eq("household_id", householdId)
     .order("redeemed_at", { ascending: false })
-    .limit(20);
+    .limit(limit);
 
   if (error) return { redemptions: [], error: error.message };
 
-  const redemptions: RewardRedemption[] = (data ?? []).map((row) => ({
-    id: row.id as string,
-    rewardId: row.reward_id as string,
-    redeemedByProfileId: row.redeemed_by_profile_id as string,
-    householdId: row.household_id as string,
-    pointsSpent: row.points_spent as number,
-    redeemedAt: row.redeemed_at as string,
-    createdAt: row.created_at as string,
-  }));
+  const redemptions: RewardRedemptionWithDetails[] = (data ?? []).map((row) => {
+    const profile = row.profiles as unknown as { display_name: string | null } | null;
+    const reward = row.rewards as unknown as { title: string } | null;
+    return {
+      id: row.id as string,
+      rewardId: row.reward_id as string,
+      redeemedByProfileId: row.redeemed_by_profile_id as string,
+      redeemedByDisplayName: profile?.display_name ?? null,
+      householdId: row.household_id as string,
+      rewardTitle: reward?.title ?? "",
+      pointsSpent: row.points_spent as number,
+      redeemedAt: row.redeemed_at as string,
+      createdAt: row.created_at as string,
+    };
+  });
 
   return { redemptions, error: null };
 }

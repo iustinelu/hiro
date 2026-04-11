@@ -1,0 +1,260 @@
+/* ─── Layout ──────────────────────────────────────────────────────────────── */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ─── Balance ─────────────────────────────────────────────────────────────── */
+
+.balance {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.balanceLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--hiro-color-ink-muted);
+}
+
+.balanceValue {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--hiro-color-accent);
+  letter-spacing: -0.02em;
+}
+
+/* ─── Card Grid ───────────────────────────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ─── Reward Card ─────────────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--hiro-color-border);
+  border-radius: 18px;
+  background: var(--hiro-color-surface);
+  padding: 20px;
+  min-height: 128px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color 0.15s ease;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at 30% 0%, rgba(255, 109, 36, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.cardAffordable {
+  border-color: rgba(255, 109, 36, 0.3);
+}
+
+.cardAffordable::before {
+  background: radial-gradient(ellipse at 30% 0%, rgba(255, 109, 36, 0.09) 0%, transparent 60%);
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--hiro-color-ink);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.costBadge {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.costPts {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--hiro-color-accent);
+  line-height: 1;
+}
+
+.costPtsDim {
+  color: var(--hiro-color-ink-muted);
+}
+
+.costNeed {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--hiro-color-ink-muted);
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ─── Redemption Feed ─────────────────────────────────────────────────────── */
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.feedHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.feedTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--hiro-color-ink-muted);
+  margin: 0;
+}
+
+.feedItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--hiro-color-border);
+}
+
+.feedItem:last-child {
+  border-bottom: none;
+}
+
+.feedText {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--hiro-color-ink);
+  line-height: 1.4;
+}
+
+.feedName {
+  color: var(--hiro-color-accent-ink);
+  font-weight: 700;
+}
+
+.feedMeta {
+  font-size: 12px;
+  color: var(--hiro-color-ink-muted);
+}
+
+/* ─── Toast ───────────────────────────────────────────────────────────────── */
+
+.toast {
+  position: fixed;
+  bottom: 100px;
+  right: 16px;
+  z-index: 40;
+  max-width: 280px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--hiro-color-surface-strong);
+  border-left: 3px solid var(--hiro-color-success);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4);
+  font-size: 14px;
+  color: var(--hiro-color-ink);
+  line-height: 1.4;
+}
+
+.toastName {
+  font-weight: 700;
+  color: var(--hiro-color-accent-ink);
+}
+
+@media (min-width: 960px) {
+  .toast {
+    bottom: 24px;
+  }
+}
+
+/* ─── Empty / Loading ─────────────────────────────────────────────────────── */
+
+.emptyGrid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 16px;
+  border: 1px dashed var(--hiro-color-border);
+  border-radius: 18px;
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--hiro-color-ink-muted);
+  margin: 0;
+}
+
+.emptyHint {
+  font-size: 13px;
+  color: var(--hiro-color-ink-muted);
+  margin: 0;
+  opacity: 0.7;
+}
+
+.feedEmpty {
+  font-size: 13px;
+  color: var(--hiro-color-ink-muted);
+  padding: 12px 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--hiro-color-ink-muted);
+  font-size: 15px;
+}
+
+.error {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--hiro-color-accent);
+  margin: 0;
+}
