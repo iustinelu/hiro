@@ -1,15 +1,12 @@
 # Hiro MVP Roadmap
 
-> Last synced: 2026-03-15 · 10/30 impl tickets done
+> Last synced: 2026-04-11 · 12/30 impl tickets done
 
 ## Overall Progress
-`███░░░░░ 33%`
+`███░░░░░ 40%`
 
-## 📍 Now — E3 - Accounts, Households, and Invites
-| ID | Title | Status |
-|----|-------|--------|
-| [HIR-37](https://linear.app/household-hiro/issue/HIR-37/i11-implement-household-creation-join-flow-and-member-list) | I11 - Implement household creation, join flow, and member list | 📝 Todo |
-| [HIR-38](https://linear.app/household-hiro/issue/HIR-38/i12-implement-email-invite-lifecycle-create-accept-expire) | I12 - Implement email invite lifecycle (create, accept, expire) | 📝 Todo |
+## 📍 Now — E0 - Architecture Governance & Delivery Rules
+_No active implementation tickets — check backlog below._
 
 ## 🗺️ Epic Progress
 | Epic | Title | Progress | Done | Status |
@@ -17,7 +14,7 @@
 | E0 | Architecture Governance & Delivery Rules | `██████░░ 75%` | 3/4 | ⏳ |
 | E1 | Design System & Interaction Foundation | `████████ 100%` | 3/3 | ✅ |
 | E2 | Platform & Supabase Foundation | `████████ 100%` | 3/3 | ✅ |
-| E3 | Accounts, Households, and Invites | `███░░░░░ 33%` | 1/3 | 🔄 |
+| E3 | Accounts, Households, and Invites | `████████ 100%` | 3/3 | ✅ |
 | E4 | Recurring Tasks + Points Core | `░░░░░░░░ 0%` | 0/3 | ⏳ |
 | E5 | Progress Hub (Velocity, Leaderboard, Calendar) | `░░░░░░░░ 0%` | 0/2 | ⏳ |
 | E6 | Budget & Shared Expenses | `░░░░░░░░ 0%` | 0/2 | ⏳ |
@@ -65,15 +62,15 @@
 
 </details>
 
-<details><summary>[HIR-8](https://linear.app/household-hiro/issue/HIR-8/e3-accounts-households-and-invites) – E3 - Accounts, Households, and Invites</summary>
+<details><summary>[HIR-8](https://linear.app/household-hiro/issue/HIR-8/e3-accounts-households-and-invites) – E3 - Accounts, Households, and Invites ✅</summary>
 
-**[HIR-19](https://linear.app/household-hiro/issue/HIR-19/s31-as-a-user-i-want-to-sign-in-and-join-a-household-so-that-i-can) – S3.1 - As a user, I want to sign in and join a household, so that I can collaborate with others.**
+**[HIR-19](https://linear.app/household-hiro/issue/HIR-19/s31-as-a-user-i-want-to-sign-in-and-join-a-household-so-that-i-can) – S3.1 - As a user, I want to sign in and join a household, so that I can collaborate with others.** ✅
 
 | ID | Title | Status |
 |----|-------|--------|
 | [HIR-36](https://linear.app/household-hiro/issue/HIR-36/i10-implement-auth-flows-sign-up-sign-in-sign-out) | I10 - Implement auth flows (sign up, sign in, sign out) | ✅ Done |
-| [HIR-37](https://linear.app/household-hiro/issue/HIR-37/i11-implement-household-creation-join-flow-and-member-list) | I11 - Implement household creation, join flow, and member list | 📝 Todo |
-| [HIR-38](https://linear.app/household-hiro/issue/HIR-38/i12-implement-email-invite-lifecycle-create-accept-expire) | I12 - Implement email invite lifecycle (create, accept, expire) | 📝 Todo |
+| [HIR-37](https://linear.app/household-hiro/issue/HIR-37/i11-implement-household-creation-join-flow-and-member-list) | I11 - Implement household creation, join flow, and member list | ✅ Done |
+| [HIR-38](https://linear.app/household-hiro/issue/HIR-38/i12-implement-email-invite-lifecycle-create-accept-expire) | I12 - Implement email invite lifecycle (create, accept, expire) | ✅ Done |
 
 </details>
 
@@ -167,5 +164,6 @@
 | [HIR-60](https://linear.app/household-hiro/issue/HIR-60/decouple-expo-native-deps-from-shared-ui-packages-via-app-owned-icon) | Decouple Expo-native deps from shared UI packages via app-owned icon injection | ⏳ Backlog |
 | [HIR-63](https://linear.app/household-hiro/issue/HIR-63/hir-37-custom-transactional-email-templates-confirm-reset-invite) | HIR-37: Custom transactional email templates (confirm, reset, invite) | ⏳ Backlog |
 | [HIR-64](https://linear.app/household-hiro/issue/HIR-64/hir-38-social-sign-in-google-oauth-on-web-and-mobile) | HIR-38: Social sign-in (Google OAuth) on web and mobile | ⏳ Backlog |
+| [HIR-65](https://linear.app/household-hiro/issue/HIR-65/web-tab-navigation-feels-laggy-500ms-block-on-switch) | Web tab navigation feels laggy (~500ms block on switch) | ⏳ Backlog |
 
 </details>
