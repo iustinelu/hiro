@@ -3,16 +3,29 @@ import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-na
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MobileInput, MobileButton } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
-import { signIn, signUp, sendPasswordResetEmail } from "../../lib/authService";
+import { signIn, signUp, sendPasswordResetEmail, signInWithGoogle } from "../../lib/authService";
 
 type AuthView = "sign-in" | "sign-up" | "forgot-password";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const GoogleG = () => (
+  <Text style={{ fontSize: 15, fontWeight: "700", color: "rgb(66,133,244)", lineHeight: 18 }}>G</Text>
+);
+
+const OrDivider = () => (
+  <View style={{ flexDirection: "row", alignItems: "center", gap: tokens.spacing.sm }}>
+    <View style={{ flex: 1, height: 1, backgroundColor: tokens.color.border }} />
+    <Text style={{ fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.bodySmallSize, color: tokens.color.inkMuted }}>or</Text>
+    <View style={{ flex: 1, height: 1, backgroundColor: tokens.color.border }} />
+  </View>
+);
+
 function SignInView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSignIn() {
@@ -22,6 +35,14 @@ function SignInView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
     setLoading(false);
     if (authError) setError(authError);
     // On success, onAuthStateChange in RootNavigator will update state
+  }
+
+  async function handleGoogleSignIn() {
+    setError(null);
+    setGoogleLoading(true);
+    const { error: authError } = await signInWithGoogle();
+    setGoogleLoading(false);
+    if (authError) setError(authError);
   }
 
   return (
@@ -37,6 +58,18 @@ function SignInView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
       >
         Sign in
       </Text>
+
+      <MobileButton
+        label="Continue with Google"
+        variant="secondary"
+        fullWidth
+        loading={googleLoading}
+        loadingLabel="Redirecting…"
+        iconLeft={<GoogleG />}
+        onPress={() => void handleGoogleSignIn()}
+      />
+
+      <OrDivider />
 
       <MobileInput
         label="Email"
@@ -87,7 +120,16 @@ function SignUpView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  async function handleGoogleSignIn() {
+    setError(null);
+    setGoogleLoading(true);
+    const { error: authError } = await signInWithGoogle();
+    setGoogleLoading(false);
+    if (authError) setError(authError);
+  }
 
   async function handleSignUp() {
     setError(null);
@@ -123,6 +165,18 @@ function SignUpView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
       >
         Create account
       </Text>
+
+      <MobileButton
+        label="Continue with Google"
+        variant="secondary"
+        fullWidth
+        loading={googleLoading}
+        loadingLabel="Redirecting…"
+        iconLeft={<GoogleG />}
+        onPress={() => void handleGoogleSignIn()}
+      />
+
+      <OrDivider />
 
       <MobileInput
         label="Email"

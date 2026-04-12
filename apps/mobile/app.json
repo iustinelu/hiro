@@ -1,11 +1,19 @@
 {
   "expo": {
     "name": "Hiro",
+    "plugins": ["expo-web-browser"],
     "slug": "hiro-mobile",
     "version": "0.1.0",
+    "scheme": "hiro",
     "newArchEnabled": false,
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "platforms": ["ios", "android", "web"]
+    "platforms": ["ios", "android", "web"],
+    "ios": {
+      "bundleIdentifier": "com.hiro.app"
+    },
+    "android": {
+      "package": "com.hiro.app"
+    }
   }
 }
