@@ -12,6 +12,7 @@ export function WebButton({
   loading,
   loadingLabel,
   fullWidth,
+  iconLeft,
   onPress
 }: ButtonProps) {
   const [hovered, setHovered] = useState(false);
@@ -65,7 +66,9 @@ export function WebButton({
       }}
     >
       <span style={{ display: "inline-flex", alignItems: "center", gap: tokens.spacing.xs }}>
-        {loading ? <WebIcon name="loading" size={14} color={busy ? resolveColor("disabledInk") : colors.foreground} /> : null}
+        {loading
+          ? <WebIcon name="loading" size={14} color={busy ? resolveColor("disabledInk") : colors.foreground} />
+          : iconLeft ?? null}
         {shownLabel}
       </span>
     </button>

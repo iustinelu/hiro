@@ -45,3 +45,14 @@ export async function updatePassword(
   const { error } = await supabase.auth.updateUser({ password });
   return { error: error?.message ?? null };
 }
+
+export async function signInWithGoogle(next?: string): Promise<{ error: string | null }> {
+  const supabase = getSupabaseBrowserClient();
+  const callbackUrl = new URL("/auth/callback", window.location.origin);
+  if (next) callbackUrl.searchParams.set("next", next);
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: callbackUrl.toString() },
+  });
+  return { error: error?.message ?? null };
+}

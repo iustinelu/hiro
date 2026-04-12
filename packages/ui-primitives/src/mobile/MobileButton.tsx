@@ -13,6 +13,7 @@ export function MobileButton({
   loading,
   loadingLabel,
   fullWidth,
+  iconLeft,
   onPress
 }: ButtonProps) {
   const colors = getButtonColors(variant);
@@ -36,7 +37,9 @@ export function MobileButton({
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: tokens.spacing.xs }}>
-        {loading ? <MobileIcon name="loading" size={14} color={busy ? resolveColor("disabledInk") : colors.foreground} /> : null}
+        {loading
+          ? <MobileIcon name="loading" size={14} color={busy ? resolveColor("disabledInk") : colors.foreground} />
+          : iconLeft ?? null}
         <Text
           style={{
             color: busy ? resolveColor("disabledInk") : colors.foreground,
