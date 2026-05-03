@@ -19,19 +19,9 @@ export function WebCard({ title, description, tone = "default", children }: Card
         border: `1px solid ${resolveColor(tokens.component.card.border)}`,
         backgroundColor,
         padding: tokens.spacing.xl,
-        boxShadow: tokens.elevation.mid,
-        position: "relative",
-        overflow: "hidden"
+        boxShadow: tokens.elevation.low
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: `radial-gradient(420px 180px at 0% 0%, ${resolveColor("accentSoft")} 0%, transparent 70%)`,
-          pointerEvents: "none"
-        }}
-      />
       {title ? (
         <h3
           style={{
@@ -41,7 +31,6 @@ export function WebCard({ title, description, tone = "default", children }: Card
             lineHeight: `${tokens.typography.lineHeightHeadline}px`,
             color: resolveColor(tokens.component.card.fg),
             fontWeight: 800,
-            position: "relative",
             overflowWrap: "anywhere"
           }}
         >
@@ -56,14 +45,13 @@ export function WebCard({ title, description, tone = "default", children }: Card
             color: resolveColor("inkMuted"),
             fontSize: tokens.typography.bodySmallSize,
             lineHeight: `${tokens.typography.lineHeightBody}px`,
-            position: "relative",
             overflowWrap: "anywhere"
           }}
         >
           {description}
         </p>
       ) : null}
-      <div style={{ position: "relative" }}>{children}</div>
+      <div>{children}</div>
     </section>
   );
 }

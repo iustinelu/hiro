@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  animation: hiroTabIn 0.22s ease both;
 }
 
 /* ─── Greeting + Streak Header ──────────────────────────────────────────── */
@@ -14,38 +15,43 @@
 
 .greeting {
   margin: 0;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 800;
   color: var(--hiro-color-ink);
+  letter-spacing: -0.02em;
 }
 
 .streak {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--hiro-color-ink);
+  gap: 5px;
+  background: var(--hiro-color-accent-alt-soft);
+  border: 1.5px solid var(--hiro-color-accent-alt);
+  border-radius: 999px;
+  padding: 6px 14px;
+  flex-shrink: 0;
+}
+
+.streakFlame {
+  font-size: 17px;
+  animation: hiroFlamePulse 1.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+.streakCount {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--hiro-color-accent-alt);
 }
 
 /* ─── Cards ─────────────────────────────────────────────────────────────── */
 
 .card {
-  position: relative;
-  overflow: hidden;
   border: 1px solid var(--hiro-color-border);
-  border-radius: 18px;
+  border-radius: 28px;
   background: var(--hiro-color-surface);
+  box-shadow: 0 2px 8px rgba(28, 27, 46, 0.08);
   padding: 20px;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  background: radial-gradient(ellipse at 30% 0%, rgba(255, 109, 36, 0.04) 0%, transparent 60%);
-  pointer-events: none;
 }
 
 .cardHeader {
@@ -57,15 +63,15 @@
 
 .cardTitle {
   margin: 0;
-  font-size: 16px;
+  font-size: 11px;
   font-weight: 700;
-  color: var(--hiro-color-ink);
+  color: var(--hiro-color-ink-soft);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.07em;
 }
 
 .progress {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--hiro-color-ink-muted);
 }
@@ -82,30 +88,51 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
 }
 
 .taskRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  transition: background 0.15s ease;
-}
-
-.taskRow:hover {
-  background: var(--hiro-color-surface-muted);
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--hiro-color-border);
+  background: var(--hiro-color-surface);
+  box-shadow: 0 2px 8px rgba(28, 27, 46, 0.08);
+  transition: opacity 0.25s ease, border-color 0.25s ease;
 }
 
 .taskRowDone {
-  opacity: 0.5;
+  opacity: 0.65;
+  box-shadow: none;
+  border-color: var(--hiro-color-accent-soft);
+}
+
+.taskIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  background: var(--hiro-color-surface-muted);
+}
+
+.taskIconDone {
+  background: var(--hiro-color-accent-soft);
+  font-size: 15px;
+  color: var(--hiro-color-accent-ink);
+  font-weight: 800;
+  animation: hiroCheckIn 0.3s ease both;
 }
 
 .taskName {
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--hiro-color-ink);
   flex: 1;
   min-width: 0;
@@ -129,11 +156,11 @@
 .pointsBadge {
   display: inline-flex;
   align-items: center;
-  padding: 3px 10px;
-  border-radius: 20px;
+  padding: 2px 8px;
+  border-radius: 999px;
   background: var(--hiro-color-accent-soft);
-  color: var(--hiro-color-accent);
-  font-size: 12px;
+  color: var(--hiro-color-accent-ink);
+  font-size: 11px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -142,15 +169,17 @@
   appearance: none;
   border: none;
   cursor: pointer;
-  padding: 6px 16px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--hiro-color-accent) 0%, var(--hiro-color-accent-strong) 100%);
-  color: var(--hiro-color-ink);
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--hiro-color-accent);
+  color: var(--hiro-color-bg-elevated);
   font-size: 13px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  transition: opacity 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 0 12px rgba(101, 163, 13, 0.35);
+  transition: transform 0.1s ease, opacity 0.15s ease;
+  min-height: 36px;
+  flex-shrink: 0;
+  font-family: inherit;
 }
 
 .doneButton:hover {
@@ -158,19 +187,21 @@
 }
 
 .doneButton:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
 .doneButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .checkmark {
-  color: var(--hiro-color-success);
-  font-size: 18px;
-  font-weight: 700;
+  color: var(--hiro-color-accent-ink);
+  font-size: 15px;
+  font-weight: 800;
+  animation: hiroCheckIn 0.3s ease both;
 }
 
 /* ─── Leaderboard ───────────────────────────────────────────────────────── */
@@ -181,15 +212,24 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 
 .leaderboardRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--hiro-color-border);
+  animation: hiroLbSlide 0.4s ease both;
+}
+
+.leaderboardRow:last-child {
+  border-bottom: none;
+}
+
+.leaderboardRowFirst {
+  background: var(--hiro-color-gold-soft);
 }
 
 .leaderboardRowMe {
@@ -197,32 +237,44 @@
 }
 
 .rank {
-  width: 28px;
+  width: 24px;
   font-size: 14px;
-  font-weight: 700;
-  color: var(--hiro-color-ink-muted);
+  font-weight: 800;
+  color: var(--hiro-color-ink-soft);
+}
+
+.rankFirst {
+  color: var(--hiro-color-gold-strong);
 }
 
 .memberName {
   flex: 1;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--hiro-color-ink);
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-left: 10px;
 }
 
 .memberNameMe {
-  color: var(--hiro-color-accent);
-  font-weight: 700;
+  color: var(--hiro-color-accent-ink);
 }
 
 .memberPoints {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--hiro-color-ink-muted);
+}
+
+.memberPointsMe {
+  color: var(--hiro-color-accent);
+}
+
+.memberPointsFirst {
+  color: var(--hiro-color-gold-strong);
 }
 
 /* ─── Add Task Row ─────────────────────────────────────────────────────── */

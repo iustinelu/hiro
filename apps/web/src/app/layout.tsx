@@ -4,13 +4,21 @@ import type { ReactNode } from "react";
 import { ThemeBootstrap } from "../theme/ThemeBootstrap";
 
 export const metadata: Metadata = {
-  title: "Hiro Web",
-  description: "Hiro web starter shell"
+  title: "Hiro",
+  description: "Household task gamification and shared expenses"
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>
         <ThemeBootstrap />
         {children}

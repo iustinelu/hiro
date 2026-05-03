@@ -10,3 +10,6 @@ coverage
 *.tsbuildinfo
 .worktrees
 .playwright-mcp
+.claude/settings.local.json
+.claude/design_bundle*/
+.claude/memory/

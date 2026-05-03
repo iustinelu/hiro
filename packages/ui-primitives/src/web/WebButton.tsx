@@ -22,6 +22,9 @@ export function WebButton({
   const busy = Boolean(disabled || loading);
   const shownLabel = loading ? loadingLabel ?? "Processing" : label;
 
+  const isPrimary = variant === "primary";
+  const borderRadius = isPrimary ? tokens.radius.pill : tokens.radius.lg;
+
   return (
     <button
       type="button"
@@ -38,29 +41,24 @@ export function WebButton({
         width: fullWidth ? "100%" : "fit-content",
         minHeight: buttonMinHeightBySize[size],
         padding: buttonPaddingBySize[size],
-        borderRadius: tokens.radius.lg,
+        borderRadius,
         border: `1px solid ${busy ? resolveColor("disabledBorder") : colors.border}`,
-        background: busy
-          ? resolveColor("disabledBg")
-          : variant === "primary"
-            ? `linear-gradient(90deg, ${resolveColor("accent")} 0%, ${resolveColor("accentStrong")} 100%)`
-            : colors.background,
+        background: busy ? resolveColor("disabledBg") : colors.background,
         color: busy ? resolveColor("disabledInk") : colors.foreground,
         fontFamily: tokens.typography.fontFamily,
         fontSize: tokens.typography.bodySmallSize,
         letterSpacing: 0.2,
-        fontWeight: 800,
+        fontWeight: 700,
         cursor: busy ? "not-allowed" : "pointer",
         transform: `scale(${scale})`,
         opacity: 1,
-        boxShadow:
-          busy
-            ? "none"
-            : variant === "primary"
-            ? `0 0 16px ${resolveColor("accentSoft")}`
-            : hovered
-              ? tokens.elevation.mid
-              : tokens.elevation.low,
+        boxShadow: busy
+          ? "none"
+          : isPrimary
+          ? "0 0 20px rgba(101, 163, 13, 0.32)"
+          : hovered
+            ? tokens.elevation.mid
+            : tokens.elevation.low,
         transition: `all ${tokens.motion.duration.fast}ms ${tokens.motion.easing.standard}`
       }}
     >
