@@ -120,9 +120,9 @@ export default function PointsBurst({
               gap: 8,
               padding: "8px 18px",
               borderRadius: tokens.radius.pill,
-              background: "rgba(22, 20, 37, 0.92)",
+              background: tokens.color.ink,
               border: `2px solid ${tokens.color.accent}`,
-              boxShadow: `0 0 24px ${tokens.color.accentSoft}, ${tokens.elevation.mid}`,
+              boxShadow: `0 0 24px rgba(101,163,13,0.4), ${tokens.elevation.mid}`,
               fontFamily: tokens.typography.fontFamily,
             }}
             animate={{ scale: [1, 1.08, 1] }}
@@ -132,7 +132,7 @@ export default function PointsBurst({
               style={{
                 fontSize: 22,
                 fontWeight: 800,
-                color: tokens.color.ink,
+                color: tokens.color.gold,
                 letterSpacing: "-0.02em",
               }}
             >

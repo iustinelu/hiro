@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  animation: hiroTabIn 0.22s ease both;
 }
 
 .topActions {
@@ -14,21 +15,11 @@
 /* ─── Cards ───────────────────────────────────────────────────────────── */
 
 .card {
-  position: relative;
-  overflow: hidden;
   border: 1px solid var(--hiro-color-border);
-  border-radius: 18px;
+  border-radius: 28px;
   background: var(--hiro-color-surface);
-  padding: 20px;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  background: radial-gradient(ellipse at 30% 0%, rgba(255, 109, 36, 0.04) 0%, transparent 60%);
-  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(28, 27, 46, 0.08);
+  overflow: hidden;
 }
 
 /* ─── Task List ───────────────────────────────────────────────────────── */
@@ -39,18 +30,22 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 
 .taskRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 13px 14px;
   cursor: pointer;
+  border-bottom: 1px solid var(--hiro-color-border);
   transition: background 0.15s ease;
+}
+
+.taskRow:last-child {
+  border-bottom: none;
 }
 
 .taskRow:hover {
@@ -58,7 +53,7 @@
 }
 
 .taskRowDone {
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
 .taskInfo {
@@ -70,8 +65,8 @@
 }
 
 .taskName {
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--hiro-color-ink);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -84,9 +79,9 @@
 }
 
 .taskCadence {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
-  color: var(--hiro-color-ink-muted);
+  color: var(--hiro-color-ink-soft);
 }
 
 .taskActions {
@@ -99,11 +94,11 @@
 .pointsBadge {
   display: inline-flex;
   align-items: center;
-  padding: 3px 10px;
-  border-radius: 20px;
+  padding: 2px 8px;
+  border-radius: 999px;
   background: var(--hiro-color-accent-soft);
-  color: var(--hiro-color-accent);
-  font-size: 12px;
+  color: var(--hiro-color-accent-ink);
+  font-size: 11px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -112,15 +107,16 @@
   appearance: none;
   border: none;
   cursor: pointer;
-  padding: 6px 16px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--hiro-color-accent) 0%, var(--hiro-color-accent-strong) 100%);
-  color: var(--hiro-color-ink);
-  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--hiro-color-accent);
+  color: var(--hiro-color-bg-elevated);
+  font-size: 12px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  transition: opacity 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 0 12px rgba(101, 163, 13, 0.3);
+  transition: transform 0.1s ease, opacity 0.15s ease;
+  min-height: 32px;
+  font-family: inherit;
 }
 
 .doneButton:hover {
@@ -128,19 +124,20 @@
 }
 
 .doneButton:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
 .doneButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .checkmark {
-  color: var(--hiro-color-success);
-  font-size: 18px;
-  font-weight: 700;
+  color: var(--hiro-color-accent-ink);
+  font-size: 15px;
+  font-weight: 800;
 }
 
 .archiveButton {
@@ -154,6 +151,7 @@
   font-size: 12px;
   font-weight: 600;
   transition: opacity 0.15s ease, background 0.15s ease;
+  font-family: inherit;
 }
 
 .archiveButton:hover {
@@ -175,6 +173,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  font-family: inherit;
 }
 
 .completedToggle:hover {
@@ -201,7 +200,7 @@
 
 .dayChip {
   appearance: none;
-  border: 2px solid var(--hiro-color-border);
+  border: 1.5px solid var(--hiro-color-border);
   cursor: pointer;
   width: 36px;
   height: 36px;
@@ -213,6 +212,7 @@
   font-size: 13px;
   font-weight: 700;
   transition: all 0.15s ease;
+  font-family: inherit;
 }
 
 .dayChip:hover {
@@ -221,9 +221,9 @@
 
 .dayChipActive {
   border-color: var(--hiro-color-accent);
-  background: rgba(255, 109, 36, 0.12);
-  color: var(--hiro-color-accent);
-  box-shadow: 0 0 12px rgba(255, 109, 36, 0.25);
+  background: var(--hiro-color-accent-soft);
+  color: var(--hiro-color-accent-ink);
+  box-shadow: 0 0 12px rgba(101, 163, 13, 0.25);
 }
 
 /* ─── Modal Form ──────────────────────────────────────────────────────── */

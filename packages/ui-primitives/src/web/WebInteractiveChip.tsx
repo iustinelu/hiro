@@ -20,10 +20,10 @@ export function WebInteractiveChip({
         alignItems: "center",
         gap: tokens.spacing.xs,
         borderRadius: tokens.radius.pill,
-        border: `2px solid ${active ? resolveColor("accent") : resolveColor("borderStrong")}`,
-        backgroundColor: active ? "rgba(255,109,36,0.12)" : "rgba(20, 24, 40, 0.92)",
-        boxShadow: active ? `0 0 14px ${resolveColor("accentSoft")}` : "none",
-        color: active ? resolveColor("accent") : resolveColor("ink"),
+        border: `2px solid ${active ? resolveColor("accent") : resolveColor("border")}`,
+        backgroundColor: active ? resolveColor("accentSoft") : resolveColor("surfaceStrong"),
+        boxShadow: active ? "0 0 14px rgba(101,163,13,0.22)" : "none",
+        color: active ? resolveColor("accentInk") : resolveColor("inkMuted"),
         padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
         cursor: "pointer",
         fontFamily: tokens.typography.fontFamily,
@@ -31,7 +31,7 @@ export function WebInteractiveChip({
         fontWeight: 600
       }}
     >
-      {leadingIcon ? <WebIcon name={leadingIcon} size={14} color={active ? resolveColor("accent") : resolveColor("ink")} /> : null}
+      {leadingIcon ? <WebIcon name={leadingIcon} size={14} color={active ? resolveColor("accentInk") : resolveColor("inkMuted")} /> : null}
       <span>{label}</span>
       {removable ? (
         <span

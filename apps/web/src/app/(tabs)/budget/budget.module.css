@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  animation: hiroTabIn 0.22s ease both;
 }
 
 .headerRow {
@@ -14,11 +15,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .monthLabel {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--hiro-color-ink);
   min-width: 160px;
@@ -32,25 +33,11 @@
 }
 
 .card {
-  position: relative;
   border: 1px solid var(--hiro-color-border);
-  border-radius: 18px;
-  background-color: var(--hiro-color-surface);
+  border-radius: 28px;
+  background: var(--hiro-color-surface);
+  box-shadow: 0 2px 8px rgba(28, 27, 46, 0.08);
   padding: 20px;
-  overflow: hidden;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse at 50% 0%,
-    var(--hiro-color-accent-soft) 0%,
-    transparent 70%
-  );
-  opacity: 0.3;
-  pointer-events: none;
 }
 
 .cardHeader {
@@ -64,8 +51,8 @@
   font-size: 11px;
   text-transform: uppercase;
   font-weight: 700;
-  color: var(--hiro-color-ink-muted);
-  letter-spacing: 0.6px;
+  color: var(--hiro-color-ink-soft);
+  letter-spacing: 0.07em;
 }
 
 .payerRow {
@@ -77,8 +64,9 @@
 }
 
 .payerName {
-  font-size: 14px;
+  font-size: 13px;
   flex: 0 0 100px;
+  font-weight: 600;
   color: var(--hiro-color-ink);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -88,20 +76,22 @@
 .payerBarTrack {
   flex: 1;
   height: 8px;
-  border-radius: 4px;
-  background-color: var(--hiro-color-surface-muted);
+  border-radius: 999px;
+  background: var(--hiro-color-surface-muted);
+  overflow: hidden;
 }
 
 .payerBarFill {
   height: 100%;
-  border-radius: 4px;
-  background-color: var(--hiro-color-accent);
+  border-radius: 999px;
+  background: var(--hiro-color-accent);
+  transition: width 0.5s ease;
 }
 
 .payerAmount {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--hiro-color-ink-muted);
+  color: var(--hiro-color-accent);
   min-width: 80px;
   text-align: right;
 }
@@ -110,13 +100,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
-  border-radius: 12px;
-  transition: background-color 0.15s ease;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--hiro-color-border);
+  transition: background 0.15s ease;
+}
+
+.expenseRow:last-child {
+  border-bottom: none;
 }
 
 .expenseRow:hover {
-  background-color: var(--hiro-color-surface-muted);
+  background: var(--hiro-color-surface-muted);
 }
 
 .expenseInfo {
@@ -128,8 +122,8 @@
 }
 
 .expenseTitle {
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--hiro-color-ink);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -137,8 +131,8 @@
 }
 
 .expenseSubtitle {
-  font-size: 12px;
-  color: var(--hiro-color-ink-muted);
+  font-size: 11px;
+  color: var(--hiro-color-ink-soft);
 }
 
 .expenseRight {
@@ -149,7 +143,7 @@
 }
 
 .expenseAmount {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--hiro-color-ink);
 }

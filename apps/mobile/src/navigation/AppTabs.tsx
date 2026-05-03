@@ -78,9 +78,9 @@ export function AppTabs() {
               minHeight: 64 + insets.bottom
             },
             tabBarLabelStyle: {
-              fontFamily: tokens.typography.fontFamilyMono,
+              fontFamily: tokens.typography.fontFamily,
               fontSize: tokens.typography.labelSize,
-              textTransform: "uppercase"
+              fontWeight: "700"
             },
             tabBarActiveTintColor: tokens.color.accent,
             tabBarInactiveTintColor: tokens.color.inkMuted,

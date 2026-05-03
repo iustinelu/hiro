@@ -10,6 +10,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         alignItems: "center",
         justifyContent: "center",
         padding: "24px",
+        background: tokens.color.bg,
       }}
     >
       <div style={{ width: "100%", maxWidth: 400 }}>
@@ -18,7 +19,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             background: tokens.color.surface,
             border: `1px solid ${tokens.color.border}`,
             borderRadius: tokens.radius.xl,
-            boxShadow: `${tokens.elevation.mid}, 0 0 60px ${tokens.color.accentSoft}`,
+            boxShadow: tokens.elevation.mid,
             padding: tokens.spacing.xxl,
           }}
         >
@@ -28,14 +29,21 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               alignItems: "center",
               justifyContent: "center",
               marginBottom: tokens.spacing.xxl,
-              fontFamily: tokens.typography.fontFamilyMono,
-              letterSpacing: "0.3em",
-              fontSize: tokens.typography.bodySmallSize,
-              textTransform: "uppercase",
+              gap: 8,
+              fontFamily: tokens.typography.fontFamily,
+              fontSize: 18,
+              fontWeight: 800,
+              letterSpacing: "-0.02em",
             }}
           >
-            <span style={{ color: tokens.color.accent, marginRight: "0.4em" }}>●</span>
-            <span style={{ color: tokens.color.ink }}>HIRO</span>
+            <span style={{
+              display: "inline-block",
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: tokens.color.accent,
+            }} />
+            <span style={{ color: tokens.color.ink }}>Hiro</span>
           </div>
           {children}
         </div>

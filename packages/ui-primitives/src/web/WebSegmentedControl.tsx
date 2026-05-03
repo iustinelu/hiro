@@ -12,7 +12,7 @@ export function WebSegmentedControl({ options, value, onChange }: SegmentedContr
         padding: tokens.spacing.xs,
         borderRadius: tokens.radius.md,
         border: `1px solid ${resolveColor("border")}`,
-        backgroundColor: "rgba(17, 20, 33, 0.9)"
+        backgroundColor: resolveColor("surfaceStrong")
       }}
     >
       {options.map((option) => {
@@ -31,8 +31,8 @@ export function WebSegmentedControl({ options, value, onChange }: SegmentedContr
               borderRadius: tokens.radius.sm,
               padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
               backgroundColor: active ? resolveColor("accent") : "transparent",
-              color: active ? resolveColor("ink") : resolveColor("inkMuted"),
-              boxShadow: active ? `0 0 16px ${resolveColor("accentSoft")}` : "none",
+              color: active ? resolveColor("bgElevated") : resolveColor("inkMuted"),
+              boxShadow: active ? "0 0 14px rgba(101,163,13,0.28)" : "none",
               cursor: "pointer",
               fontFamily: tokens.typography.fontFamily,
               fontSize: tokens.typography.bodySmallSize,
