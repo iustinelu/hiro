@@ -4,8 +4,8 @@ import {
   MobileModalSheet,
   MobileInput,
   MobileInteractiveChip,
+  useTheme,
 } from "@hiro/ui-primitives/mobile";
-import { tokens } from "@hiro/ui-tokens";
 import type { HouseholdMemberWithProfile } from "@hiro/domain";
 
 interface Props {
@@ -39,6 +39,7 @@ export function ExpenseAddModal({
   const [date, setDate] = useState(todayStr);
   const [payerProfileId, setPayerProfileId] = useState(currentProfileId);
   const [participantIds, setParticipantIds] = useState<string[]>([]);
+  const t = useTheme();
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -85,7 +86,7 @@ export function ExpenseAddModal({
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ maxHeight: 420 }}
-        contentContainerStyle={{ gap: tokens.spacing.md }}
+        contentContainerStyle={{ gap: t.spacing.md }}
       >
         <MobileInput
           label="Title"
@@ -106,12 +107,12 @@ export function ExpenseAddModal({
           onChangeText={setDate}
         />
 
-        <View style={{ gap: tokens.spacing.sm }}>
+        <View style={{ gap: t.spacing.sm }}>
           <Text
             style={{
-              color: tokens.color.inkMuted,
-              fontFamily: tokens.typography.fontFamilyMobile,
-              fontSize: tokens.typography.labelSize,
+              color: t.color.inkMuted,
+              fontFamily: t.typography.fontFamily,
+              fontSize: t.typography.labelSize,
               fontWeight: "700",
               textTransform: "uppercase",
               letterSpacing: 0.6,
@@ -119,7 +120,7 @@ export function ExpenseAddModal({
           >
             Who paid?
           </Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: tokens.spacing.sm }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: t.spacing.sm }}>
             {members.map((m) => (
               <MobileInteractiveChip
                 key={m.profileId}
@@ -131,12 +132,12 @@ export function ExpenseAddModal({
           </View>
         </View>
 
-        <View style={{ gap: tokens.spacing.sm }}>
+        <View style={{ gap: t.spacing.sm }}>
           <Text
             style={{
-              color: tokens.color.inkMuted,
-              fontFamily: tokens.typography.fontFamilyMobile,
-              fontSize: tokens.typography.labelSize,
+              color: t.color.inkMuted,
+              fontFamily: t.typography.fontFamily,
+              fontSize: t.typography.labelSize,
               fontWeight: "700",
               textTransform: "uppercase",
               letterSpacing: 0.6,
@@ -144,7 +145,7 @@ export function ExpenseAddModal({
           >
             Split between
           </Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: tokens.spacing.sm }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: t.spacing.sm }}>
             {members.map((m) => (
               <MobileInteractiveChip
                 key={m.profileId}

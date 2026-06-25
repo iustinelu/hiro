@@ -3,8 +3,8 @@ import { ScrollView, View, Text, RefreshControl } from "react-native";
 import {
   MobileButton,
   MobileEmptyStatePanel,
+  useTheme,
 } from "@hiro/ui-primitives/mobile";
-import { tokens } from "@hiro/ui-tokens";
 import type { CurrencyCode, Expense, HouseholdMemberWithProfile, MonthlyBreakdown } from "@hiro/domain";
 import { supabase } from "../lib/supabase";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
@@ -24,6 +24,7 @@ function currentMonth() {
 }
 
 export function BudgetScreen() {
+  const t = useTheme();
   const [profileId, setProfileId] = useState<string | null>(null);
   const [householdId, setHouseholdId] = useState<string | null>(null);
   const [currency, setCurrency] = useState<CurrencyCode>("EUR");
@@ -115,7 +116,7 @@ export function BudgetScreen() {
     <>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ padding: tokens.spacing.lg, gap: tokens.spacing.md }}
+        contentContainerStyle={{ padding: t.spacing.lg, gap: t.spacing.md }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={() => void handleRefresh()} />
         }
@@ -126,16 +127,16 @@ export function BudgetScreen() {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            gap: tokens.spacing.sm,
+            gap: t.spacing.sm,
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: tokens.spacing.xs }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: t.spacing.xs }}>
             <MobileButton label="<" variant="ghost" size="sm" onPress={handlePrevMonth} />
             <Text
               style={{
-                color: tokens.color.ink,
-                fontFamily: tokens.typography.fontFamilyMobile,
-                fontSize: tokens.typography.subtitleSize,
+                color: t.color.ink,
+                fontFamily: t.typography.fontFamily,
+                fontSize: t.typography.subtitleSize,
                 fontWeight: "800",
                 minWidth: 140,
                 textAlign: "center",
@@ -157,11 +158,11 @@ export function BudgetScreen() {
         {loading ? (
           <Text
             style={{
-              color: tokens.color.inkMuted,
-              fontFamily: tokens.typography.fontFamilyMobile,
-              fontSize: tokens.typography.bodySize,
+              color: t.color.inkMuted,
+              fontFamily: t.typography.fontFamily,
+              fontSize: t.typography.bodySize,
               textAlign: "center",
-              marginTop: tokens.spacing.xl,
+              marginTop: t.spacing.xl,
             }}
           >
             Loading…

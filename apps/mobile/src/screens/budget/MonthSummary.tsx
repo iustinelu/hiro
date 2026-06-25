@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { MobileKpiTile } from "@hiro/ui-primitives/mobile";
-import { tokens } from "@hiro/ui-tokens";
+import { MobileKpiTile, useTheme } from "@hiro/ui-primitives/mobile";
 import { formatCurrency, type MonthlyBreakdown, type CurrencyCode } from "@hiro/domain";
 
 interface Props {
@@ -10,11 +9,12 @@ interface Props {
 }
 
 export function MonthSummary({ breakdown, currency }: Props) {
+  const t = useTheme();
   const maxPayerTotal = Math.max(...breakdown.byPayer.map((p) => p.totalPaid), 1);
 
   return (
-    <View style={{ gap: tokens.spacing.md }}>
-      <View style={{ flexDirection: "row", gap: tokens.spacing.sm }}>
+    <View style={{ gap: t.spacing.md }}>
+      <View style={{ flexDirection: "row", gap: t.spacing.sm }}>
         <View style={{ flex: 1 }}>
           <MobileKpiTile
             title="Total Spent"
@@ -33,19 +33,19 @@ export function MonthSummary({ breakdown, currency }: Props) {
 
       <View
         style={{
-          borderRadius: tokens.radius.lg,
+          borderRadius: t.radius.lg,
           borderWidth: 1,
-          borderColor: tokens.color.border,
+          borderColor: t.color.border,
           backgroundColor: "rgba(255,255,255,0.03)",
-          padding: tokens.spacing.md,
-          gap: tokens.spacing.sm,
+          padding: t.spacing.md,
+          gap: t.spacing.sm,
         }}
       >
         <Text
           style={{
-            color: tokens.color.inkMuted,
-            fontFamily: tokens.typography.fontFamilyMobile,
-            fontSize: tokens.typography.labelSize,
+            color: t.color.inkMuted,
+            fontFamily: t.typography.fontFamily,
+            fontSize: t.typography.labelSize,
             textTransform: "uppercase",
             letterSpacing: 0.6,
             fontWeight: "700",
@@ -57,7 +57,7 @@ export function MonthSummary({ breakdown, currency }: Props) {
         {breakdown.byPayer.map((payer) => {
           const barFraction = payer.totalPaid / maxPayerTotal;
           return (
-            <View key={payer.profileId} style={{ gap: tokens.spacing.xs }}>
+            <View key={payer.profileId} style={{ gap: t.spacing.xs }}>
               <View
                 style={{
                   flexDirection: "row",
@@ -67,9 +67,9 @@ export function MonthSummary({ breakdown, currency }: Props) {
               >
                 <Text
                   style={{
-                    color: tokens.color.ink,
-                    fontFamily: tokens.typography.fontFamilyMobile,
-                    fontSize: tokens.typography.bodySmallSize,
+                    color: t.color.ink,
+                    fontFamily: t.typography.fontFamily,
+                    fontSize: t.typography.bodySmallSize,
                     fontWeight: "600",
                     flex: 1,
                   }}
@@ -78,9 +78,9 @@ export function MonthSummary({ breakdown, currency }: Props) {
                 </Text>
                 <Text
                   style={{
-                    color: tokens.color.accentInk,
-                    fontFamily: tokens.typography.fontFamilyMobile,
-                    fontSize: tokens.typography.bodySmallSize,
+                    color: t.color.accentInk,
+                    fontFamily: t.typography.fontFamily,
+                    fontSize: t.typography.bodySmallSize,
                     fontWeight: "700",
                   }}
                 >
@@ -90,15 +90,15 @@ export function MonthSummary({ breakdown, currency }: Props) {
               <View
                 style={{
                   height: 4,
-                  borderRadius: tokens.radius.sm,
-                  backgroundColor: tokens.color.border,
+                  borderRadius: t.radius.sm,
+                  backgroundColor: t.color.border,
                 }}
               >
                 <View
                   style={{
                     height: 4,
-                    borderRadius: tokens.radius.sm,
-                    backgroundColor: tokens.color.accent,
+                    borderRadius: t.radius.sm,
+                    backgroundColor: t.color.accent,
                     width: `${Math.round(barFraction * 100)}%`,
                   }}
                 />

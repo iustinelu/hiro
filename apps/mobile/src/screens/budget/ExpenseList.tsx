@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, Alert } from "react-native";
-import { MobileListRow } from "@hiro/ui-primitives/mobile";
-import { tokens } from "@hiro/ui-tokens";
+import { MobileListRow, useTheme } from "@hiro/ui-primitives/mobile";
 import { formatCurrency, type Expense, type CurrencyCode } from "@hiro/domain";
 
 interface Props {
@@ -11,6 +10,7 @@ interface Props {
 }
 
 export function ExpenseList({ expenses, currency, onDelete }: Props) {
+  const t = useTheme();
   if (expenses.length === 0) return null;
 
   function confirmDelete(expense: Expense) {
@@ -31,19 +31,19 @@ export function ExpenseList({ expenses, currency, onDelete }: Props) {
   return (
     <View
       style={{
-        borderRadius: tokens.radius.lg,
+        borderRadius: t.radius.lg,
         borderWidth: 1,
-        borderColor: tokens.color.border,
+        borderColor: t.color.border,
         backgroundColor: "rgba(255,255,255,0.03)",
-        padding: tokens.spacing.md,
-        gap: tokens.spacing.sm,
+        padding: t.spacing.md,
+        gap: t.spacing.sm,
       }}
     >
       <Text
         style={{
-          color: tokens.color.inkMuted,
-          fontFamily: tokens.typography.fontFamilyMobile,
-          fontSize: tokens.typography.labelSize,
+          color: t.color.inkMuted,
+          fontFamily: t.typography.fontFamily,
+          fontSize: t.typography.labelSize,
           textTransform: "uppercase",
           letterSpacing: 0.6,
           fontWeight: "700",
