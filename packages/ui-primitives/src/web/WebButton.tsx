@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { tokens } from "@hiro/ui-tokens";
 import type { ButtonProps } from "../shared/types";
