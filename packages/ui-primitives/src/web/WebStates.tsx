@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo } from "react";
 import { tokens } from "@hiro/ui-tokens";
 import { defaultStateMessages } from "../shared/states";
