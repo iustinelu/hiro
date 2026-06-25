@@ -8,12 +8,18 @@
     "newArchEnabled": false,
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "platforms": ["ios", "android", "web"],
+    "platforms": ["ios", "android"],
+    "owner": "justins9269s-team",
     "ios": {
       "bundleIdentifier": "com.hiro.app"
     },
     "android": {
       "package": "com.hiro.app"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b732bece-946b-4fc7-8407-7088f6ef4873"
+      }
     }
   }
 }
