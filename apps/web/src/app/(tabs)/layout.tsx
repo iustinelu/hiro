@@ -4,20 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { appShellSections } from "@hiro/domain";
+import { WebIcon } from "@hiro/ui-primitives/web";
 import { getSupabaseBrowserClient } from "../../lib/supabase/client";
 import { logActivity } from "../../lib/activityService";
 import { HouseholdProvider } from "./HouseholdProvider";
 import styles from "./tabs-layout.module.css";
 import type { ReactNode } from "react";
-
-const TAB_ICONS: Record<string, string> = {
-  home: "🏠",
-  tasks: "✓",
-  progress: "📊",
-  budget: "💰",
-  rewards: "⭐",
-  more: "⋯",
-};
 
 function withActiveClass(isActive: boolean, baseClass: string, activeClass: string) {
   return isActive ? `${baseClass} ${activeClass}` : baseClass;
@@ -53,7 +45,7 @@ export default function TabsLayout({ children }: { children: ReactNode }) {
                 href={section.path}
                 className={withActiveClass(isActive, styles.desktopLink, styles.desktopLinkActive)}
               >
-                <span style={{ fontSize: 16 }}>{TAB_ICONS[section.id]}</span>
+                <WebIcon name={section.id} size={16} />
                 <span>{section.label}</span>
               </Link>
             );
@@ -84,7 +76,7 @@ export default function TabsLayout({ children }: { children: ReactNode }) {
               href={section.path}
               className={withActiveClass(isActive, styles.tabLink, styles.tabLinkActive)}
             >
-              <span style={{ fontSize: 16, lineHeight: 1 }}>{TAB_ICONS[section.id]}</span>
+              <WebIcon name={section.id} size={16} />
               <span>{section.label}</span>
             </Link>
           );

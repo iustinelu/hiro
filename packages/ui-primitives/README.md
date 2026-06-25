@@ -42,10 +42,22 @@ Use shared `IconName` values in primitives instead of raw unicode glyphs:
 | `loading` | `LoaderCircle` | `sync-outline` |
 | `error` | `CircleAlert` | `alert-circle-outline` |
 | `home` | `House` | `home-outline` |
+| `tasks` | `ListChecks` | `checkbox-outline` |
+| `progress` | `BarChart3` | `stats-chart-outline` |
+| `budget` | `Wallet` | `wallet-outline` |
+| `rewards` | `Gift` | `gift-outline` |
+| `more` | `MoreHorizontal` | `ellipsis-horizontal` |
 | `strokeOutline` | `Circle` | `ellipse-outline` |
 | `strokeFill` | `CircleDot` | `ellipse` |
 | `close` | `X` | `close` |
 | `navigation` | `Compass` | `compass-outline` |
+
+`MobileIcon` accepts a `filled` prop that swaps each glyph to its solid Ionicons variant (e.g.
+the active tab); `WebIcon` accepts `filled` for API symmetry but treats it as a no-op since web
+active emphasis is CSS/`currentColor`-driven.
+
+The canonical app tab set is the six `appShellSections` from `@hiro/domain` — `home`, `tasks`,
+`progress`, `budget`, `rewards`, `more` (HIR-61 confirmed; the section set is final).
 
 ## Usage Examples
 

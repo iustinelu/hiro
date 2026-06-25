@@ -1,4 +1,6 @@
 export { cssColor, cssRadius, cssShadow, cssFontFamily } from "./utils";
+export type { IconName } from "../shared/types";
+export * from "./WebIcon";
 export * from "./WebButton";
 export * from "./WebDayChip";
 export * from "./WebCard";
