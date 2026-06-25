@@ -2,7 +2,7 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import type { SegmentedControlProps } from "../shared/types";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily } from "./utils";
 
 export function MobileSegmentedControl({ options, value, onChange }: SegmentedControlProps) {
   const t = useTheme();
@@ -36,10 +36,9 @@ export function MobileSegmentedControl({ options, value, onChange }: SegmentedCo
               style={{
                 textAlign: "center",
                 color: active ? resolveColor(t, "ink") : resolveColor(t, "inkMuted"),
-                fontFamily: t.typography.fontFamily,
+                fontFamily: resolveFontFamily(t, 700),
                 fontSize: t.typography.bodySmallSize,
                 lineHeight: t.typography.lineHeightLabel,
-                fontWeight: "700",
                 flexShrink: 1
               }}
             >

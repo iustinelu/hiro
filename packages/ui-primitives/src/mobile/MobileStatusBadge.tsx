@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import type { StatusBadgeProps } from "../shared/types";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamilyMono } from "./utils";
 
 const colorMap = {
   success: "success",
@@ -31,10 +31,9 @@ export function MobileStatusBadge({ label, tone = "neutral" }: StatusBadgeProps)
       <Text
         style={{
           color: tone === "neutral" ? resolveColor(t, "ink") : toneColor,
-          fontFamily: t.typography.fontFamilyMono,
+          fontFamily: resolveFontFamilyMono(t, 700),
           fontSize: t.typography.labelSize,
           lineHeight: t.typography.lineHeightLabel,
-          fontWeight: "700",
           letterSpacing: 0.8,
           textTransform: "uppercase",
           flexShrink: 1

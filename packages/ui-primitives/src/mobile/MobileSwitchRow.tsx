@@ -2,7 +2,7 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import type { SwitchRowProps } from "../shared/types";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily } from "./utils";
 
 export function MobileSwitchRow({ label, value, onToggle }: SwitchRowProps) {
   const t = useTheme();
@@ -23,10 +23,9 @@ export function MobileSwitchRow({ label, value, onToggle }: SwitchRowProps) {
       <Text
         style={{
           color: resolveColor(t, "ink"),
-          fontFamily: t.typography.fontFamily,
+          fontFamily: resolveFontFamily(t, 600),
           fontSize: t.typography.bodySmallSize,
           lineHeight: t.typography.lineHeightBody,
-          fontWeight: "600",
           flex: 1,
           paddingRight: t.spacing.sm
         }}

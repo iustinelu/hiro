@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import type { PresenceAvatarProps } from "../shared/types";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily } from "./utils";
 
 const statusColorByState = {
   online: "success",
@@ -40,7 +40,7 @@ export function MobilePresenceAvatar({ name, status = "online", highlighted, siz
           justifyContent: "center"
         }}
       >
-        <Text style={{ color: resolveColor(t, "ink"), fontFamily: t.typography.fontFamily, fontWeight: "700" }}>
+        <Text style={{ color: resolveColor(t, "ink"), fontFamily: resolveFontFamily(t, 700) }}>
           {initials}
         </Text>
       </View>

@@ -4,7 +4,7 @@ import { defaultStateMessages } from "../shared/states";
 import type { FeedbackStateProps, IconName } from "../shared/types";
 import { MobileIcon } from "./MobileIcon";
 import { useTheme, type ResolvedTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily } from "./utils";
 
 type FeedbackVariant = "loading" | "empty" | "error";
 
@@ -48,9 +48,8 @@ function MobileFeedbackState({
         <Text
           style={{
             color: config.accent,
-            fontFamily: t.typography.fontFamily,
+            fontFamily: resolveFontFamily(t, 800),
             fontSize: t.typography.bodySize,
-            fontWeight: "800",
             letterSpacing: 0.6,
             textTransform: "uppercase"
           }}
@@ -62,7 +61,7 @@ function MobileFeedbackState({
         <Text
           style={{
             color: resolveColor(t, "inkMuted"),
-            fontFamily: t.typography.fontFamily,
+            fontFamily: resolveFontFamily(t, 400),
             fontSize: t.typography.bodySize,
             lineHeight: t.typography.lineHeightBody
           }}
@@ -86,9 +85,8 @@ function MobileFeedbackState({
             <Text
               style={{
                 color: resolveColor(t, "error"),
-                fontFamily: t.typography.fontFamily,
+                fontFamily: resolveFontFamily(t, 800),
                 fontSize: t.typography.bodySmallSize,
-                fontWeight: "800",
                 letterSpacing: 1.2,
                 textTransform: "uppercase"
               }}

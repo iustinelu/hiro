@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import type { ButtonProps } from "../shared/types";
 import { MobileIcon } from "./MobileIcon";
 import { useTheme } from "./theme-context";
-import { buttonPaddingBySize, getButtonColors, resolveColor } from "./utils";
+import { buttonPaddingBySize, getButtonColors, resolveColor, resolveFontFamily } from "./utils";
 
 export function MobileButton({
   label,
@@ -44,8 +44,7 @@ export function MobileButton({
         <Text
           style={{
             color: busy ? resolveColor(t, "disabledInk") : colors.foreground,
-            fontFamily: t.typography.fontFamily,
-            fontWeight: "800",
+            fontFamily: resolveFontFamily(t, 800),
             fontSize: t.typography.bodySmallSize,
             letterSpacing: 0.2,
             textTransform: t.flags.textTransform

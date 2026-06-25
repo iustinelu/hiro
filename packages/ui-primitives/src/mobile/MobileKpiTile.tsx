@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import type { KpiTileProps } from "../shared/types";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily } from "./utils";
 
 const toneColorByBadge = {
   success: "success",
@@ -38,12 +38,11 @@ export function MobileKpiTile({
         <Text
           style={{
             color: resolveColor(t, "inkMuted"),
-            fontFamily: t.typography.fontFamily,
+            fontFamily: resolveFontFamily(t, 700),
             fontSize: t.typography.labelSize,
             lineHeight: t.typography.lineHeightLabel,
             textTransform: "uppercase",
             letterSpacing: 0.6,
-            fontWeight: "700",
             flex: 1
           }}
         >
@@ -53,10 +52,9 @@ export function MobileKpiTile({
           <Text
             style={{
               color: deltaTone === "neutral" ? resolveColor(t, "inkSoft") : deltaColor,
-              fontFamily: t.typography.fontFamily,
+              fontFamily: resolveFontFamily(t, 700),
               fontSize: t.typography.labelSize,
-              lineHeight: t.typography.lineHeightLabel,
-              fontWeight: "700"
+              lineHeight: t.typography.lineHeightLabel
             }}
           >
             {deltaLabel}
@@ -66,10 +64,9 @@ export function MobileKpiTile({
       <Text
         style={{
           color: resolveColor(t, "ink"),
-          fontFamily: t.typography.fontFamily,
+          fontFamily: resolveFontFamily(t, 800),
           fontSize: t.typography.titleSize,
-          lineHeight: t.typography.lineHeightHeadline,
-          fontWeight: "800"
+          lineHeight: t.typography.lineHeightHeadline
         }}
       >
         {value}

@@ -224,7 +224,7 @@ const neonTheme = {
     pill: 999
   },
   typography: {
-    fontFamily: "'Inter', 'Rajdhani', 'Exo 2', sans-serif",
+    fontFamily: "'Rajdhani', 'Exo 2', 'Inter', sans-serif",
     fontFamilyMono: "'IBM Plex Mono', 'JetBrains Mono', monospace"
   },
   elevation: {

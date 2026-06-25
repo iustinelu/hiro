@@ -35,6 +35,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en" data-theme={themeId}>
       <head>
+        {/* Preload the default-theme display face (Inter variable) to cut first-paint swap */}
+        <link
+          rel="preload"
+          href="/fonts/inter.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         <ThemeCssVars />
       </head>
       <body>

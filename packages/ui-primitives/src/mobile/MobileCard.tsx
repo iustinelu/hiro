@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import type { CardProps } from "../shared/types";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily } from "./utils";
 
 export function MobileCard({ title, description, tone = "default", children }: CardProps) {
   const t = useTheme();
@@ -37,11 +37,10 @@ export function MobileCard({ title, description, tone = "default", children }: C
         <Text
           style={{
             color: resolveColor(t, t.component.card.fg as keyof typeof t.color),
-            fontFamily: t.typography.fontFamily,
+            fontFamily: resolveFontFamily(t, 800),
             fontSize: t.typography.subtitleSize,
             lineHeight: t.typography.lineHeightHeadline,
-            flexShrink: 1,
-            fontWeight: "800"
+            flexShrink: 1
           }}
         >
           {title}
@@ -51,7 +50,7 @@ export function MobileCard({ title, description, tone = "default", children }: C
         <Text
           style={{
             color: resolveColor(t, "inkMuted"),
-            fontFamily: t.typography.fontFamily,
+            fontFamily: resolveFontFamily(t, 400),
             fontSize: t.typography.bodySmallSize,
             lineHeight: t.typography.lineHeightBody,
             flexShrink: 1

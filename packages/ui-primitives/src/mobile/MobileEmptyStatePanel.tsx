@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import type { EmptyStatePanelProps } from "../shared/types";
 import { MobileIcon } from "./MobileIcon";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily, resolveFontFamilyMono } from "./utils";
 
 export function MobileEmptyStatePanel({
   title,
@@ -15,8 +15,8 @@ export function MobileEmptyStatePanel({
   return (
     <View style={{ gap: t.spacing.md }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <Text style={{ color: resolveColor(t, "ink"), fontWeight: "800", fontSize: 18, fontFamily: t.typography.fontFamily }}>EMPTY STATE</Text>
-        <Text style={{ color: resolveColor(t, "inkSoft"), fontFamily: t.typography.fontFamilyMono, letterSpacing: 1.4 }}>{subtitle}</Text>
+        <Text style={{ color: resolveColor(t, "ink"), fontSize: 18, fontFamily: resolveFontFamily(t, 800) }}>EMPTY STATE</Text>
+        <Text style={{ color: resolveColor(t, "inkSoft"), fontFamily: resolveFontFamilyMono(t, 400), letterSpacing: 1.4 }}>{subtitle}</Text>
       </View>
       <View
         style={{
@@ -45,11 +45,11 @@ export function MobileEmptyStatePanel({
           >
             <MobileIcon name={icon} size={28} color={resolveColor(t, "inkSoft")} />
           </View>
-          <Text style={{ color: resolveColor(t, "inkMuted"), fontSize: t.typography.titleSize, fontFamily: t.typography.fontFamily, fontWeight: "700" }}>{title}</Text>
+          <Text style={{ color: resolveColor(t, "inkMuted"), fontSize: t.typography.titleSize, fontFamily: resolveFontFamily(t, 700) }}>{title}</Text>
           <Text
             style={{
               color: resolveColor(t, "inkSoft"),
-              fontFamily: t.typography.fontFamilyMono,
+              fontFamily: resolveFontFamilyMono(t, 400),
               fontSize: 18,
               letterSpacing: 1.6,
               textTransform: "uppercase"

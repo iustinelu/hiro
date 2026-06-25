@@ -2,7 +2,7 @@ import React from "react";
 import { Text, TextInput, View } from "react-native";
 import type { InputProps } from "../shared/types";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily } from "./utils";
 
 export function MobileInput({
   label,
@@ -28,8 +28,7 @@ export function MobileInput({
         <Text
           style={{
             color: resolveColor(t, "inkMuted"),
-            fontFamily: t.typography.fontFamily,
-            fontWeight: "700",
+            fontFamily: resolveFontFamily(t, 700),
             fontSize: t.typography.labelSize,
             textTransform: "uppercase"
           }}
@@ -53,7 +52,7 @@ export function MobileInput({
           color: resolveColor(t, t.component.input.fg as keyof typeof t.color),
           paddingHorizontal: t.spacing.md,
           paddingVertical: t.spacing.sm,
-          fontFamily: t.typography.fontFamily,
+          fontFamily: resolveFontFamily(t, 400),
           fontSize: t.typography.bodySize,
           shadowColor: forceFocused ? resolveColor(t, "accent") : "transparent",
           shadowOpacity: forceFocused ? 0.3 : 0,
@@ -64,7 +63,7 @@ export function MobileInput({
         <Text
           style={{
             color: state === "error" ? resolveColor(t, "error") : resolveColor(t, "inkSoft"),
-            fontFamily: t.typography.fontFamily,
+            fontFamily: resolveFontFamily(t, 400),
             fontSize: t.typography.labelSize
           }}
         >

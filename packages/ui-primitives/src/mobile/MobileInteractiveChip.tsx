@@ -3,7 +3,7 @@ import { Pressable, Text } from "react-native";
 import type { InteractiveChipProps } from "../shared/types";
 import { MobileIcon } from "./MobileIcon";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily } from "./utils";
 
 export function MobileInteractiveChip({
   label,
@@ -33,9 +33,8 @@ export function MobileInteractiveChip({
       <Text
         style={{
           color: active ? resolveColor(t, "accent") : resolveColor(t, "ink"),
-          fontFamily: t.typography.fontFamily,
-          fontSize: t.typography.bodySmallSize,
-          fontWeight: "600"
+          fontFamily: resolveFontFamily(t, 600),
+          fontSize: t.typography.bodySmallSize
         }}
       >
         {label}

@@ -2,7 +2,7 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import type { ListRowProps } from "../shared/types";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily } from "./utils";
 
 export function MobileListRow({
   title,
@@ -40,9 +40,8 @@ export function MobileListRow({
           numberOfLines={1}
           style={{
             color: resolveColor(t, t.component.listRow.fg as keyof typeof t.color),
-            fontFamily: t.typography.fontFamily,
-            fontSize: t.typography.bodySize,
-            fontWeight: "700"
+            fontFamily: resolveFontFamily(t, 700),
+            fontSize: t.typography.bodySize
           }}
         >
           {title}
@@ -52,7 +51,7 @@ export function MobileListRow({
             numberOfLines={1}
             style={{
               color: resolveColor(t, "inkMuted"),
-              fontFamily: t.typography.fontFamily,
+              fontFamily: resolveFontFamily(t, 400),
               fontSize: t.typography.bodySmallSize
             }}
           >
@@ -64,9 +63,8 @@ export function MobileListRow({
         <Text
           style={{
             color: resolveColor(t, "accentInk"),
-            fontFamily: t.typography.fontFamily,
-            fontSize: t.typography.labelSize,
-            fontWeight: "700"
+            fontFamily: resolveFontFamily(t, 700),
+            fontSize: t.typography.labelSize
           }}
         >
           {meta}

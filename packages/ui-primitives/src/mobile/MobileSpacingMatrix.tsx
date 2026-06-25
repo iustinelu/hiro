@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import type { SpacingMatrixProps } from "../shared/types";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily, resolveFontFamilyMono } from "./utils";
 
 const spacingRows = [
   { px: 4, token: "token.xs" },
@@ -18,8 +18,8 @@ export function MobileSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixP
   return (
     <View style={{ gap: t.spacing.md }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={{ color: resolveColor(t, "ink"), fontSize: t.typography.titleSize, lineHeight: t.typography.lineHeightHeadline, fontFamily: t.typography.fontFamily, fontWeight: "800", textTransform: "uppercase", flex: 1, paddingRight: t.spacing.sm }}>{title}</Text>
-        <Text style={{ color: resolveColor(t, "inkSoft"), fontFamily: t.typography.fontFamilyMono, fontSize: t.typography.bodySmallSize, lineHeight: t.typography.lineHeightLabel, letterSpacing: 1.4 }}>SPEC 05.1</Text>
+        <Text style={{ color: resolveColor(t, "ink"), fontSize: t.typography.titleSize, lineHeight: t.typography.lineHeightHeadline, fontFamily: resolveFontFamily(t, 800), textTransform: "uppercase", flex: 1, paddingRight: t.spacing.sm }}>{title}</Text>
+        <Text style={{ color: resolveColor(t, "inkSoft"), fontFamily: resolveFontFamilyMono(t, 400), fontSize: t.typography.bodySmallSize, lineHeight: t.typography.lineHeightLabel, letterSpacing: 1.4 }}>SPEC 05.1</Text>
       </View>
       <View style={{ gap: t.spacing.sm }}>
         {spacingRows.map((row) => (
@@ -37,7 +37,7 @@ export function MobileSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixP
               gap: t.spacing.md
             }}
           >
-            <Text style={{ width: 56, color: resolveColor(t, "inkMuted"), fontFamily: t.typography.fontFamilyMono, fontSize: t.typography.bodySmallSize, lineHeight: t.typography.lineHeightLabel, fontWeight: "700" }}>{row.px}px</Text>
+            <Text style={{ width: 56, color: resolveColor(t, "inkMuted"), fontFamily: resolveFontFamilyMono(t, 700), fontSize: t.typography.bodySmallSize, lineHeight: t.typography.lineHeightLabel }}>{row.px}px</Text>
             <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: t.spacing.md }}>
               <View
                 style={{
@@ -49,7 +49,7 @@ export function MobileSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixP
               />
               <View style={{ flex: 1, height: 1, backgroundColor: "rgba(255,255,255,0.08)" }} />
             </View>
-            <Text style={{ width: 76, textAlign: "right", color: resolveColor(t, "inkSoft"), fontFamily: t.typography.fontFamilyMono, fontSize: t.typography.bodySmallSize, lineHeight: t.typography.lineHeightLabel }}>{row.token}</Text>
+            <Text style={{ width: 76, textAlign: "right", color: resolveColor(t, "inkSoft"), fontFamily: resolveFontFamilyMono(t, 400), fontSize: t.typography.bodySmallSize, lineHeight: t.typography.lineHeightLabel }}>{row.token}</Text>
           </View>
         ))}
       </View>

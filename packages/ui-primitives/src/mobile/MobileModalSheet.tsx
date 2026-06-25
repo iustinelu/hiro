@@ -3,7 +3,7 @@ import { Modal, Pressable, Text, View } from "react-native";
 import type { ModalSheetProps } from "../shared/types";
 import { MobileButton } from "./MobileButton";
 import { useTheme } from "./theme-context";
-import { resolveColor } from "./utils";
+import { resolveColor, resolveFontFamily } from "./utils";
 
 export function MobileModalSheet({
   open,
@@ -47,9 +47,8 @@ export function MobileModalSheet({
             <Text
               style={{
                 color: resolveColor(t, "ink"),
-                fontFamily: t.typography.fontFamily,
-                fontSize: t.typography.subtitleSize,
-                fontWeight: "800"
+                fontFamily: resolveFontFamily(t, 800),
+                fontSize: t.typography.subtitleSize
               }}
             >
               {title}
@@ -59,7 +58,7 @@ export function MobileModalSheet({
             <Text
               style={{
                 color: resolveColor(t, "inkMuted"),
-                fontFamily: t.typography.fontFamily,
+                fontFamily: resolveFontFamily(t, 400),
                 fontSize: t.typography.bodySize
               }}
             >
