@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 type HouseholdContextValue = {
   profileId: string | null;
   householdId: string | null;
+  displayName: string | null;
   loading: boolean;
 };
 
@@ -23,6 +24,7 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [profileId, setProfileId] = useState<string | null>(null);
   const [householdId, setHouseholdId] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,14 +42,26 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const { data: membership } = await supabase
-        .from("household_members")
-        .select("household_id")
-        .eq("profile_id", resolvedProfileId)
-        .limit(1)
-        .maybeSingle();
+      const [{ data: membership }, { data: profile }] = await Promise.all([
+        supabase
+          .from("household_members")
+          .select("household_id")
+          .eq("profile_id", resolvedProfileId)
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("profiles")
+          .select("display_name")
+          .eq("id", resolvedProfileId)
+          .single(),
+      ]);
 
-      if (!membership) {
+      const resolvedDisplayName = (profile?.display_name as string | null) ?? null;
+
+      // Onboarding resolves BOTH requirements: a display name AND a household.
+      // Either gap (missing name from a Google sign-up, or no household yet)
+      // bounces the user back to /onboarding before any tab route renders.
+      if (!membership || !resolvedDisplayName || !resolvedDisplayName.trim()) {
         if (active) router.replace("/onboarding");
         return;
       }
@@ -55,6 +69,7 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
       if (active) {
         setProfileId(resolvedProfileId as string);
         setHouseholdId(membership.household_id);
+        setDisplayName(resolvedDisplayName);
         setLoading(false);
       }
     }
@@ -67,7 +82,7 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
   }, [router]);
 
   return (
-    <HouseholdContext.Provider value={{ profileId, householdId, loading }}>
+    <HouseholdContext.Provider value={{ profileId, householdId, displayName, loading }}>
       {children}
     </HouseholdContext.Provider>
   );
