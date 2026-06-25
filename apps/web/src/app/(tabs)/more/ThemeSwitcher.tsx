@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { ALL_THEME_IDS, DEFAULT_THEME, THEME_LABELS, cssVariablesFor } from "@hiro/ui-tokens";
 import type { ThemeId } from "@hiro/ui-tokens";
+import { applyThemeLocal } from "../../../theme/applyTheme";
+import { getSupabaseBrowserClient } from "../../../lib/supabase/client";
+import { useHousehold } from "../HouseholdProvider";
 
 function readCurrentTheme(): ThemeId {
   if (typeof document === "undefined") return DEFAULT_THEME;
@@ -12,24 +15,13 @@ function readCurrentTheme(): ThemeId {
     : DEFAULT_THEME;
 }
 
-function applyTheme(id: ThemeId) {
-  // 1. Instant DOM apply (CSS vars already injected via <style>; just update data-theme)
-  document.documentElement.dataset.theme = id;
-
-  // 2. Persist to localStorage
-  localStorage.setItem("hiro-theme", id);
-
-  // 3. Write cookie (1-year, path=/) so SSR picks it up on next hard load
-  const maxAge = 60 * 60 * 24 * 365;
-  document.cookie = `hiro-theme=${id}; path=/; max-age=${maxAge}; SameSite=Lax`;
-}
-
 // Derive preview colors from the token package — no hard-coded hex in app layer.
 const THEME_VARS = Object.fromEntries(
   ALL_THEME_IDS.map((id) => [id, cssVariablesFor(id)])
 ) as Record<ThemeId, Record<string, string>>;
 
 export function ThemeSwitcher() {
+  const { profileId } = useHousehold();
   const [active, setActive] = useState<ThemeId>(DEFAULT_THEME);
 
   useEffect(() => {
@@ -37,8 +29,16 @@ export function ThemeSwitcher() {
   }, []);
 
   function handleSelect(id: ThemeId) {
-    applyTheme(id);
+    // Instant local apply (cookie/localStorage/data-theme) for zero-lag feedback...
+    applyThemeLocal(id);
     setActive(id);
+    // ...then fire-and-forget the DB write so the choice follows the user across devices.
+    if (profileId) {
+      void getSupabaseBrowserClient()
+        .from("profiles")
+        .update({ theme: id })
+        .eq("id", profileId);
+    }
   }
 
   return (
