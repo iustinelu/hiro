@@ -5,11 +5,11 @@ Four independent polish items, one agent per item, each in its own git worktree 
 | # | Item | Status | Branch | Touches |
 |---|------|--------|--------|---------|
 | 1 | [PWA raster icons](1-pwa-raster-icons.md) | ✅ Merged | `chore/pwa-raster-icons` | `apps/web/public`, manifest, layout metadata |
-| 2 | [Tab icons (HIR-61/62)](2-tab-icons.md) | ⏳ In progress | `hir-62/tab-icons` | `ui-tokens`/`ui-primitives` icon set, both shells |
+| 2 | [Tab icons (HIR-61/62)](2-tab-icons.md) | ✅ Merged (PR #31) | `hir-62/tab-icons` | `ui-tokens`/`ui-primitives` icon set, both shells |
 | 3 | [Font bundling](3-font-bundling.md) | ✅ Merged (`43d2faa`) | `chore/font-bundling` | `apps/web` + `apps/mobile` fonts, `globals.css`, RN resolver |
 | 4 | [profiles.theme DB sync](4-profile-theme-sync.md) | ✅ Merged (`e683612`) | `chore/profile-theme-sync` | Supabase migration, `domain`, theme handlers |
 
-**Status (2026-06-25):** 3 of 4 merged to `main`. Only **item 2 (tab icons)** remains open (worktree `../hiro-tab-icons`). Item 3 shipped web **and** mobile (mobile was optional in the brief; founder opted in) and includes a `neon` stack reorder so it renders the geometric face.
+**Status (2026-06-25):** ✅ **All 4 merged to `main`** — v0.1 polish queue complete. Item 2 (tab icons) also fixed a mobile bug: Progress/Rewards now refetch on tab focus (`useFocusEffect`). Item 3 shipped web **and** mobile (mobile was optional in the brief; founder opted in) and includes a `neon` stack reorder so it renders the geometric face.
 
 **Suggested merge order:** 1 → 2 → 3 → 4 (cheapest/most isolated first). Any order works with a rebase on `main` before merge.
 
