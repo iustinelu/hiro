@@ -23,6 +23,11 @@
 4. **Polish**: branded app icon/splash + iOS raster PWA icon, real tab icons (HIR-61/62), `profiles.theme` DB sync, font bundling (retro pixel / neon geometric faces).
 5. **Phase 4 distribution** (EAS → TestFlight + Play internal) — BLOCKED on founder accounts: Apple Developer (~24-48h long pole), Google Play, Expo. Founder is creating these via a separate account-setup guide.
 
+## Founder requests captured at end of session (do these next session)
+1. **Push/PR done:** `hir-design/themes` is pushed to origin. Open PR (no governance template needed): https://github.com/iustinelu/hiro/pull/new/hir-design/themes — or `gh pr create` after fixing gh auth (`gh auth login`; gh currently 401s on keyring).
+2. **Scrap PR governance** — founder explicitly de-prioritized it ("not actual value, I just care that it works"). Do NOT enforce the PR governance template anymore. Use plain `gh pr create` / the GitHub web PR. Optionally delete `scripts/check-pr-governance.mjs` + the `pr:validate`/`pr:create` governance wiring in root `package.json`, and drop the "PR Governance (MANDATORY)" expectation. (Memory updated to reflect this.)
+3. **Better navigation perf (preload everything)** — current state: tabs are instant for profile/household (cached in `HouseholdProvider`), but each dashboard still fetches its OWN data on first mount → first visit shows "Loading expenses" + skeleton, then content; revisits are smooth only because of Next's short-lived router cache. **Goal:** warm all tab data up front so first visit is instant too. Recommended approach: add a lightweight client data cache (SWR or React Query, or a simple shared context cache with dedupe), and in `HouseholdProvider` — once household resolves — kick off background prefetches for each tab's primary query (tasks/today-completions/leaderboard, month expenses, rewards+balance, progress stats); dashboards read cache-first then revalidate. Also enable `<Link prefetch>` (default in prod). This makes navigation instant from the first visit and keeps it smooth.
+
 ## Notes
 - Supabase project `pfokfopwjrahclmseper` (consider Pro to avoid free-tier auto-pause for the live test).
 - Worktree gotcha: agent worktrees branch from `main` (not the current branch) — for theme-dependent work, integrate by copying files into the main tree, not git-merging stale worktree branches.
