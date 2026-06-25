@@ -19,3 +19,8 @@ apps/mobile/ios
 
 # Agent worktrees
 .claude/worktrees
+
+# Claude scratch (from #28)
+.claude/design_bundle*/
+.claude/memory/
+.claude/settings.local.json

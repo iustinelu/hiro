@@ -179,7 +179,8 @@ export default function HomeDashboard({ householdId, profileId }: Props) {
         <h1 className={styles.greeting}>{getGreeting()}</h1>
         {streak > 0 && (
           <span className={styles.streak} title={`${streak}-day streak`}>
-            {"\uD83D\uDD25"} {streak}
+            <span className={styles.streakFlame}>{"\uD83D\uDD25"}</span>
+            <span className={styles.streakCount}>{streak}</span>
           </span>
         )}
       </div>

@@ -21,16 +21,27 @@ export function HomeLeaderboard({ entries, profileId }: Props) {
         <ol className={styles.leaderboardList}>
           {entries.map((entry, i) => {
             const isMe = entry.profileId === profileId;
+            const isFirst = i === 0;
             return (
               <li
                 key={entry.profileId}
-                className={`${styles.leaderboardRow} ${isMe ? styles.leaderboardRowMe : ""}`}
+                className={[
+                  styles.leaderboardRow,
+                  isFirst ? styles.leaderboardRowFirst : "",
+                  isMe ? styles.leaderboardRowMe : "",
+                ].join(" ")}
+                style={{ animationDelay: `${i * 0.06}s` }}
               >
-                <span className={styles.rank}>{i + 1}.</span>
+                <span className={`${styles.rank} ${isFirst ? styles.rankFirst : ""}`}>
+                  {isFirst ? "🥇" : `#${i + 1}`}
+                </span>
                 <span className={`${styles.memberName} ${isMe ? styles.memberNameMe : ""}`}>
                   {entry.displayName ?? "Member"}
+                  {isMe ? " (you)" : ""}
                 </span>
-                <span className={styles.memberPoints}>{entry.pointsThisWeek} pts</span>
+                <span className={`${styles.memberPoints} ${isMe ? styles.memberPointsMe : ""} ${isFirst ? styles.memberPointsFirst : ""}`}>
+                  {entry.pointsThisWeek} pts
+                </span>
               </li>
             );
           })}
