@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import type { DailyPoints, LeaderboardEntry, PersonalStats, TaskStats } from "@hiro/domain";
 import { MobileEmptyStatePanel, useTheme } from "@hiro/ui-primitives/mobile";
 import { supabase } from "../lib/supabase";
@@ -45,29 +46,30 @@ export function ProgressScreen() {
   }, []);
 
   /* ── Parallel data fetch ────────────────────────────────────────────────── */
-  useEffect(() => {
-    if (!bootstrapped || !profileId || !householdId) {
-      if (bootstrapped) setLoading(false);
-      return;
-    }
+  const loadData = useCallback(async () => {
+    if (!profileId || !householdId) return;
+    const [statsRes, trendRes, leaderboardRes, taskStatsRes] = await Promise.all([
+      getPersonalStats(profileId, householdId),
+      getWeeklyPointsTrend(householdId, profileId),
+      getWeeklyLeaderboard(householdId),
+      getTaskStats(householdId),
+    ]);
+    setStats(statsRes.stats);
+    setTrend(trendRes.trend);
+    setLeaderboard(leaderboardRes.entries);
+    setTaskStats(taskStatsRes.taskStats);
+    setLoading(false);
+  }, [profileId, householdId]);
 
-    let active = true;
-    void (async () => {
-      const [statsRes, trendRes, leaderboardRes, taskStatsRes] = await Promise.all([
-        getPersonalStats(profileId, householdId),
-        getWeeklyPointsTrend(householdId, profileId),
-        getWeeklyLeaderboard(householdId),
-        getTaskStats(householdId),
-      ]);
-      if (!active) return;
-      setStats(statsRes.stats);
-      setTrend(trendRes.trend);
-      setLeaderboard(leaderboardRes.entries);
-      setTaskStats(taskStatsRes.taskStats);
-      setLoading(false);
-    })();
-    return () => { active = false; };
-  }, [bootstrapped, profileId, householdId]);
+  /* Refetch the numbers every time the tab gains focus (tab screens stay
+   * mounted, so a plain mount effect would never refresh on revisit). */
+  useFocusEffect(
+    useCallback(() => {
+      if (!bootstrapped) return;
+      if (!profileId || !householdId) { setLoading(false); return; }
+      void loadData();
+    }, [bootstrapped, profileId, householdId, loadData])
+  );
 
   /* ── Loading state ──────────────────────────────────────────────────────── */
   if (!bootstrapped || loading) {

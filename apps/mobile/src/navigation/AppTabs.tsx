@@ -90,9 +90,7 @@ export function AppTabs() {
             tabBarActiveTintColor: t.color.accent,
             tabBarInactiveTintColor: t.color.inkMuted,
             tabBarIcon: ({ focused, color }) => (
-              <View style={{ marginBottom: tokens.spacing.xs }}>
-                <MobileIcon name={route.name as IconName} color={color} filled={focused} size={22} />
-              </View>
+              <MobileIcon name={route.name as IconName} color={color} filled={focused} size={24} />
             ),
             sceneStyle: {
               backgroundColor: t.color.bg

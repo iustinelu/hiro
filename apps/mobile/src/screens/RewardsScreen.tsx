@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Easing, ScrollView, Text, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   MobileButton,
   MobileKpiTile,
@@ -119,11 +120,15 @@ export function RewardsScreen() {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    if (profileId && householdId) {
-      void loadData(profileId, householdId);
-    }
-  }, [profileId, householdId, loadData]);
+  /* Reload the balance + rewards every time the tab gains focus (tab screens
+   * stay mounted, so a plain mount effect would never refresh on revisit). */
+  useFocusEffect(
+    useCallback(() => {
+      if (profileId && householdId) {
+        void loadData(profileId, householdId);
+      }
+    }, [profileId, householdId, loadData])
+  );
 
   /* ── Realtime subscription ───────────────────────────────────────── */
 
