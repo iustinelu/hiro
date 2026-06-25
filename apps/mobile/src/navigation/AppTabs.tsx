@@ -8,6 +8,8 @@ import { MobileButton } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
 import { SectionPlaceholderScreen } from "../screens/SectionPlaceholderScreen";
 import { MoreScreen } from "../screens/MoreScreen";
+import { HomeScreen } from "../screens/HomeScreen";
+import { TasksScreen } from "../screens/TasksScreen";
 import { logActivity } from "../lib/activityService";
 
 type AppTabParamList = Record<AppShellSectionId, undefined>;
@@ -113,7 +115,11 @@ export function AppTabs() {
           >
             {() => (
               <View style={{ flex: 1 }}>
-                {section.id === "more" ? (
+                {section.id === "home" ? (
+                  <HomeScreen />
+                ) : section.id === "tasks" ? (
+                  <TasksScreen />
+                ) : section.id === "more" ? (
                   <MoreScreen />
                 ) : (
                   <SectionPlaceholderScreen
