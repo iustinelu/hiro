@@ -13,6 +13,7 @@ import {
 import { createInvite, getHouseholdInvites } from "../../../lib/inviteService";
 import { getDisplayName, updateDisplayName } from "../../../lib/profileService";
 import { tokens } from "@hiro/ui-tokens";
+import { cssColor, cssRadius, cssFontFamily } from "@hiro/ui-primitives/web";
 import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
@@ -196,14 +197,14 @@ export default function MorePage() {
                   display: "grid",
                   gap: tokens.spacing.sm,
                   padding: tokens.spacing.md,
-                  background: tokens.color.surfaceMuted,
-                  borderRadius: tokens.radius.md,
-                  fontFamily: tokens.typography.fontFamilyMono,
+                  background: cssColor("surfaceMuted"),
+                  borderRadius: cssRadius.md,
+                  fontFamily: cssFontFamily.mono,
                   fontSize: tokens.typography.bodySmallSize,
                   wordBreak: "break-all",
                 }}
               >
-                <span style={{ color: tokens.color.ink }}>{inviteLink}</span>
+                <span style={{ color: cssColor("ink") }}>{inviteLink}</span>
                 <WebButton
                   label={copied ? "Copied!" : "Copy link"}
                   variant="secondary"

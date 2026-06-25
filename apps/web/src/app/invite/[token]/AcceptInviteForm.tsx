@@ -7,6 +7,7 @@ import { WebButton } from "@hiro/ui-primitives/web";
 import { acceptInvite, acceptInviteAndLeave } from "../../../lib/inviteService";
 import { getMyHousehold } from "../../../lib/householdService";
 import { tokens } from "@hiro/ui-tokens";
+import { cssColor, cssRadius, cssFontFamily } from "@hiro/ui-primitives/web";
 
 interface Props {
   token: string;
@@ -75,17 +76,17 @@ export function AcceptInviteForm({ token, isAuthenticated }: Props) {
         <div
           style={{
             padding: tokens.spacing.md,
-            borderRadius: tokens.radius.md,
-            border: `1px solid ${tokens.color.warning}`,
-            background: tokens.color.warningSoft ?? "transparent",
+            borderRadius: cssRadius.md,
+            border: `1px solid ${cssColor("warning")}`,
+            background: cssColor("warningSoft"),
           }}
         >
           <p
             style={{
               margin: 0,
-              fontFamily: tokens.typography.fontFamily,
+              fontFamily: cssFontFamily.default,
               fontSize: tokens.typography.bodySize,
-              color: tokens.color.warning,
+              color: cssColor("warning"),
               fontWeight: 600,
             }}
           >
@@ -94,9 +95,9 @@ export function AcceptInviteForm({ token, isAuthenticated }: Props) {
           <p
             style={{
               margin: `${tokens.spacing.xs} 0 0`,
-              fontFamily: tokens.typography.fontFamily,
+              fontFamily: cssFontFamily.default,
               fontSize: tokens.typography.bodySmallSize,
-              color: tokens.color.inkMuted,
+              color: cssColor("inkMuted"),
               lineHeight: 1.5,
             }}
           >
@@ -151,9 +152,9 @@ export function AcceptInviteForm({ token, isAuthenticated }: Props) {
         <p
           style={{
             margin: 0,
-            fontFamily: tokens.typography.fontFamily,
+            fontFamily: cssFontFamily.default,
             fontSize: tokens.typography.bodySmallSize,
-            color: isDissolvedNotice ? tokens.color.inkMuted : tokens.color.error,
+            color: isDissolvedNotice ? cssColor("inkMuted") : cssColor("error"),
             lineHeight: 1.5,
           }}
         >

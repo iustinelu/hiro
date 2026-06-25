@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { tokens } from "@hiro/ui-tokens";
+import { cssColor, cssShadow, cssRadius, cssFontFamily } from "@hiro/ui-primitives/web";
 
 /* ─── Types ────────────────────────────────────────────────────────────── */
 
@@ -15,11 +15,11 @@ export interface AllDoneCelebrationProps {
 
 const CONFETTI_COUNT = 40;
 const COLORS = [
-  tokens.color.accent,
-  tokens.color.success,
-  tokens.color.accentAlt,
-  tokens.color.accentInk,
-  tokens.color.warning,
+  cssColor("accent"),
+  cssColor("success"),
+  cssColor("accentAlt"),
+  cssColor("accentInk"),
+  cssColor("warning"),
 ];
 
 interface ConfettiPiece {
@@ -82,7 +82,7 @@ export default function AllDoneCelebration({
           style={{
             position: "absolute",
             inset: 0,
-            background: tokens.color.overlay,
+            background: cssColor("overlay"),
             backdropFilter: "blur(4px)",
           }}
         />
@@ -125,11 +125,11 @@ export default function AllDoneCelebration({
             alignItems: "center",
             gap: 12,
             padding: "32px 40px",
-            borderRadius: tokens.radius.xl,
-            background: tokens.color.surface,
-            border: `2px solid ${tokens.color.accent}`,
-            boxShadow: `0 0 40px ${tokens.color.accentSoft}, 0 0 80px ${tokens.color.accentSoft}, ${tokens.elevation.high}`,
-            fontFamily: tokens.typography.fontFamily,
+            borderRadius: cssRadius.xl,
+            background: cssColor("surface"),
+            border: `2px solid ${cssColor("accent")}`,
+            boxShadow: `0 0 40px ${cssColor("accentSoft")}, 0 0 80px ${cssColor("accentSoft")}, ${cssShadow.high}`,
+            fontFamily: cssFontFamily.default,
             textAlign: "center",
           }}
           initial={{ scale: 0.4, y: 40, opacity: 0 }}
@@ -147,14 +147,14 @@ export default function AllDoneCelebration({
             animate={{ rotate: [0, -10, 10, -5, 5, 0], scale: [1, 1.2, 1] }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            {"\uD83C\uDF89"}
+            {"🎉"}
           </motion.div>
 
           <span
             style={{
               fontSize: 22,
               fontWeight: 800,
-              color: tokens.color.ink,
+              color: cssColor("ink"),
               letterSpacing: "-0.02em",
             }}
           >
@@ -165,7 +165,7 @@ export default function AllDoneCelebration({
             style={{
               fontSize: 18,
               fontWeight: 700,
-              color: tokens.color.accent,
+              color: cssColor("accent"),
             }}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -177,7 +177,7 @@ export default function AllDoneCelebration({
           <span
             style={{
               fontSize: 13,
-              color: tokens.color.inkMuted,
+              color: cssColor("inkMuted"),
               marginTop: 4,
             }}
           >
