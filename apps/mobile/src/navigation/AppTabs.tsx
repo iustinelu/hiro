@@ -6,10 +6,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { appShellSections, type AppShellSectionId } from "@hiro/domain";
 import { MobileButton } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
-import { SectionPlaceholderScreen } from "../screens/SectionPlaceholderScreen";
 import { MoreScreen } from "../screens/MoreScreen";
 import { HomeScreen } from "../screens/HomeScreen";
 import { TasksScreen } from "../screens/TasksScreen";
+import { ProgressScreen } from "../screens/ProgressScreen";
+import { BudgetScreen } from "../screens/BudgetScreen";
+import { RewardsScreen } from "../screens/RewardsScreen";
 import { logActivity } from "../lib/activityService";
 
 type AppTabParamList = Record<AppShellSectionId, undefined>;
@@ -119,14 +121,14 @@ export function AppTabs() {
                   <HomeScreen />
                 ) : section.id === "tasks" ? (
                   <TasksScreen />
-                ) : section.id === "more" ? (
-                  <MoreScreen />
+                ) : section.id === "progress" ? (
+                  <ProgressScreen />
+                ) : section.id === "budget" ? (
+                  <BudgetScreen />
+                ) : section.id === "rewards" ? (
+                  <RewardsScreen />
                 ) : (
-                  <SectionPlaceholderScreen
-                    title={section.label}
-                    description={`${section.label} section shell`}
-                    actionLabel={section.label}
-                  />
+                  <MoreScreen />
                 )}
                 {__DEV__ && section.id === "more" && <DevErrorTrigger />}
               </View>
