@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hiro app icon">
+    <rect x="0" y="0" width="512" height="512" rx="112" fill="#15121f"/>
+    
+    <path d="M186 252 C150 296 122 360 134 444 C176 421 202 426 256 452 C310 426 336 421 378 444 C390 360 362 296 326 252 Z" fill="#57e0c0"/>
+    <path d="M256 452 C310 426 336 421 378 444 C390 360 362 296 326 252 L302 270 C320 320 322 392 300 436 C284 446 270 450 256 452 Z" fill="#3fc7a8"/>
+    <rect x="181" y="248" width="150" height="150" rx="13" fill="#ff7a59"/>
+    <path d="M256 150 L150 258 L362 258 Z" fill="#e8633f" stroke="#e8633f" stroke-width="8" stroke-linejoin="round"/>
+    <circle cx="256" cy="222" r="19" fill="#f7f3ff"/>
+    <path d="M233 398 L233 354 A23 23 0 0 1 279 354 L279 398 Z" fill="#fff"/>
+  </svg>
