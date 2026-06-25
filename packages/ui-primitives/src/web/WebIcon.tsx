@@ -1,10 +1,13 @@
-import { Circle, CircleAlert, CircleDot, Compass, House, Inbox, Link2, LoaderCircle, ShieldCheck, Sparkles, X } from "lucide-react";
+import { BarChart3, Circle, CircleAlert, CircleDot, Compass, Gift, House, Inbox, Link2, ListChecks, LoaderCircle, MoreHorizontal, ShieldCheck, Sparkles, Wallet, X } from "lucide-react";
 import type { IconName } from "../shared/types";
 
 interface WebIconProps {
   name: IconName;
   size?: number;
   color?: string;
+  // Accepted for cross-platform API symmetry with MobileIcon. No-op on web:
+  // lucide icons are stroke-based and active emphasis is CSS/currentColor-driven.
+  filled?: boolean;
 }
 
 const iconMap = {
@@ -15,6 +18,11 @@ const iconMap = {
   loading: LoaderCircle,
   error: CircleAlert,
   home: House,
+  tasks: ListChecks,
+  progress: BarChart3,
+  budget: Wallet,
+  rewards: Gift,
+  more: MoreHorizontal,
   strokeOutline: Circle,
   strokeFill: CircleDot,
   close: X,

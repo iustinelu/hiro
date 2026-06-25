@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { appShellSections, type AppShellSectionId } from "@hiro/domain";
-import { MobileButton, useTheme } from "@hiro/ui-primitives/mobile";
+import { MobileButton, MobileIcon, useTheme, type IconName } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
 import { MoreScreen } from "../screens/MoreScreen";
 import { HomeScreen } from "../screens/HomeScreen";
@@ -90,16 +90,9 @@ export function AppTabs() {
             tabBarActiveTintColor: t.color.accent,
             tabBarInactiveTintColor: t.color.inkMuted,
             tabBarIcon: ({ focused, color }) => (
-              <Text
-                style={{
-                  marginBottom: tokens.spacing.xs,
-                  color,
-                  fontSize: 12,
-                  lineHeight: 14
-                }}
-              >
-                {focused ? "●" : "○"}
-              </Text>
+              <View style={{ marginBottom: tokens.spacing.xs }}>
+                <MobileIcon name={route.name as IconName} color={color} filled={focused} size={22} />
+              </View>
             ),
             sceneStyle: {
               backgroundColor: t.color.bg

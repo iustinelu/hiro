@@ -1,4 +1,6 @@
 export * from "./theme-context";
+export type { IconName } from "../shared/types";
+export * from "./MobileIcon";
 export * from "./MobileButton";
 export * from "./MobileCard";
 export * from "./MobileChartContainer";
