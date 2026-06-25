@@ -15,7 +15,7 @@ export function MobileSegmentedControl({ options, value, onChange }: SegmentedCo
         borderRadius: t.radius.md,
         borderWidth: t.flags.borderWidth,
         borderColor: resolveColor(t, "border"),
-        backgroundColor: "rgba(17, 20, 33, 0.9)"
+        backgroundColor: resolveColor(t, "surface")
       }}
     >
       {options.map((option) => {

@@ -28,7 +28,7 @@ export function MobileEmptyStatePanel({
           alignItems: "center",
           justifyContent: "center",
           padding: t.spacing.xl,
-          backgroundColor: "rgba(10, 14, 28, 0.66)"
+          backgroundColor: resolveColor(t, "surfaceMuted")
         }}
       >
         <View style={{ alignItems: "center", gap: t.spacing.md }}>

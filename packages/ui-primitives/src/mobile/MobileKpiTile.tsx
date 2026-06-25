@@ -31,7 +31,7 @@ export function MobileKpiTile({
         borderRadius: t.radius.lg,
         borderWidth: 1,
         borderColor: resolveColor(t, "border"),
-        backgroundColor: "rgba(255,255,255,0.03)"
+        backgroundColor: resolveColor(t, "surfaceMuted")
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: t.spacing.sm }}>

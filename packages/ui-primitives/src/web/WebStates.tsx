@@ -35,8 +35,7 @@ function WebFeedbackState({
         borderRadius: cssRadius.lg,
         border: `1px solid ${cssColor("border")}`,
         backgroundColor: cssColor(tokens.component.feedback[variant]),
-        padding: tokens.spacing.lg,
-        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.02)"
+        padding: tokens.spacing.lg
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: tokens.spacing.sm }}>

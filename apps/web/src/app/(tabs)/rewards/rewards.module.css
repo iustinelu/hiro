@@ -195,7 +195,7 @@
   border-radius: 14px;
   background: var(--hiro-color-surface-strong);
   border-left: 3px solid var(--hiro-color-success);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 26px var(--hiro-color-overlay);
   font-size: 14px;
   color: var(--hiro-color-ink);
   line-height: 1.4;

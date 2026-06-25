@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MobileInput, MobileButton, useTheme } from "@hiro/ui-primitives/mobile";
-import { tokens } from "@hiro/ui-tokens";
+import { tokens, brand } from "@hiro/ui-tokens";
 import { signIn, signUp, sendPasswordResetEmail, signInWithGoogle } from "../../lib/authService";
 
 type AuthView = "sign-in" | "sign-up" | "forgot-password";
@@ -10,7 +10,7 @@ type AuthView = "sign-in" | "sign-up" | "forgot-password";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const GoogleG = () => (
-  <Text style={{ fontSize: 15, fontWeight: "700", color: "rgb(66,133,244)", lineHeight: 18 }}>G</Text>
+  <Text style={{ fontSize: 15, fontWeight: "700", color: brand.googleBlue, lineHeight: 18 }}>G</Text>
 );
 
 const OrDivider = () => {

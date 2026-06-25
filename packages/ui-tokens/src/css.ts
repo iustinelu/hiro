@@ -39,6 +39,7 @@ export function cssVariablesFor(themeId: ThemeId): Record<string, string> {
     "--hiro-color-disabled-bg": color.disabledBg,
     "--hiro-color-disabled-border": color.disabledBorder,
     "--hiro-color-disabled-ink": color.disabledInk,
+    "--hiro-color-overlay": color.overlay,
     // radius
     "--hiro-radius-sm": String(radius.sm),
     "--hiro-radius-md": String(radius.md),

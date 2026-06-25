@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { WebInput, WebButton } from "@hiro/ui-primitives/web";
+import { WebInput, WebButton, cssFontFamily } from "@hiro/ui-primitives/web";
 import { sendPasswordResetEmail } from "../../../lib/authService";
 import { tokens } from "@hiro/ui-tokens";
 
@@ -34,7 +34,7 @@ export function ForgotPasswordForm() {
         <h1
           style={{
             margin: 0,
-            fontFamily: tokens.typography.fontFamily,
+            fontFamily: cssFontFamily.default,
             fontSize: tokens.typography.titleSize,
             fontWeight: 700,
             color: "var(--hiro-color-ink)",
@@ -45,7 +45,7 @@ export function ForgotPasswordForm() {
         <p
           style={{
             margin: 0,
-            fontFamily: tokens.typography.fontFamily,
+            fontFamily: cssFontFamily.default,
             fontSize: tokens.typography.bodySize,
             color: "var(--hiro-color-ink-muted)",
           }}
@@ -57,7 +57,7 @@ export function ForgotPasswordForm() {
           <Link
             href="/auth/sign-in"
             style={{
-              fontFamily: tokens.typography.fontFamily,
+              fontFamily: cssFontFamily.default,
               fontSize: tokens.typography.bodySmallSize,
               color: "var(--hiro-color-accent)",
               display: "inline-flex",
@@ -78,7 +78,7 @@ export function ForgotPasswordForm() {
       <h1
         style={{
           margin: 0,
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: cssFontFamily.default,
           fontSize: tokens.typography.titleSize,
           fontWeight: 700,
           color: "var(--hiro-color-ink)",
@@ -89,7 +89,7 @@ export function ForgotPasswordForm() {
       <p
         style={{
           margin: 0,
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: cssFontFamily.default,
           fontSize: tokens.typography.bodySize,
           color: "var(--hiro-color-ink-muted)",
         }}
@@ -119,7 +119,7 @@ export function ForgotPasswordForm() {
         <Link
           href="/auth/sign-in"
           style={{
-            fontFamily: tokens.typography.fontFamily,
+            fontFamily: cssFontFamily.default,
             fontSize: tokens.typography.bodySmallSize,
             color: "var(--hiro-color-accent)",
             display: "inline-flex",

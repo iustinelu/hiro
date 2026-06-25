@@ -19,7 +19,7 @@ export function WebStatusBadge({ label, tone = "neutral" }: StatusBadgeProps) {
         padding: `${tokens.spacing.xs}px ${tokens.spacing.sm}px`,
         borderRadius: cssRadius.sm,
         border: `1px solid ${tone === "neutral" ? cssColor("borderStrong") : `color-mix(in srgb, ${toneColor} 40%, transparent)`}`,
-        backgroundColor: tone === "neutral" ? "rgba(255,255,255,0.05)" : `color-mix(in srgb, ${toneColor} 13%, transparent)`,
+        backgroundColor: tone === "neutral" ? cssColor("surfaceMuted") : `color-mix(in srgb, ${toneColor} 13%, transparent)`,
         color: tone === "neutral" ? cssColor("ink") : toneColor,
         fontFamily: cssFontFamily.mono,
         fontSize: tokens.typography.labelSize,

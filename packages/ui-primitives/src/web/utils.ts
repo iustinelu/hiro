@@ -42,8 +42,7 @@ const colorKeyToCssVar: Record<keyof typeof tokens.color, string> = {
   disabledBg: "var(--hiro-color-disabled-bg)",
   disabledBorder: "var(--hiro-color-disabled-border)",
   disabledInk: "var(--hiro-color-disabled-ink)",
-  // overlay has no CSS var in cssVariablesFor — resolved statically via resolveColor
-  overlay: tokens.color.overlay
+  overlay: "var(--hiro-color-overlay)"
 };
 
 /**

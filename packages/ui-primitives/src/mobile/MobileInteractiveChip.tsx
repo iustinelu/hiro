@@ -24,7 +24,7 @@ export function MobileInteractiveChip({
         borderRadius: t.radius.pill,
         borderWidth: 2,
         borderColor: active ? resolveColor(t, "accent") : resolveColor(t, "borderStrong"),
-        backgroundColor: active ? "rgba(255,109,36,0.12)" : "rgba(20, 24, 40, 0.92)",
+        backgroundColor: active ? resolveColor(t, "accentSoft") : resolveColor(t, "surfaceStrong"),
         paddingVertical: t.spacing.sm,
         paddingHorizontal: t.spacing.md
       }}

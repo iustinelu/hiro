@@ -1,57 +1,30 @@
-# Next Chat Handoff (HIR-31 continuation)
+# Session handoff — 2026-06-25 (v0.1 ship push)
 
-Date: 2026-03-01
-Branch: current working branch (user requested to continue from here)
+## Branch
+`hir-design/themes` (off `hir-64/google-oauth`, which is off `main`). NOT merged to main yet. Nothing pushed.
 
-## What was completed
+## What shipped this session (all committed on hir-design/themes)
+1. **4-theme design system** — Aurora (default dark), Daylight (light), Super Chore (retro), Neon Grid (cyberpunk). Per-person, persisted (cookie on web, SecureStore on mobile; **DB sync via `profiles.theme` still TODO**). Switcher in More → Appearance on both platforms. Token contract in `@hiro/ui-tokens` (`themes`, `resolveTheme`, `cssVariablesFor`, `tokens`=aurora back-compat), split into types/structural/themes/css modules.
+2. **Mobile is now feature-complete** — Home+Tasks, Progress, Budget, Rewards all built natively (ported from web), theme-aware, wired in `AppTabs`. Placeholders deleted.
+3. **Web PWA** — installable (manifest + service worker, prod-only; SVG icon — needs a raster PNG for iOS in polish).
+4. **Dogfood fixes**: web primitives theme-reactive; **tab-switch lag fixed (HIR-65)** via `HouseholdProvider` (profile/household fetched once in persistent layout) + `loading.tsx`; **display-name gate** for social-login users (web + mobile).
+5. **Theming durability (the "fix it forever")** — IN PROGRESS at handoff: web + mobile sweeps committed; `scripts/lint.mjs` hardened to forbid color literals (hex/rgb/rgba/hsl) AND static themed-token access (`tokens.color/elevation/radius/typography.fontFamily`) in app/primitive code, with a small allowlist. A final fixer agent is making the remaining offenders green (auth forms, residual primitive rgba bgs, Google-brand-blue→`brand` token, black scrim→overlay token). **Verify `npm run check` is green and commit it as the last step if not already done.**
 
-- Implemented broad n8n-inspired dark redesign across shared DS foundations:
-  - `packages/ui-tokens/src/index.ts`
-  - `packages/ui-primitives/src/web/*`
-  - `packages/ui-primitives/src/mobile/*`
-  - `apps/web/src/app/design-system/page.tsx`
-  - `apps/mobile/src/screens/DesignSystemGallery.tsx`
-- Added check UX improvements:
-  - `scripts/check.mjs` (emoji/color quick summary)
-  - `scripts/check-mobile-runtime.mjs`
-  - `package.json` updated to run new orchestrated check
-- Added governance/template updates for explicit Founder QA quick-cycle requirements.
-- Upgraded mobile project config to Expo SDK 54 (`apps/mobile/package.json`).
-- Fixed web chart overflow in gallery (bars constrained to grid columns).
-- Added mobile modal guard (`MobileModalSheet` returns `null` when closed).
+## THE THEMING RULE (enforced by `scripts/lint.mjs`, runs in `npm run check`)
+- **Themed values** (color, elevation, radius, typography.fontFamily) MUST be reactive: web → `cssColor/cssShadow/cssRadius/cssFontFamily` (from `@hiro/ui-primitives/web`, emit `var(--hiro-*)`); mobile → `const t = useTheme()` (from `@hiro/ui-primitives/mobile`).
+- **Structural** (spacing, size, motion, typography sizes) → static `tokens.*` is fine.
+- New design token → add to the `Theme`/`ColorScale` interface; TypeScript forces all 4 themes to define it (compiler-enforced coverage — no manual element list needed).
+- The lint output is the live "coverage report". Tiny allowlist for theming infra, pre-theme/crash surfaces, and DS gallery showcases.
 
-## Current status
+## What's next (priority order)
+1. **Confirm/commit** the theming-durability fixer result → `npm run check` green.
+2. **Founder QA** the themes on web + a mobile dev build (`npm run dev:web`, `npm run dev:mobile`) — switch all 4 themes, confirm every surface re-skins.
+3. **Phase 1**: merge `hir-64` → main; deploy web to Vercel (needs founder Vercel account) → share PWA link.
+4. **Polish**: branded app icon/splash + iOS raster PWA icon, real tab icons (HIR-61/62), `profiles.theme` DB sync, font bundling (retro pixel / neon geometric faces).
+5. **Phase 4 distribution** (EAS → TestFlight + Play internal) — BLOCKED on founder accounts: Apple Developer (~24-48h long pole), Google Play, Expo. Founder is creating these via a separate account-setup guide.
 
-- `npm run check` passes in repo.
-- Web design system gallery renders and reflects n8n-style direction.
-- Mobile still reports red-screen runtime error in user QA session.
-
-## Known blocker
-
-- `expo-doctor` still reports duplicate dependencies:
-  - `react` 19.1.0 (mobile local) vs 18.3.1 (root)
-  - `react-dom` 19.1.0 (mobile local) vs 18.3.1 (root)
-  - `react-native` 0.81.5 (mobile local) vs 0.76.9 (root)
-- Attempts to clean/dedupe were interrupted by network failures (`ENOTFOUND registry.npmjs.org`) during npm operations.
-
-## First steps for next chat
-
-1. Reproduce mobile red-screen with full stack trace and component path.
-2. Resolve workspace dependency duplication cleanly (requires stable npm network):
-   - run install/dedupe cleanup from repo root
-   - re-run `cd apps/mobile && npx expo-doctor`
-3. Re-test mobile runtime after dependency cleanup.
-4. If mobile boot is stable, do final DS polish pass (extra premium components/patterns requested by user).
-
-## QA commands reference
-
-- `npm run check`
-- `npm run dev:web`
-- `npm run dev:mobile`
-- `cd apps/mobile && npx expo-doctor`
-
-## User direction captured
-
-- Keep the strong n8n-style visual direction.
-- Prioritize fixing mobile red-screen first before further polish.
-- Continue from this branch state in next session.
+## Notes
+- Supabase project `pfokfopwjrahclmseper` (consider Pro to avoid free-tier auto-pause for the live test).
+- Worktree gotcha: agent worktrees branch from `main` (not the current branch) — for theme-dependent work, integrate by copying files into the main tree, not git-merging stale worktree branches.
+- SDD ledger: `.superpowers/sdd/progress.md` (gitignored).
+- Plan: `~/.claude/plans/yo-claude-hope-precious-gray.md`.

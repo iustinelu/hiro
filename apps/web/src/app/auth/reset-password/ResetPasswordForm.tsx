@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { WebInput, WebButton } from "@hiro/ui-primitives/web";
+import { WebInput, WebButton, cssFontFamily } from "@hiro/ui-primitives/web";
 import { updatePassword } from "../../../lib/authService";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/client";
 import { tokens } from "@hiro/ui-tokens";
@@ -53,7 +53,7 @@ export function ResetPasswordForm() {
     return (
       <p
         style={{
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: cssFontFamily.default,
           fontSize: tokens.typography.bodySize,
           color: "var(--hiro-color-ink-muted)",
         }}
@@ -68,7 +68,7 @@ export function ResetPasswordForm() {
       <h1
         style={{
           margin: 0,
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: cssFontFamily.default,
           fontSize: tokens.typography.titleSize,
           fontWeight: 700,
           color: "var(--hiro-color-ink)",

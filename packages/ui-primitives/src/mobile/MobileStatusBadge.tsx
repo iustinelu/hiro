@@ -24,7 +24,7 @@ export function MobileStatusBadge({ label, tone = "neutral" }: StatusBadgeProps)
         borderRadius: t.radius.sm,
         borderWidth: t.flags.borderWidth,
         borderColor: tone === "neutral" ? resolveColor(t, "borderStrong") : `${toneColor}66`,
-        backgroundColor: tone === "neutral" ? "rgba(255,255,255,0.05)" : `${toneColor}22`,
+        backgroundColor: tone === "neutral" ? resolveColor(t, "surfaceMuted") : `${toneColor}22`,
         maxWidth: "100%"
       }}
     >

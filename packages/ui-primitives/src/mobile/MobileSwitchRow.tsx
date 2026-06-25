@@ -17,7 +17,7 @@ export function MobileSwitchRow({ label, value, onToggle }: SwitchRowProps) {
         borderRadius: t.radius.md,
         borderWidth: t.flags.borderWidth,
         borderColor: resolveColor(t, "border"),
-        backgroundColor: "rgba(15, 18, 30, 0.72)"
+        backgroundColor: resolveColor(t, "surface")
       }}
     >
       <Text

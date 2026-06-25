@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { WebInput, WebButton, WebInteractiveChip } from "@hiro/ui-primitives/web";
+import { WebInput, WebButton, WebInteractiveChip, cssFontFamily } from "@hiro/ui-primitives/web";
 import { createHousehold } from "../../lib/householdService";
 import { updateDisplayName } from "../../lib/profileService";
 import { getSupabaseBrowserClient } from "../../lib/supabase/client";
@@ -85,7 +85,7 @@ function NameStep({ onDone }: { onDone: () => void }) {
       <h1
         style={{
           margin: 0,
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: cssFontFamily.default,
           fontSize: tokens.typography.titleSize,
           fontWeight: 700,
           color: "var(--hiro-color-ink)",
@@ -97,7 +97,7 @@ function NameStep({ onDone }: { onDone: () => void }) {
       <p
         style={{
           margin: 0,
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: cssFontFamily.default,
           fontSize: tokens.typography.bodySmallSize,
           color: "var(--hiro-color-ink-muted)",
         }}
@@ -148,7 +148,7 @@ export function CreateHouseholdForm({ onCreated }: { onCreated: () => void }) {
       <h1
         style={{
           margin: 0,
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: cssFontFamily.default,
           fontSize: tokens.typography.titleSize,
           fontWeight: 700,
           color: "var(--hiro-color-ink)",
@@ -160,7 +160,7 @@ export function CreateHouseholdForm({ onCreated }: { onCreated: () => void }) {
       <p
         style={{
           margin: 0,
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: cssFontFamily.default,
           fontSize: tokens.typography.bodySmallSize,
           color: "var(--hiro-color-ink-muted)",
         }}
@@ -181,7 +181,7 @@ export function CreateHouseholdForm({ onCreated }: { onCreated: () => void }) {
         <p
           style={{
             margin: `0 0 ${tokens.spacing.sm}px`,
-            fontFamily: tokens.typography.fontFamily,
+            fontFamily: cssFontFamily.default,
             fontSize: tokens.typography.labelSize,
             fontWeight: 700,
             color: "var(--hiro-color-ink-muted)",

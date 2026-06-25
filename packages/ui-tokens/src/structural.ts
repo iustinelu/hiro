@@ -1,3 +1,12 @@
+// ─── Brand colors (intentional third-party branding, exempt from theming lint) ─
+
+export const brand = {
+  googleBlue: "#4285F4",
+  googleGreen: "#34A853",
+  googleYellow: "#FBBC05",
+  googleRed: "#EA4335"
+} as const;
+
 // ─── Structural (theme-invariant) tokens ─────────────────────────────────────
 
 export const structural = {

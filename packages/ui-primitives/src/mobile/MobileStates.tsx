@@ -36,7 +36,7 @@ function MobileFeedbackState({
         borderRadius: t.radius.lg,
         borderWidth: t.flags.borderWidth,
         borderColor: resolveColor(t, "border"),
-        backgroundColor: "rgba(15, 18, 30, 0.62)",
+        backgroundColor: resolveColor(t, "surfaceMuted"),
         padding: t.spacing.lg,
         gap: t.spacing.sm
       }}

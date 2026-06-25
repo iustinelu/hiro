@@ -36,7 +36,7 @@ export function MonthSummary({ breakdown, currency }: Props) {
           borderRadius: t.radius.lg,
           borderWidth: 1,
           borderColor: t.color.border,
-          backgroundColor: "rgba(255,255,255,0.03)",
+          backgroundColor: t.color.surfaceMuted,
           padding: t.spacing.md,
           gap: t.spacing.sm,
         }}
