@@ -7,7 +7,8 @@ import { signOut } from "../lib/authService";
 import { supabase } from "../lib/supabase";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
 import { createInvite, getHouseholdInvites } from "../lib/inviteService";
-import { getDisplayName, updateDisplayName } from "../lib/profileService";
+import { getDisplayName, updateDisplayName, updateTheme } from "../lib/profileService";
+import type { ThemeId } from "@hiro/ui-tokens";
 import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
 
 // Web origin for invite links — update when deployed
@@ -103,6 +104,13 @@ export function MoreScreen() {
     }
   }
 
+  function handleSelectTheme(id: ThemeId) {
+    // Instant local apply (state + SecureStore) for zero-lag feedback, then
+    // fire-and-forget the DB write so the choice follows the user across devices.
+    setThemeId(id);
+    if (profileId) void updateTheme(profileId, id);
+  }
+
   async function handleSignOut() {
     await signOut();
     // Session change triggers RootNavigator to switch to AuthScreen
@@ -172,7 +180,7 @@ export function MoreScreen() {
               key={id}
               title={THEME_LABELS[id]}
               meta={id === themeId ? "Selected" : undefined}
-              onPress={() => setThemeId(id)}
+              onPress={() => handleSelectTheme(id)}
             />
           ))}
         </View>

@@ -16,6 +16,11 @@ export interface Profile {
   id: Uuid;
   userId: Uuid;
   displayName: string | null;
+  // Persisted theme id (cross-device sync); null = no DB preference, use client default.
+  // Typed `string` (not the UI ThemeId union) because the domain layer must stay free of UI
+  // package imports (enforced by scripts/check-boundaries.mjs); the UI layer validates the
+  // value against its theme id list before applying.
+  theme: string | null;
   createdAt: string;
   updatedAt: string;
 }

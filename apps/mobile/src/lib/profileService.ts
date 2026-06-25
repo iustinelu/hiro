@@ -23,3 +23,27 @@ export async function updateDisplayName(
   if (error) return { error: error.message };
   return { error: null };
 }
+
+export async function getTheme(
+  profileId: string
+): Promise<{ theme: string | null; error: string | null }> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("theme")
+    .eq("id", profileId)
+    .single();
+  if (error) return { theme: null, error: error.message };
+  return { theme: data.theme as string | null, error: null };
+}
+
+export async function updateTheme(
+  profileId: string,
+  theme: string
+): Promise<{ error: string | null }> {
+  const { error } = await supabase
+    .from("profiles")
+    .update({ theme })
+    .eq("id", profileId);
+  if (error) return { error: error.message };
+  return { error: null };
+}

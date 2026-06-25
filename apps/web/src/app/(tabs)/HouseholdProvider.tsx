@@ -2,7 +2,10 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ALL_THEME_IDS } from "@hiro/ui-tokens";
+import type { ThemeId } from "@hiro/ui-tokens";
 import { getSupabaseBrowserClient } from "../../lib/supabase/client";
+import { applyThemeLocal } from "../../theme/applyTheme";
 import type { ReactNode } from "react";
 
 type HouseholdContextValue = {
@@ -51,12 +54,25 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
           .maybeSingle(),
         supabase
           .from("profiles")
-          .select("display_name")
+          .select("display_name, theme")
           .eq("id", resolvedProfileId)
           .single(),
       ]);
 
       const resolvedDisplayName = (profile?.display_name as string | null) ?? null;
+
+      // Reconcile the DB theme over the client fast-path: cookie/localStorage paint
+      // instantly on first load, then the user's persisted choice (if any) wins so the
+      // theme follows them across devices/storage-wipes. A null DB value means "no
+      // preference yet" — we leave the client value alone to avoid a flash-to-default.
+      const dbTheme = (profile?.theme as string | null) ?? null;
+      if (
+        dbTheme &&
+        (ALL_THEME_IDS as string[]).includes(dbTheme) &&
+        document.documentElement.dataset.theme !== dbTheme
+      ) {
+        applyThemeLocal(dbTheme as ThemeId);
+      }
 
       // Onboarding resolves BOTH requirements: a display name AND a household.
       // Either gap (missing name from a Google sign-up, or no household yet)

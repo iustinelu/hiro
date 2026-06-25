@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { useTheme } from "@hiro/ui-primitives/mobile";
+import { ALL_THEME_IDS, type ThemeId } from "@hiro/ui-tokens";
 import { supabase } from "../lib/supabase";
+import { useThemeControl } from "../theme/ThemeProvider";
+import { getTheme } from "../lib/profileService";
 import { AuthScreen } from "../screens/auth/AuthScreen";
 import { AppShellScreen } from "../screens/AppShell";
 import { HouseholdOnboardingScreen } from "../screens/HouseholdOnboardingScreen";
@@ -38,15 +41,30 @@ async function checkOnboarded(): Promise<boolean> {
 
 export function RootNavigator() {
   const t = useTheme();
+  const { setThemeId } = useThemeControl();
   const [authState, setAuthState] = useState<AuthState>("loading");
 
   useEffect(() => {
+    // Theme precedence: SecureStore paints instantly (ThemeProvider) → the DB value
+    // reconciles on login here → a user switch (MoreScreen) writes both. Reconcile is
+    // read-only over the DB: a valid persisted theme wins so it follows the user across
+    // devices; null/invalid leaves the SecureStore value alone (no flash-to-default).
+    async function reconcileTheme() {
+      const { data: profileId } = await supabase.rpc("current_profile_id");
+      if (!profileId) return;
+      const { theme } = await getTheme(profileId as string);
+      if (theme && (ALL_THEME_IDS as string[]).includes(theme)) {
+        setThemeId(theme as ThemeId);
+      }
+    }
+
     // Get initial session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) {
         setAuthState("unauthed");
         return;
       }
+      void reconcileTheme();
       const onboarded = await checkOnboarded();
       setAuthState(onboarded ? "authed" : "needs-onboarding");
     });
@@ -57,6 +75,7 @@ export function RootNavigator() {
         setAuthState("unauthed");
         return;
       }
+      void reconcileTheme();
       setAuthState("loading");
       checkOnboarded().then((onboarded) => {
         setAuthState(onboarded ? "authed" : "needs-onboarding");
@@ -64,7 +83,7 @@ export function RootNavigator() {
     });
 
     return () => listener.subscription.unsubscribe();
-  }, []);
+  }, [setThemeId]);
 
   if (authState === "loading") {
     return (
