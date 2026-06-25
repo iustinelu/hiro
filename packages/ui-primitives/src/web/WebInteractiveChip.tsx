@@ -1,7 +1,7 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { InteractiveChipProps } from "../shared/types";
 import { WebIcon } from "./WebIcon";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius } from "./utils";
 
 export function WebInteractiveChip({
   label,
@@ -19,19 +19,19 @@ export function WebInteractiveChip({
         display: "inline-flex",
         alignItems: "center",
         gap: tokens.spacing.xs,
-        borderRadius: tokens.radius.pill,
-        border: `2px solid ${active ? resolveColor("accent") : resolveColor("borderStrong")}`,
-        backgroundColor: active ? "rgba(255,109,36,0.12)" : "rgba(20, 24, 40, 0.92)",
-        boxShadow: active ? `0 0 14px ${resolveColor("accentSoft")}` : "none",
-        color: active ? resolveColor("accent") : resolveColor("ink"),
+        borderRadius: cssRadius.pill,
+        border: `2px solid ${active ? cssColor("accent") : cssColor("borderStrong")}`,
+        backgroundColor: active ? cssColor(tokens.component.chip.activeBg) : cssColor(tokens.component.chip.inactiveBg),
+        boxShadow: active ? `0 0 14px ${cssColor("accentSoft")}` : "none",
+        color: active ? cssColor("accent") : cssColor("ink"),
         padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
         cursor: "pointer",
-        fontFamily: tokens.typography.fontFamily,
+        fontFamily: cssFontFamily.default,
         fontSize: tokens.typography.bodySmallSize,
         fontWeight: 600
       }}
     >
-      {leadingIcon ? <WebIcon name={leadingIcon} size={14} color={active ? resolveColor("accent") : resolveColor("ink")} /> : null}
+      {leadingIcon ? <WebIcon name={leadingIcon} size={14} color={active ? cssColor("accent") : cssColor("ink")} /> : null}
       <span>{label}</span>
       {removable ? (
         <span
@@ -42,7 +42,7 @@ export function WebInteractiveChip({
           }}
           style={{ opacity: 0.72, display: "grid" }}
         >
-          <WebIcon name="close" size={12} color={resolveColor("inkSoft")} />
+          <WebIcon name="close" size={12} color={cssColor("inkSoft")} />
         </span>
       ) : null}
     </button>

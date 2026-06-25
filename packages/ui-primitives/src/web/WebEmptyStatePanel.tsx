@@ -1,7 +1,7 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { EmptyStatePanelProps } from "../shared/types";
 import { WebIcon } from "./WebIcon";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius } from "./utils";
 
 export function WebEmptyStatePanel({
   title,
@@ -14,26 +14,26 @@ export function WebEmptyStatePanel({
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span
           style={{
-            color: resolveColor("ink"),
+            color: cssColor("ink"),
             fontWeight: 800,
             fontSize: tokens.typography.titleSize,
-            fontFamily: tokens.typography.fontFamily
+            fontFamily: cssFontFamily.default
           }}
         >
           EMPTY STATE
         </span>
-        <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, letterSpacing: 2 }}>{subtitle}</span>
+        <span style={{ color: cssColor("inkSoft"), fontFamily: cssFontFamily.mono, letterSpacing: 2 }}>{subtitle}</span>
       </header>
       <div
         style={{
-          borderRadius: tokens.radius.xl,
-          border: `1px dashed ${resolveColor("borderStrong")}`,
+          borderRadius: cssRadius.xl,
+          border: `1px dashed ${cssColor("borderStrong")}`,
           minHeight: 260,
           display: "grid",
           placeItems: "center",
           textAlign: "center",
           padding: tokens.spacing.xl,
-          backgroundColor: "rgba(10, 14, 28, 0.66)"
+          backgroundColor: cssColor("feedbackEmptyBg")
         }}
       >
         <div style={{ display: "grid", gap: tokens.spacing.md, justifyItems: "center" }}>
@@ -41,21 +41,21 @@ export function WebEmptyStatePanel({
             style={{
               width: 76,
               height: 76,
-              borderRadius: tokens.radius.pill,
-              border: `1px solid ${resolveColor("accentStrong")}`,
-              color: resolveColor("inkSoft"),
+              borderRadius: cssRadius.pill,
+              border: `1px solid ${cssColor("accentStrong")}`,
+              color: cssColor("inkSoft"),
               display: "grid",
               placeItems: "center",
               fontSize: tokens.typography.titleSize
             }}
           >
-            <WebIcon name={icon} size={28} color={resolveColor("inkSoft")} />
+            <WebIcon name={icon} size={28} color={cssColor("inkSoft")} />
           </span>
           <strong
             style={{
-              color: resolveColor("inkMuted"),
+              color: cssColor("inkMuted"),
               fontSize: tokens.typography.headlineSize,
-              fontFamily: tokens.typography.fontFamily,
+              fontFamily: cssFontFamily.default,
               fontWeight: 700
             }}
           >
@@ -63,8 +63,8 @@ export function WebEmptyStatePanel({
           </strong>
           <span
             style={{
-              color: resolveColor("inkSoft"),
-              fontFamily: tokens.typography.fontFamilyMono,
+              color: cssColor("inkSoft"),
+              fontFamily: cssFontFamily.mono,
               fontSize: tokens.typography.bodySize,
               letterSpacing: 2,
               textTransform: "uppercase"

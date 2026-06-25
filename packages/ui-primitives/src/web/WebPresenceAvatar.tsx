@@ -1,6 +1,6 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { PresenceAvatarProps } from "../shared/types";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius } from "./utils";
 
 const statusColorByState = {
   online: "success",
@@ -29,14 +29,14 @@ export function WebPresenceAvatar({ name, status = "online", highlighted, size =
         style={{
           width: avatarSize,
           height: avatarSize,
-          borderRadius: tokens.radius.pill,
-          border: `2px solid ${highlighted ? resolveColor("accent") : resolveColor("borderStrong")}`,
-          backgroundColor: resolveColor("surfaceMuted"),
+          borderRadius: cssRadius.pill,
+          border: `2px solid ${highlighted ? cssColor("accent") : cssColor("borderStrong")}`,
+          backgroundColor: cssColor("surfaceMuted"),
           display: "grid",
           placeItems: "center",
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: cssFontFamily.default,
           fontWeight: 700,
-          color: resolveColor("ink")
+          color: cssColor("ink")
         }}
       >
         {initials}
@@ -48,9 +48,9 @@ export function WebPresenceAvatar({ name, status = "online", highlighted, size =
           bottom: 0,
           width: Math.max(10, Math.round(avatarSize * 0.28)),
           height: Math.max(10, Math.round(avatarSize * 0.28)),
-          borderRadius: tokens.radius.pill,
-          border: `2px solid ${resolveColor("bg")}`,
-          backgroundColor: resolveColor(statusColorByState[status])
+          borderRadius: cssRadius.pill,
+          border: `2px solid ${cssColor("bg")}`,
+          backgroundColor: cssColor(statusColorByState[status])
         }}
       />
     </div>

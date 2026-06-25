@@ -1,6 +1,6 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { DayChipProps } from "../shared/types";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily } from "./utils";
 
 export function WebDayChip({ label, active, onPress }: DayChipProps) {
   return (
@@ -14,12 +14,12 @@ export function WebDayChip({ label, active, onPress }: DayChipProps) {
         borderRadius: "50%",
         display: "grid",
         placeItems: "center",
-        border: `2px solid ${active ? resolveColor("accent") : resolveColor("borderStrong")}`,
-        backgroundColor: active ? resolveColor("accentSoft") : "transparent",
-        color: active ? resolveColor("accent") : resolveColor("inkMuted"),
-        boxShadow: active ? `0 0 12px ${resolveColor("accentSoft")}` : "none",
+        border: `2px solid ${active ? cssColor("accent") : cssColor("borderStrong")}`,
+        backgroundColor: active ? cssColor("accentSoft") : "transparent",
+        color: active ? cssColor("accent") : cssColor("inkMuted"),
+        boxShadow: active ? `0 0 12px ${cssColor("accentSoft")}` : "none",
         cursor: "pointer",
-        fontFamily: tokens.typography.fontFamily,
+        fontFamily: cssFontFamily.default,
         fontSize: tokens.typography.bodySmallSize,
         fontWeight: 700,
         transition: `all ${tokens.motion.duration.fast}ms ${tokens.motion.easing.standard}`,

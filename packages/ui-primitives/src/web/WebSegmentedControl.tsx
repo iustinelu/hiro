@@ -1,6 +1,6 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { SegmentedControlProps } from "../shared/types";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius } from "./utils";
 
 export function WebSegmentedControl({ options, value, onChange }: SegmentedControlProps) {
   return (
@@ -10,9 +10,9 @@ export function WebSegmentedControl({ options, value, onChange }: SegmentedContr
         display: "flex",
         gap: tokens.spacing.xs,
         padding: tokens.spacing.xs,
-        borderRadius: tokens.radius.md,
-        border: `1px solid ${resolveColor("border")}`,
-        backgroundColor: "rgba(17, 20, 33, 0.9)"
+        borderRadius: cssRadius.md,
+        border: `1px solid ${cssColor("border")}`,
+        backgroundColor: cssColor("surfaceMuted")
       }}
     >
       {options.map((option) => {
@@ -28,13 +28,13 @@ export function WebSegmentedControl({ options, value, onChange }: SegmentedContr
               flex: 1,
               minWidth: 0,
               border: "none",
-              borderRadius: tokens.radius.sm,
+              borderRadius: cssRadius.sm,
               padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
-              backgroundColor: active ? resolveColor("accent") : "transparent",
-              color: active ? resolveColor("ink") : resolveColor("inkMuted"),
-              boxShadow: active ? `0 0 16px ${resolveColor("accentSoft")}` : "none",
+              backgroundColor: active ? cssColor("accent") : "transparent",
+              color: active ? cssColor("accentInk") : cssColor("inkMuted"),
+              boxShadow: active ? `0 0 16px ${cssColor("accentSoft")}` : "none",
               cursor: "pointer",
-              fontFamily: tokens.typography.fontFamily,
+              fontFamily: cssFontFamily.default,
               fontSize: tokens.typography.bodySmallSize,
               lineHeight: `${tokens.typography.lineHeightLabel}px`,
               fontWeight: 700,

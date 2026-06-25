@@ -1,6 +1,6 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { StatusBadgeProps } from "../shared/types";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius } from "./utils";
 
 const colorMap = {
   success: "success",
@@ -10,18 +10,18 @@ const colorMap = {
 } as const;
 
 export function WebStatusBadge({ label, tone = "neutral" }: StatusBadgeProps) {
-  const toneColor = resolveColor(colorMap[tone]);
+  const toneColor = cssColor(colorMap[tone]);
   return (
     <span
       style={{
         display: "inline-flex",
         alignItems: "center",
         padding: `${tokens.spacing.xs}px ${tokens.spacing.sm}px`,
-        borderRadius: tokens.radius.sm,
-        border: `1px solid ${tone === "neutral" ? resolveColor("borderStrong") : `${toneColor}66`}`,
-        backgroundColor: tone === "neutral" ? "rgba(255,255,255,0.05)" : `${toneColor}22`,
-        color: tone === "neutral" ? resolveColor("ink") : toneColor,
-        fontFamily: tokens.typography.fontFamilyMono,
+        borderRadius: cssRadius.sm,
+        border: `1px solid ${tone === "neutral" ? cssColor("borderStrong") : `color-mix(in srgb, ${toneColor} 40%, transparent)`}`,
+        backgroundColor: tone === "neutral" ? "rgba(255,255,255,0.05)" : `color-mix(in srgb, ${toneColor} 13%, transparent)`,
+        color: tone === "neutral" ? cssColor("ink") : toneColor,
+        fontFamily: cssFontFamily.mono,
         fontSize: tokens.typography.labelSize,
         lineHeight: `${tokens.typography.lineHeightLabel}px`,
         fontWeight: 700,
