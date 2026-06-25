@@ -14,7 +14,7 @@
   gap: 12px;
   padding: 16px;
   border-bottom: 1px solid var(--hiro-color-border);
-  background: rgba(17, 16, 34, 0.92);
+  background: var(--hiro-color-bg-elevated);
   backdrop-filter: blur(8px);
 }
 
@@ -30,8 +30,8 @@
 .contentCard {
   border: 1px solid var(--hiro-color-border);
   border-radius: 24px;
-  background: rgba(22, 20, 37, 0.86);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.36);
+  background: var(--hiro-color-surface);
+  box-shadow: var(--hiro-shadow-mid);
   padding: 24px;
 }
 
@@ -58,7 +58,7 @@
   gap: 4px;
   padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--hiro-color-border);
-  background: rgba(17, 16, 34, 0.96);
+  background: var(--hiro-color-bg-elevated);
   backdrop-filter: blur(12px);
 }
 
@@ -93,7 +93,7 @@
     gap: 20px;
     border-right: 1px solid var(--hiro-color-border);
     padding: 24px 16px;
-    background: rgba(17, 16, 34, 0.78);
+    background: var(--hiro-color-bg-elevated);
   }
 
   .brand {

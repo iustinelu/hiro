@@ -1,1 +1,2 @@
-export * from "./theme/theme";
+// Web app barrel — nothing to export currently.
+export {};

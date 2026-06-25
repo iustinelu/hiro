@@ -14,6 +14,7 @@ import { createInvite, getHouseholdInvites } from "../../../lib/inviteService";
 import { getDisplayName, updateDisplayName } from "../../../lib/profileService";
 import { tokens } from "@hiro/ui-tokens";
 import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 export default function MorePage() {
   const router = useRouter();
@@ -227,6 +228,10 @@ export default function MorePage() {
           </div>
         </WebCard>
       )}
+
+      <WebCard title="Appearance">
+        <ThemeSwitcher />
+      </WebCard>
 
       <WebCard title="Account" description={email ?? "Loading…"}>
         <div style={{ display: "grid", gap: tokens.spacing.md }}>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
-import { tokens } from "@hiro/ui-tokens";
 import type { KpiTileProps } from "../shared/types";
+import { useTheme } from "./theme-context";
 import { resolveColor } from "./utils";
 
 const toneColorByBadge = {
@@ -19,27 +19,28 @@ export function MobileKpiTile({
   bars = [0.35, 0.58, 0.42, 0.74, 0.92],
   accent = "primary"
 }: KpiTileProps) {
-  const accentColor = accent === "primary" ? resolveColor("accent") : resolveColor("accentAlt");
-  const deltaColor = resolveColor(toneColorByBadge[deltaTone]);
+  const t = useTheme();
+  const accentColor = accent === "primary" ? resolveColor(t, "accent") : resolveColor(t, "accentAlt");
+  const deltaColor = resolveColor(t, toneColorByBadge[deltaTone]);
 
   return (
     <View
       style={{
-        gap: tokens.spacing.sm,
-        padding: tokens.spacing.md,
-        borderRadius: tokens.radius.lg,
+        gap: t.spacing.sm,
+        padding: t.spacing.md,
+        borderRadius: t.radius.lg,
         borderWidth: 1,
-        borderColor: resolveColor("border"),
+        borderColor: resolveColor(t, "border"),
         backgroundColor: "rgba(255,255,255,0.03)"
       }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: tokens.spacing.sm }}>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: t.spacing.sm }}>
         <Text
           style={{
-            color: resolveColor("inkMuted"),
-            fontFamily: tokens.typography.fontFamily,
-            fontSize: tokens.typography.labelSize,
-            lineHeight: tokens.typography.lineHeightLabel,
+            color: resolveColor(t, "inkMuted"),
+            fontFamily: t.typography.fontFamily,
+            fontSize: t.typography.labelSize,
+            lineHeight: t.typography.lineHeightLabel,
             textTransform: "uppercase",
             letterSpacing: 0.6,
             fontWeight: "700",
@@ -51,10 +52,10 @@ export function MobileKpiTile({
         {deltaLabel ? (
           <Text
             style={{
-              color: deltaTone === "neutral" ? resolveColor("inkSoft") : deltaColor,
-              fontFamily: tokens.typography.fontFamily,
-              fontSize: tokens.typography.labelSize,
-              lineHeight: tokens.typography.lineHeightLabel,
+              color: deltaTone === "neutral" ? resolveColor(t, "inkSoft") : deltaColor,
+              fontFamily: t.typography.fontFamily,
+              fontSize: t.typography.labelSize,
+              lineHeight: t.typography.lineHeightLabel,
               fontWeight: "700"
             }}
           >
@@ -64,10 +65,10 @@ export function MobileKpiTile({
       </View>
       <Text
         style={{
-          color: resolveColor("ink"),
-          fontFamily: tokens.typography.fontFamily,
-          fontSize: tokens.typography.titleSize,
-          lineHeight: tokens.typography.lineHeightHeadline,
+          color: resolveColor(t, "ink"),
+          fontFamily: t.typography.fontFamily,
+          fontSize: t.typography.titleSize,
+          lineHeight: t.typography.lineHeightHeadline,
           fontWeight: "800"
         }}
       >
@@ -80,7 +81,7 @@ export function MobileKpiTile({
             style={{
               flex: 1,
               height: `${Math.max(20, Math.round(bar * 100))}%`,
-              borderRadius: tokens.radius.sm,
+              borderRadius: t.radius.sm,
               backgroundColor: `${accentColor}${index === bars.length - 1 ? "" : "88"}`
             }}
           />

@@ -1,8 +1,8 @@
 import React from "react";
 import { Pressable, Text } from "react-native";
-import { tokens } from "@hiro/ui-tokens";
 import type { InteractiveChipProps } from "../shared/types";
 import { MobileIcon } from "./MobileIcon";
+import { useTheme } from "./theme-context";
 import { resolveColor } from "./utils";
 
 export function MobileInteractiveChip({
@@ -13,27 +13,28 @@ export function MobileInteractiveChip({
   onPress,
   onRemove
 }: InteractiveChipProps) {
+  const t = useTheme();
   return (
     <Pressable
       onPress={onPress}
       style={{
         flexDirection: "row",
         alignItems: "center",
-        gap: tokens.spacing.xs,
-        borderRadius: tokens.radius.pill,
+        gap: t.spacing.xs,
+        borderRadius: t.radius.pill,
         borderWidth: 2,
-        borderColor: active ? resolveColor("accent") : resolveColor("borderStrong"),
+        borderColor: active ? resolveColor(t, "accent") : resolveColor(t, "borderStrong"),
         backgroundColor: active ? "rgba(255,109,36,0.12)" : "rgba(20, 24, 40, 0.92)",
-        paddingVertical: tokens.spacing.sm,
-        paddingHorizontal: tokens.spacing.md
+        paddingVertical: t.spacing.sm,
+        paddingHorizontal: t.spacing.md
       }}
     >
-      {leadingIcon ? <MobileIcon name={leadingIcon} size={14} color={active ? resolveColor("accent") : resolveColor("ink")} /> : null}
+      {leadingIcon ? <MobileIcon name={leadingIcon} size={14} color={active ? resolveColor(t, "accent") : resolveColor(t, "ink")} /> : null}
       <Text
         style={{
-          color: active ? resolveColor("accent") : resolveColor("ink"),
-          fontFamily: tokens.typography.fontFamily,
-          fontSize: tokens.typography.bodySmallSize,
+          color: active ? resolveColor(t, "accent") : resolveColor(t, "ink"),
+          fontFamily: t.typography.fontFamily,
+          fontSize: t.typography.bodySmallSize,
           fontWeight: "600"
         }}
       >
@@ -41,7 +42,7 @@ export function MobileInteractiveChip({
       </Text>
       {removable ? (
         <Pressable onPress={onRemove}>
-          <MobileIcon name="close" size={12} color={resolveColor("inkSoft")} />
+          <MobileIcon name="close" size={12} color={resolveColor(t, "inkSoft")} />
         </Pressable>
       ) : null}
     </Pressable>

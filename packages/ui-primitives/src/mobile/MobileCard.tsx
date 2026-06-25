@@ -1,42 +1,45 @@
 import React from "react";
 import { Text, View } from "react-native";
-import { tokens } from "@hiro/ui-tokens";
 import type { CardProps } from "../shared/types";
+import { useTheme } from "./theme-context";
 import { resolveColor } from "./utils";
 
 export function MobileCard({ title, description, tone = "default", children }: CardProps) {
+  const t = useTheme();
   const backgroundColor =
     tone === "accent"
-      ? resolveColor(tokens.component.card.accentBg)
+      ? resolveColor(t, t.component.card.accentBg as keyof typeof t.color)
       : tone === "warning"
-        ? resolveColor(tokens.component.card.warningBg)
-        : resolveColor(tokens.component.card.bg);
+        ? resolveColor(t, t.component.card.warningBg as keyof typeof t.color)
+        : resolveColor(t, t.component.card.bg as keyof typeof t.color);
 
   return (
     <View
       style={{
-        gap: tokens.spacing.sm,
-        borderRadius: tokens.radius.xl,
-        borderWidth: 1,
-        borderColor: resolveColor(tokens.component.card.border),
+        gap: t.spacing.sm,
+        borderRadius: t.radius.xl,
+        borderWidth: t.flags.borderWidth,
+        borderColor: resolveColor(t, t.component.card.border as keyof typeof t.color),
         backgroundColor,
-        padding: tokens.spacing.xl
+        padding: t.spacing.xl
       }}
     >
-      <View
-        style={{
-          height: 3,
-          borderRadius: tokens.radius.pill,
-          backgroundColor: resolveColor("accent")
-        }}
-      />
+      {t.flags.cardAccentBar ? (
+        <View
+          style={{
+            height: 3,
+            borderRadius: t.radius.pill,
+            backgroundColor: resolveColor(t, "accent")
+          }}
+        />
+      ) : null}
       {title ? (
         <Text
           style={{
-            color: resolveColor(tokens.component.card.fg),
-            fontFamily: tokens.typography.fontFamily,
-            fontSize: tokens.typography.subtitleSize,
-            lineHeight: tokens.typography.lineHeightHeadline,
+            color: resolveColor(t, t.component.card.fg as keyof typeof t.color),
+            fontFamily: t.typography.fontFamily,
+            fontSize: t.typography.subtitleSize,
+            lineHeight: t.typography.lineHeightHeadline,
             flexShrink: 1,
             fontWeight: "800"
           }}
@@ -47,10 +50,10 @@ export function MobileCard({ title, description, tone = "default", children }: C
       {description ? (
         <Text
           style={{
-            color: resolveColor("inkMuted"),
-            fontFamily: tokens.typography.fontFamily,
-            fontSize: tokens.typography.bodySmallSize,
-            lineHeight: tokens.typography.lineHeightBody,
+            color: resolveColor(t, "inkMuted"),
+            fontFamily: t.typography.fontFamily,
+            fontSize: t.typography.bodySmallSize,
+            lineHeight: t.typography.lineHeightBody,
             flexShrink: 1
           }}
         >

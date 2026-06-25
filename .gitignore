@@ -13,3 +13,6 @@ apps/mobile/ios
 *.tsbuildinfo
 .worktrees
 .playwright-mcp
+
+# SDD scratch ledger
+.superpowers
