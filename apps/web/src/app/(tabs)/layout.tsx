@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { appShellSections } from "@hiro/domain";
 import { getSupabaseBrowserClient } from "../../lib/supabase/client";
 import { logActivity } from "../../lib/activityService";
+import { HouseholdProvider } from "./HouseholdProvider";
 import styles from "./tabs-layout.module.css";
 import type { ReactNode } from "react";
 
@@ -52,7 +53,9 @@ export default function TabsLayout({ children }: { children: ReactNode }) {
         <header className={styles.mobileHeader}>
           <h1 className={styles.title}>{activeSection.label}</h1>
         </header>
-        <main className={styles.main}>{children}</main>
+        <main className={styles.main}>
+          <HouseholdProvider>{children}</HouseholdProvider>
+        </main>
       </div>
 
       <nav className={styles.mobileTabs}>

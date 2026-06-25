@@ -1,22 +1,12 @@
-import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "../../../lib/supabase/server";
+"use client";
+
+import { useHousehold } from "../HouseholdProvider";
 import { RewardsDashboard } from "./RewardsDashboard";
 
-export default async function RewardsPage() {
-  const supabase = await createSupabaseServerClient();
+export default function RewardsPage() {
+  const { householdId, profileId, loading } = useHousehold();
 
-  const { data: profileId } = await supabase.rpc("current_profile_id");
+  if (loading || !householdId || !profileId) return null;
 
-  if (!profileId) redirect("/onboarding");
-
-  const { data: membership } = await supabase
-    .from("household_members")
-    .select("household_id")
-    .eq("profile_id", profileId)
-    .limit(1)
-    .maybeSingle();
-
-  if (!membership) redirect("/onboarding");
-
-  return <RewardsDashboard householdId={membership.household_id} profileId={profileId} />;
+  return <RewardsDashboard householdId={householdId} profileId={profileId} />;
 }
