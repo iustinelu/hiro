@@ -10,21 +10,26 @@ A teal-caped house/hero: orange body + roof, white face dot and doorway, on a da
 
 | File | Use |
 |------|-----|
-| `hiro-icon-aurora-teal-cape.svg` | **Primary** full-color app icon. Use anywhere the mark appears on its own (app icon, splash, favicon, marketing). |
+| `hiro-icon-aurora-teal-cape.svg` | **Primary** full-color app icon — the mark *on* its dark rounded-rect tile. Use for app icon, splash, favicon, marketing. |
+| `hiro-icon-logo-only.svg` | The mark **without** the background tile (transparent). Use for in-app headers, on-brand surfaces, anywhere you place the logo over your own background. |
 | `hiro-icon-mono-dark-ink.svg` | Monochrome mark in dark ink (`#15121f`) — for light backgrounds, single-color print, Safari pinned-tab style. |
 | `hiro-icon-mono-light-ink.svg` | Monochrome mark in light ink (`#f7f3ff`) — for dark backgrounds. |
+| `icon-1024.png` | High-res raster master of the primary icon (app-store listings, large displays). Source for any further downscales. |
 
-All are 512×512 `viewBox`, SVG.
+SVGs are 512×512 `viewBox`.
 
 ## Derived artifacts
 
 | Consumer | Files | Source |
 |----------|-------|--------|
 | Web PWA | `apps/web/public/{icon,apple-touch-icon}.svg`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180), `icon-512-maskable.png`; mono SVGs `icon-mono-{dark,light}.svg` | aurora-teal-cape (+ mono) |
+| Web favicons | `apps/web/public/favicon.ico` (16/32/48/256 multi-res), `favicon-16.png`, `favicon-32.png`, `favicon-48.png` | aurora-teal-cape |
 
 When the mark changes, regenerate the web rasters.
 
 ## Rasterize recipe
+
+The current web PNGs + `favicon.ico` were exported directly from the design source; `icon-512-maskable.png` is generated locally (no design-tool export exists for it). Use this recipe to regenerate equivalents if you only have the SVGs.
 
 Use **Inkscape**, not ImageMagick alone — the mono variants use an SVG `<mask>` that ImageMagick renders unreliably without a librsvg delegate. Use `convert` (ImageMagick) only to downscale / pad an already-rendered PNG.
 
