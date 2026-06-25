@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { MobileInput, MobileButton } from "@hiro/ui-primitives/mobile";
+import { MobileInput, MobileButton, useTheme } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
 import { createHousehold, getMyHousehold } from "../lib/householdService";
 import { getDisplayName, updateDisplayName } from "../lib/profileService";
@@ -28,6 +28,7 @@ type Step = "loading" | "name" | "household";
  * one (e.g. after accepting an invite).
  */
 export function HouseholdOnboardingScreen({ onCompleted }: HouseholdOnboardingScreenProps) {
+  const t = useTheme();
   const insets = useSafeAreaInsets();
   const [step, setStep] = useState<Step>("loading");
   const [needsHousehold, setNeedsHousehold] = useState(true);
@@ -69,7 +70,7 @@ export function HouseholdOnboardingScreen({ onCompleted }: HouseholdOnboardingSc
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: tokens.color.bg }}
+      style={{ flex: 1, backgroundColor: t.color.bg }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
@@ -85,30 +86,30 @@ export function HouseholdOnboardingScreen({ onCompleted }: HouseholdOnboardingSc
         <View style={{ alignItems: "center", marginBottom: tokens.spacing.xxl }}>
           <Text
             style={{
-              fontFamily: tokens.typography.fontFamilyMono,
+              fontFamily: t.typography.fontFamilyMono,
               fontSize: tokens.typography.bodySmallSize,
               letterSpacing: 6,
               textTransform: "uppercase",
             }}
           >
-            <Text style={{ color: tokens.color.accent }}>● </Text>
-            <Text style={{ color: tokens.color.ink }}>HIRO</Text>
+            <Text style={{ color: t.color.accent }}>● </Text>
+            <Text style={{ color: t.color.ink }}>HIRO</Text>
           </Text>
         </View>
 
         <View
           style={{
-            backgroundColor: tokens.color.surface,
-            borderRadius: tokens.radius.xl,
+            backgroundColor: t.color.surface,
+            borderRadius: t.radius.xl,
             borderWidth: 1,
-            borderColor: tokens.color.border,
+            borderColor: t.color.border,
             padding: tokens.spacing.xxl,
             gap: tokens.spacing.md,
           }}
         >
           {step === "loading" && (
             <View style={{ alignItems: "center", paddingVertical: tokens.spacing.xl }}>
-              <ActivityIndicator color={tokens.color.accent} />
+              <ActivityIndicator color={t.color.accent} />
             </View>
           )}
           {step === "name" && <NameStep onDone={handleNameDone} />}
@@ -120,6 +121,7 @@ export function HouseholdOnboardingScreen({ onCompleted }: HouseholdOnboardingSc
 }
 
 function NameStep({ onDone }: { onDone: () => void }) {
+  const t = useTheme();
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -150,10 +152,10 @@ function NameStep({ onDone }: { onDone: () => void }) {
     <>
       <Text
         style={{
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: t.typography.fontFamily,
           fontSize: tokens.typography.titleSize,
           fontWeight: "700",
-          color: tokens.color.ink,
+          color: t.color.ink,
           marginBottom: tokens.spacing.sm,
         }}
       >
@@ -161,9 +163,9 @@ function NameStep({ onDone }: { onDone: () => void }) {
       </Text>
       <Text
         style={{
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: t.typography.fontFamily,
           fontSize: tokens.typography.bodySize,
-          color: tokens.color.inkMuted,
+          color: t.color.inkMuted,
         }}
       >
         This is the name your household will see.
@@ -191,6 +193,7 @@ function NameStep({ onDone }: { onDone: () => void }) {
 }
 
 function HouseholdStep({ onCreated }: { onCreated: () => void }) {
+  const t = useTheme();
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -210,10 +213,10 @@ function HouseholdStep({ onCreated }: { onCreated: () => void }) {
     <>
       <Text
         style={{
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: t.typography.fontFamily,
           fontSize: tokens.typography.titleSize,
           fontWeight: "700",
-          color: tokens.color.ink,
+          color: t.color.ink,
           marginBottom: tokens.spacing.sm,
         }}
       >
@@ -221,9 +224,9 @@ function HouseholdStep({ onCreated }: { onCreated: () => void }) {
       </Text>
       <Text
         style={{
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: t.typography.fontFamily,
           fontSize: tokens.typography.bodySize,
-          color: tokens.color.inkMuted,
+          color: t.color.inkMuted,
         }}
       >
         Give your household a name to get started.

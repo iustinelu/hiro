@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, ActivityIndicator } from "react-native";
-import { tokens } from "@hiro/ui-tokens";
+import { useTheme } from "@hiro/ui-primitives/mobile";
 import { supabase } from "../lib/supabase";
 import { AuthScreen } from "../screens/auth/AuthScreen";
 import { AppShellScreen } from "../screens/AppShell";
@@ -37,6 +37,7 @@ async function checkOnboarded(): Promise<boolean> {
 }
 
 export function RootNavigator() {
+  const t = useTheme();
   const [authState, setAuthState] = useState<AuthState>("loading");
 
   useEffect(() => {
@@ -72,10 +73,10 @@ export function RootNavigator() {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: tokens.color.bg,
+          backgroundColor: t.color.bg,
         }}
       >
-        <ActivityIndicator color={tokens.color.accent} />
+        <ActivityIndicator color={t.color.accent} />
       </View>
     );
   }

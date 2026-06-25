@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { MobileInput, MobileButton } from "@hiro/ui-primitives/mobile";
+import { MobileInput, MobileButton, useTheme } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
 import { signIn, signUp, sendPasswordResetEmail, signInWithGoogle } from "../../lib/authService";
 
@@ -13,15 +13,19 @@ const GoogleG = () => (
   <Text style={{ fontSize: 15, fontWeight: "700", color: "rgb(66,133,244)", lineHeight: 18 }}>G</Text>
 );
 
-const OrDivider = () => (
-  <View style={{ flexDirection: "row", alignItems: "center", gap: tokens.spacing.sm }}>
-    <View style={{ flex: 1, height: 1, backgroundColor: tokens.color.border }} />
-    <Text style={{ fontFamily: tokens.typography.fontFamily, fontSize: tokens.typography.bodySmallSize, color: tokens.color.inkMuted }}>or</Text>
-    <View style={{ flex: 1, height: 1, backgroundColor: tokens.color.border }} />
-  </View>
-);
+const OrDivider = () => {
+  const t = useTheme();
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: tokens.spacing.sm }}>
+      <View style={{ flex: 1, height: 1, backgroundColor: t.color.border }} />
+      <Text style={{ fontFamily: t.typography.fontFamily, fontSize: tokens.typography.bodySmallSize, color: t.color.inkMuted }}>or</Text>
+      <View style={{ flex: 1, height: 1, backgroundColor: t.color.border }} />
+    </View>
+  );
+};
 
 function SignInView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
+  const t = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -49,10 +53,10 @@ function SignInView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
     <View style={{ gap: tokens.spacing.md }}>
       <Text
         style={{
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: t.typography.fontFamily,
           fontSize: tokens.typography.titleSize,
           fontWeight: "700",
-          color: tokens.color.ink,
+          color: t.color.ink,
           marginBottom: tokens.spacing.sm,
         }}
       >
@@ -116,6 +120,7 @@ function SignInView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
 }
 
 function SignUpView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
+  const t = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -156,10 +161,10 @@ function SignUpView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
     <View style={{ gap: tokens.spacing.md }}>
       <Text
         style={{
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: t.typography.fontFamily,
           fontSize: tokens.typography.titleSize,
           fontWeight: "700",
-          color: tokens.color.ink,
+          color: t.color.ink,
           marginBottom: tokens.spacing.sm,
         }}
       >
@@ -223,6 +228,7 @@ function SignUpView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
 }
 
 function ForgotPasswordView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
+  const t = useTheme();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -245,19 +251,19 @@ function ForgotPasswordView({ onSwitch }: { onSwitch: (view: AuthView) => void }
       <View style={{ gap: tokens.spacing.md }}>
         <Text
           style={{
-            fontFamily: tokens.typography.fontFamily,
+            fontFamily: t.typography.fontFamily,
             fontSize: tokens.typography.titleSize,
             fontWeight: "700",
-            color: tokens.color.ink,
+            color: t.color.ink,
           }}
         >
           Check your email
         </Text>
         <Text
           style={{
-            fontFamily: tokens.typography.fontFamily,
+            fontFamily: t.typography.fontFamily,
             fontSize: tokens.typography.bodySize,
-            color: tokens.color.inkMuted,
+            color: t.color.inkMuted,
           }}
         >
           We sent a password reset link to {email}.
@@ -276,10 +282,10 @@ function ForgotPasswordView({ onSwitch }: { onSwitch: (view: AuthView) => void }
     <View style={{ gap: tokens.spacing.md }}>
       <Text
         style={{
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: t.typography.fontFamily,
           fontSize: tokens.typography.titleSize,
           fontWeight: "700",
-          color: tokens.color.ink,
+          color: t.color.ink,
           marginBottom: tokens.spacing.sm,
         }}
       >
@@ -287,9 +293,9 @@ function ForgotPasswordView({ onSwitch }: { onSwitch: (view: AuthView) => void }
       </Text>
       <Text
         style={{
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: t.typography.fontFamily,
           fontSize: tokens.typography.bodySize,
-          color: tokens.color.inkMuted,
+          color: t.color.inkMuted,
         }}
       >
         Enter your email and we&apos;ll send you a reset link.
@@ -324,12 +330,13 @@ function ForgotPasswordView({ onSwitch }: { onSwitch: (view: AuthView) => void }
 }
 
 export function AuthScreen() {
+  const t = useTheme();
   const insets = useSafeAreaInsets();
   const [view, setView] = useState<AuthView>("sign-in");
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: tokens.color.bg }}
+      style={{ flex: 1, backgroundColor: t.color.bg }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
@@ -345,22 +352,22 @@ export function AuthScreen() {
         <View style={{ alignItems: "center", marginBottom: tokens.spacing.xxl }}>
           <Text
             style={{
-              fontFamily: tokens.typography.fontFamilyMono,
+              fontFamily: t.typography.fontFamilyMono,
               fontSize: tokens.typography.bodySmallSize,
               letterSpacing: 6,
               textTransform: "uppercase",
             }}
           >
-            <Text style={{ color: tokens.color.accent }}>● </Text>
-            <Text style={{ color: tokens.color.ink }}>HIRO</Text>
+            <Text style={{ color: t.color.accent }}>● </Text>
+            <Text style={{ color: t.color.ink }}>HIRO</Text>
           </Text>
         </View>
         <View
           style={{
-            backgroundColor: tokens.color.surface,
-            borderRadius: tokens.radius.xl,
+            backgroundColor: t.color.surface,
+            borderRadius: t.radius.xl,
             borderWidth: 1,
-            borderColor: tokens.color.border,
+            borderColor: t.color.border,
             padding: tokens.spacing.xxl,
           }}
         >
