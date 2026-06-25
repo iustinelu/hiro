@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
-import { tokens } from "@hiro/ui-tokens";
 import type { PresenceAvatarProps } from "../shared/types";
+import { useTheme } from "./theme-context";
 import { resolveColor } from "./utils";
 
 const statusColorByState = {
@@ -17,6 +17,7 @@ const sizeByVariant = {
 } as const;
 
 export function MobilePresenceAvatar({ name, status = "online", highlighted, size = "md" }: PresenceAvatarProps) {
+  const t = useTheme();
   const avatarSize = sizeByVariant[size];
   const initials = name
     .split(" ")
@@ -31,15 +32,15 @@ export function MobilePresenceAvatar({ name, status = "online", highlighted, siz
         style={{
           width: avatarSize,
           height: avatarSize,
-          borderRadius: tokens.radius.pill,
+          borderRadius: t.radius.pill,
           borderWidth: 2,
-          borderColor: highlighted ? resolveColor("accent") : resolveColor("borderStrong"),
-          backgroundColor: resolveColor("surfaceMuted"),
+          borderColor: highlighted ? resolveColor(t, "accent") : resolveColor(t, "borderStrong"),
+          backgroundColor: resolveColor(t, "surfaceMuted"),
           alignItems: "center",
           justifyContent: "center"
         }}
       >
-        <Text style={{ color: resolveColor("ink"), fontFamily: tokens.typography.fontFamily, fontWeight: "700" }}>
+        <Text style={{ color: resolveColor(t, "ink"), fontFamily: t.typography.fontFamily, fontWeight: "700" }}>
           {initials}
         </Text>
       </View>
@@ -50,10 +51,10 @@ export function MobilePresenceAvatar({ name, status = "online", highlighted, siz
           bottom: 0,
           width: Math.max(10, Math.round(avatarSize * 0.28)),
           height: Math.max(10, Math.round(avatarSize * 0.28)),
-          borderRadius: tokens.radius.pill,
+          borderRadius: t.radius.pill,
           borderWidth: 2,
-          borderColor: resolveColor("bg"),
-          backgroundColor: resolveColor(statusColorByState[status])
+          borderColor: resolveColor(t, "bg"),
+          backgroundColor: resolveColor(t, statusColorByState[status])
         }}
       />
     </View>

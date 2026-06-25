@@ -1,8 +1,8 @@
 import React from "react";
 import { Modal, Pressable, Text, View } from "react-native";
-import { tokens } from "@hiro/ui-tokens";
 import type { ModalSheetProps } from "../shared/types";
 import { MobileButton } from "./MobileButton";
+import { useTheme } from "./theme-context";
 import { resolveColor } from "./utils";
 
 export function MobileModalSheet({
@@ -16,6 +16,7 @@ export function MobileModalSheet({
   onSecondaryAction,
   onClose
 }: ModalSheetProps) {
+  const t = useTheme();
   if (!open) {
     return null;
   }
@@ -26,28 +27,28 @@ export function MobileModalSheet({
         style={{
           flex: 1,
           justifyContent: "flex-end",
-          backgroundColor: resolveColor(tokens.component.modalSheet.overlay)
+          backgroundColor: resolveColor(t, t.component.modalSheet.overlay as keyof typeof t.color)
         }}
         onPress={onClose}
       >
         <Pressable
           onPress={() => undefined}
           style={{
-            borderTopLeftRadius: tokens.radius.xxl,
-            borderTopRightRadius: tokens.radius.xxl,
+            borderTopLeftRadius: t.radius.xxl,
+            borderTopRightRadius: t.radius.xxl,
             borderTopWidth: 1,
-            borderColor: resolveColor(tokens.component.modalSheet.border),
-            backgroundColor: resolveColor(tokens.component.modalSheet.bg),
-            padding: tokens.spacing.xl,
-            gap: tokens.spacing.md
+            borderColor: resolveColor(t, t.component.modalSheet.border as keyof typeof t.color),
+            backgroundColor: resolveColor(t, t.component.modalSheet.bg as keyof typeof t.color),
+            padding: t.spacing.xl,
+            gap: t.spacing.md
           }}
         >
           {title ? (
             <Text
               style={{
-                color: resolveColor("ink"),
-                fontFamily: tokens.typography.fontFamily,
-                fontSize: tokens.typography.subtitleSize,
+                color: resolveColor(t, "ink"),
+                fontFamily: t.typography.fontFamily,
+                fontSize: t.typography.subtitleSize,
                 fontWeight: "800"
               }}
             >
@@ -57,16 +58,16 @@ export function MobileModalSheet({
           {description ? (
             <Text
               style={{
-                color: resolveColor("inkMuted"),
-                fontFamily: tokens.typography.fontFamily,
-                fontSize: tokens.typography.bodySize
+                color: resolveColor(t, "inkMuted"),
+                fontFamily: t.typography.fontFamily,
+                fontSize: t.typography.bodySize
               }}
             >
               {description}
             </Text>
           ) : null}
           {children}
-          <View style={{ flexDirection: "row", gap: tokens.spacing.sm, flexWrap: "wrap" }}>
+          <View style={{ flexDirection: "row", gap: t.spacing.sm, flexWrap: "wrap" }}>
             {secondaryActionLabel ? (
               <MobileButton label={secondaryActionLabel} variant="secondary" onPress={onSecondaryAction} />
             ) : null}

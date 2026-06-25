@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, TextInput, View } from "react-native";
-import { tokens } from "@hiro/ui-tokens";
 import type { InputProps } from "../shared/types";
+import { useTheme } from "./theme-context";
 import { resolveColor } from "./utils";
 
 export function MobileInput({
@@ -14,22 +14,23 @@ export function MobileInput({
   secureTextEntry,
   forceFocused
 }: InputProps) {
+  const t = useTheme();
   const borderColor =
     state === "error"
-      ? resolveColor(tokens.component.input.errorBorder)
+      ? resolveColor(t, t.component.input.errorBorder as keyof typeof t.color)
       : state === "success"
-        ? resolveColor(tokens.component.input.successBorder)
-        : resolveColor(tokens.component.input.border);
+        ? resolveColor(t, t.component.input.successBorder as keyof typeof t.color)
+        : resolveColor(t, t.component.input.border as keyof typeof t.color);
 
   return (
-    <View style={{ gap: tokens.spacing.xs }}>
+    <View style={{ gap: t.spacing.xs }}>
       {label ? (
         <Text
           style={{
-            color: resolveColor("inkMuted"),
-            fontFamily: tokens.typography.fontFamily,
+            color: resolveColor(t, "inkMuted"),
+            fontFamily: t.typography.fontFamily,
             fontWeight: "700",
-            fontSize: tokens.typography.labelSize,
+            fontSize: t.typography.labelSize,
             textTransform: "uppercase"
           }}
         >
@@ -42,19 +43,19 @@ export function MobileInput({
         editable={state !== "disabled"}
         secureTextEntry={secureTextEntry}
         onChangeText={onChangeText}
-        placeholderTextColor={resolveColor("inkSoft")}
+        placeholderTextColor={resolveColor(t, "inkSoft")}
         style={{
-          minHeight: tokens.size.touchMin,
-          borderRadius: tokens.radius.lg,
-          borderWidth: 1,
-          borderColor: forceFocused ? resolveColor("accent") : borderColor,
-          backgroundColor: resolveColor(tokens.component.input.bg),
-          color: resolveColor(tokens.component.input.fg),
-          paddingHorizontal: tokens.spacing.md,
-          paddingVertical: tokens.spacing.sm,
-          fontFamily: tokens.typography.fontFamily,
-          fontSize: tokens.typography.bodySize,
-          shadowColor: forceFocused ? resolveColor("accent") : "transparent",
+          minHeight: t.size.touchMin,
+          borderRadius: t.radius.lg,
+          borderWidth: t.flags.borderWidth,
+          borderColor: forceFocused ? resolveColor(t, "accent") : borderColor,
+          backgroundColor: resolveColor(t, t.component.input.bg as keyof typeof t.color),
+          color: resolveColor(t, t.component.input.fg as keyof typeof t.color),
+          paddingHorizontal: t.spacing.md,
+          paddingVertical: t.spacing.sm,
+          fontFamily: t.typography.fontFamily,
+          fontSize: t.typography.bodySize,
+          shadowColor: forceFocused ? resolveColor(t, "accent") : "transparent",
           shadowOpacity: forceFocused ? 0.3 : 0,
           shadowRadius: forceFocused ? 10 : 0
         }}
@@ -62,9 +63,9 @@ export function MobileInput({
       {helperText ? (
         <Text
           style={{
-            color: state === "error" ? resolveColor("error") : resolveColor("inkSoft"),
-            fontFamily: tokens.typography.fontFamily,
-            fontSize: tokens.typography.labelSize
+            color: state === "error" ? resolveColor(t, "error") : resolveColor(t, "inkSoft"),
+            fontFamily: t.typography.fontFamily,
+            fontSize: t.typography.labelSize
           }}
         >
           {helperText}

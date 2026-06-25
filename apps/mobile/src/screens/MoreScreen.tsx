@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, View, Share, Alert } from "react-native";
-import { MobileButton, MobileCard, MobileListRow, MobileInput } from "@hiro/ui-primitives/mobile";
-import { tokens } from "@hiro/ui-tokens";
+import { MobileButton, MobileCard, MobileListRow, MobileInput, useTheme } from "@hiro/ui-primitives/mobile";
+import { ALL_THEME_IDS, THEME_LABELS } from "@hiro/ui-tokens";
+import { useThemeControl } from "../theme/ThemeProvider";
 import { signOut } from "../lib/authService";
 import { supabase } from "../lib/supabase";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
@@ -13,6 +14,8 @@ import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hi
 const WEB_ORIGIN = "http://localhost:3000";
 
 export function MoreScreen() {
+  const t = useTheme();
+  const { themeId, setThemeId } = useThemeControl();
   const [email, setEmail] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [household, setHousehold] = useState<Household | null>(null);
@@ -110,11 +113,11 @@ export function MoreScreen() {
   return (
     <ScrollView
       style={{ flex: 1 }}
-      contentContainerStyle={{ padding: tokens.spacing.lg, gap: tokens.spacing.md }}
+      contentContainerStyle={{ padding: t.spacing.lg, gap: t.spacing.md }}
     >
       {household && (
         <MobileCard title={household.name}>
-          <View style={{ gap: tokens.spacing.sm }}>
+          <View style={{ gap: t.spacing.sm }}>
             {members.map((m) => (
               <MobileListRow
                 key={m.id}
@@ -128,7 +131,7 @@ export function MoreScreen() {
 
       {isOwner && (
         <MobileCard title="Invite member">
-          <View style={{ gap: tokens.spacing.md }}>
+          <View style={{ gap: t.spacing.md }}>
             <MobileInput
               label="Email address"
               placeholder="friend@example.com"
@@ -150,7 +153,7 @@ export function MoreScreen() {
 
       {isOwner && invites.length > 0 && (
         <MobileCard title="Pending invites">
-          <View style={{ gap: tokens.spacing.sm }}>
+          <View style={{ gap: t.spacing.sm }}>
             {invites.map((inv) => (
               <MobileListRow
                 key={inv.id}
@@ -162,8 +165,21 @@ export function MoreScreen() {
         </MobileCard>
       )}
 
+      <MobileCard title="Appearance" description="Pick your theme">
+        <View style={{ gap: t.spacing.sm }}>
+          {ALL_THEME_IDS.map((id) => (
+            <MobileListRow
+              key={id}
+              title={THEME_LABELS[id]}
+              meta={id === themeId ? "Selected" : undefined}
+              onPress={() => setThemeId(id)}
+            />
+          ))}
+        </View>
+      </MobileCard>
+
       <MobileCard title="Account" description={email ?? "Loading…"}>
-        <View style={{ gap: tokens.spacing.md }}>
+        <View style={{ gap: t.spacing.md }}>
           <MobileInput
             label="Display name"
             placeholder="Your name"

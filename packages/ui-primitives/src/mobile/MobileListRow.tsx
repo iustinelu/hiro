@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { tokens } from "@hiro/ui-tokens";
 import type { ListRowProps } from "../shared/types";
+import { useTheme } from "./theme-context";
 import { resolveColor } from "./utils";
 
 export function MobileListRow({
@@ -12,35 +12,36 @@ export function MobileListRow({
   disabled,
   onPress
 }: ListRowProps) {
-  const verticalPadding = density === "compact" ? tokens.spacing.sm : tokens.spacing.md;
+  const t = useTheme();
+  const verticalPadding = density === "compact" ? t.spacing.sm : t.spacing.md;
   return (
     <TouchableOpacity
       disabled={disabled}
       onPress={onPress}
       activeOpacity={0.82}
       style={{
-        minHeight: tokens.size.touchMin,
-        borderRadius: tokens.radius.lg,
+        minHeight: t.size.touchMin,
+        borderRadius: t.radius.lg,
         borderWidth: 1,
-        borderColor: resolveColor(tokens.component.listRow.border),
+        borderColor: resolveColor(t, t.component.listRow.border as keyof typeof t.color),
         backgroundColor: disabled
-          ? resolveColor("surface")
-          : resolveColor(tokens.component.listRow.bg),
+          ? resolveColor(t, "surface")
+          : resolveColor(t, t.component.listRow.bg as keyof typeof t.color),
         paddingVertical: verticalPadding,
-        paddingHorizontal: tokens.spacing.md,
+        paddingHorizontal: t.spacing.md,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        gap: tokens.spacing.md
+        gap: t.spacing.md
       }}
     >
-      <View style={{ flex: 1, gap: tokens.spacing.xs }}>
+      <View style={{ flex: 1, gap: t.spacing.xs }}>
         <Text
           numberOfLines={1}
           style={{
-            color: resolveColor(tokens.component.listRow.fg),
-            fontFamily: tokens.typography.fontFamily,
-            fontSize: tokens.typography.bodySize,
+            color: resolveColor(t, t.component.listRow.fg as keyof typeof t.color),
+            fontFamily: t.typography.fontFamily,
+            fontSize: t.typography.bodySize,
             fontWeight: "700"
           }}
         >
@@ -50,9 +51,9 @@ export function MobileListRow({
           <Text
             numberOfLines={1}
             style={{
-              color: resolveColor("inkMuted"),
-              fontFamily: tokens.typography.fontFamily,
-              fontSize: tokens.typography.bodySmallSize
+              color: resolveColor(t, "inkMuted"),
+              fontFamily: t.typography.fontFamily,
+              fontSize: t.typography.bodySmallSize
             }}
           >
             {subtitle}
@@ -62,9 +63,9 @@ export function MobileListRow({
       {meta ? (
         <Text
           style={{
-            color: resolveColor("accentInk"),
-            fontFamily: tokens.typography.fontFamily,
-            fontSize: tokens.typography.labelSize,
+            color: resolveColor(t, "accentInk"),
+            fontFamily: t.typography.fontFamily,
+            fontSize: t.typography.labelSize,
             fontWeight: "700"
           }}
         >

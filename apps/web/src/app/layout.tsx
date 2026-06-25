@@ -1,26 +1,45 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { cookies } from "next/headers";
+import { ALL_THEME_IDS, DEFAULT_THEME, tokens } from "@hiro/ui-tokens";
+import type { ThemeId } from "@hiro/ui-tokens";
+import { ThemeCssVars } from "../theme/ThemeCssVars";
 import { ThemeBootstrap } from "../theme/ThemeBootstrap";
+import { ServiceWorkerRegister } from "./ServiceWorkerRegister";
+
+export const viewport: Viewport = {
+  themeColor: tokens.color.bg
+};
 
 export const metadata: Metadata = {
   title: "Hiro",
-  description: "Household task gamification and shared expenses"
+  description: "Hiro — household chores and points tracker",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Hiro"
+  },
+  icons: {
+    apple: "/apple-touch-icon.svg"
+  }
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const cookieStore = await cookies();
+  const raw = cookieStore.get("hiro-theme")?.value;
+  const themeId: ThemeId =
+    raw && (ALL_THEME_IDS as string[]).includes(raw) ? (raw as ThemeId) : DEFAULT_THEME;
+
   return (
-    <html lang="en">
+    <html lang="en" data-theme={themeId}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
-          rel="stylesheet"
-        />
+        <ThemeCssVars />
       </head>
       <body>
         <ThemeBootstrap />
+        <ServiceWorkerRegister />
         {children}
       </body>
     </html>

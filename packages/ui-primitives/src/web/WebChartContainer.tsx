@@ -1,18 +1,18 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { ChartContainerProps } from "../shared/types";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius, cssShadow } from "./utils";
 
 export function WebChartContainer({ title, subtitle, children }: ChartContainerProps) {
   return (
     <section
       style={{
-        borderRadius: tokens.radius.xl,
-        border: `1px solid ${resolveColor(tokens.component.chartContainer.border)}`,
-        backgroundColor: resolveColor(tokens.component.chartContainer.bg),
+        borderRadius: cssRadius.xl,
+        border: `1px solid ${cssColor(tokens.component.chartContainer.border)}`,
+        backgroundColor: cssColor(tokens.component.chartContainer.bg),
         padding: tokens.spacing.xl,
         display: "grid",
         gap: tokens.spacing.md,
-        boxShadow: tokens.elevation.mid
+        boxShadow: cssShadow.mid
       }}
     >
       {(title || subtitle) && (
@@ -21,9 +21,9 @@ export function WebChartContainer({ title, subtitle, children }: ChartContainerP
             <h3
               style={{
                 margin: 0,
-                fontFamily: tokens.typography.fontFamily,
+                fontFamily: cssFontFamily.default,
                 fontSize: tokens.typography.subtitleSize,
-                color: resolveColor("ink")
+                color: cssColor("ink")
               }}
             >
               {title}
@@ -33,8 +33,8 @@ export function WebChartContainer({ title, subtitle, children }: ChartContainerP
             <p
               style={{
                 margin: 0,
-                color: resolveColor("inkMuted"),
-                fontFamily: tokens.typography.fontFamily,
+                color: cssColor("inkMuted"),
+                fontFamily: cssFontFamily.default,
                 fontSize: tokens.typography.bodySmallSize
               }}
             >

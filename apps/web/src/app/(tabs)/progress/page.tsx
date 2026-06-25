@@ -1,20 +1,12 @@
-import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "../../../lib/supabase/server";
+"use client";
+
+import { useHousehold } from "../HouseholdProvider";
 import { ProgressDashboard } from "./ProgressDashboard";
 
-export default async function ProgressPage() {
-  const supabase = await createSupabaseServerClient();
-  const { data: profileId } = await supabase.rpc("current_profile_id");
-  if (!profileId) redirect("/onboarding");
+export default function ProgressPage() {
+  const { householdId, profileId, loading } = useHousehold();
 
-  const { data: membership } = await supabase
-    .from("household_members")
-    .select("household_id")
-    .eq("profile_id", profileId)
-    .limit(1)
-    .maybeSingle();
+  if (loading || !householdId || !profileId) return null;
 
-  if (!membership) redirect("/onboarding");
-
-  return <ProgressDashboard householdId={membership.household_id} profileId={profileId} />;
+  return <ProgressDashboard householdId={householdId} profileId={profileId} />;
 }

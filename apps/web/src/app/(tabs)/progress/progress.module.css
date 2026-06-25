@@ -4,7 +4,6 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  animation: hiroTabIn 0.22s ease both;
 }
 
 /* ─── Stats Grid ────────────────────────────────────────────────────────── */
@@ -35,11 +34,21 @@
 /* ─── Card ──────────────────────────────────────────────────────────────── */
 
 .card {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--hiro-color-border);
-  border-radius: 28px;
+  border-radius: 18px;
   background: var(--hiro-color-surface);
-  box-shadow: 0 2px 8px rgba(28, 27, 46, 0.08);
   padding: 20px;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at 30% 0%, color-mix(in srgb, var(--hiro-color-accent) 8%, transparent) 0%, transparent 60%);
+  pointer-events: none;
 }
 
 .cardHeader {
@@ -51,11 +60,11 @@
 
 .cardTitle {
   margin: 0;
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 700;
-  color: var(--hiro-color-ink-soft);
+  color: var(--hiro-color-ink);
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.5px;
 }
 
 /* ─── Weekly Chart Bars ─────────────────────────────────────────────────── */
@@ -65,7 +74,7 @@
   flex-direction: row;
   align-items: flex-end;
   gap: 6px;
-  height: 80px;
+  height: 120px;
 }
 
 .bar {
@@ -80,26 +89,21 @@
 .barFill {
   width: 100%;
   border-radius: 6px 6px 0 0;
-  background: var(--hiro-color-accent-soft);
-  transition: height 0.4s ease;
-}
-
-.barFillPeak {
   background: var(--hiro-color-accent);
-  box-shadow: 0 0 10px rgba(101, 163, 13, 0.45);
+  transition: height 0.3s ease;
 }
 
 .barLabel {
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--hiro-color-ink-soft);
+  color: var(--hiro-color-ink-muted);
   margin-top: 6px;
 }
 
 .barValue {
-  font-size: 8px;
-  font-weight: 800;
-  color: var(--hiro-color-accent);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--hiro-color-ink-muted);
   margin-bottom: 4px;
 }
 
@@ -108,23 +112,20 @@
 .taskBreakdownList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .taskRow {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.taskRowHeader {
-  display: flex;
-  justify-content: space-between;
+  flex-direction: row;
   align-items: center;
+  gap: 12px;
 }
 
 .taskName {
-  font-size: 13px;
+  flex: 0 0 auto;
+  max-width: 140px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--hiro-color-ink);
   overflow: hidden;
@@ -132,24 +133,18 @@
   white-space: nowrap;
 }
 
-.taskPts {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--hiro-color-accent);
-}
-
 .taskBar {
+  flex: 1;
   height: 8px;
-  border-radius: 999px;
+  border-radius: 4px;
   background: var(--hiro-color-surface-muted);
-  overflow: hidden;
 }
 
 .taskBarFill {
   height: 100%;
-  border-radius: 999px;
+  border-radius: 4px;
   background: var(--hiro-color-accent);
-  transition: width 0.5s ease;
+  transition: width 0.3s ease;
 }
 
 .taskCount {

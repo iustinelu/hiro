@@ -4,10 +4,14 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { appShellSections, type AppShellSectionId } from "@hiro/domain";
-import { MobileButton } from "@hiro/ui-primitives/mobile";
+import { MobileButton, useTheme } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
-import { SectionPlaceholderScreen } from "../screens/SectionPlaceholderScreen";
 import { MoreScreen } from "../screens/MoreScreen";
+import { HomeScreen } from "../screens/HomeScreen";
+import { TasksScreen } from "../screens/TasksScreen";
+import { ProgressScreen } from "../screens/ProgressScreen";
+import { BudgetScreen } from "../screens/BudgetScreen";
+import { RewardsScreen } from "../screens/RewardsScreen";
 import { logActivity } from "../lib/activityService";
 
 type AppTabParamList = Record<AppShellSectionId, undefined>;
@@ -31,6 +35,7 @@ function DevErrorTrigger() {
 
 export function AppTabs() {
   const insets = useSafeAreaInsets();
+  const t = useTheme();
 
   return (
     <NavigationContainer
@@ -48,16 +53,16 @@ export function AppTabs() {
           const section = appShellSections.find((item) => item.id === route.name);
           return {
             headerStyle: {
-              backgroundColor: tokens.color.bgElevated
+              backgroundColor: t.color.bgElevated
             },
             headerTitleStyle: {
-              color: tokens.color.ink,
-              fontFamily: tokens.typography.fontFamily,
+              color: t.color.ink,
+              fontFamily: t.typography.fontFamily,
               fontSize: tokens.typography.titleSize,
               fontWeight: "700"
             },
             headerTitleAlign: "left",
-            headerTintColor: tokens.color.ink,
+            headerTintColor: t.color.ink,
             headerRight: () => (
               <View
                 style={{
@@ -70,20 +75,20 @@ export function AppTabs() {
             ),
             tabBarHideOnKeyboard: true,
             tabBarStyle: {
-              backgroundColor: tokens.color.bgElevated,
-              borderTopColor: tokens.color.border,
+              backgroundColor: t.color.bgElevated,
+              borderTopColor: t.color.border,
               borderTopWidth: 1,
               paddingTop: tokens.spacing.sm,
               paddingBottom: Math.max(tokens.spacing.sm, insets.bottom),
               minHeight: 64 + insets.bottom
             },
             tabBarLabelStyle: {
-              fontFamily: tokens.typography.fontFamily,
+              fontFamily: t.typography.fontFamilyMono,
               fontSize: tokens.typography.labelSize,
-              fontWeight: "700"
+              textTransform: "uppercase"
             },
-            tabBarActiveTintColor: tokens.color.accent,
-            tabBarInactiveTintColor: tokens.color.inkMuted,
+            tabBarActiveTintColor: t.color.accent,
+            tabBarInactiveTintColor: t.color.inkMuted,
             tabBarIcon: ({ focused, color }) => (
               <Text
                 style={{
@@ -97,7 +102,7 @@ export function AppTabs() {
               </Text>
             ),
             sceneStyle: {
-              backgroundColor: tokens.color.bg
+              backgroundColor: t.color.bg
             }
           };
         }}
@@ -113,14 +118,18 @@ export function AppTabs() {
           >
             {() => (
               <View style={{ flex: 1 }}>
-                {section.id === "more" ? (
-                  <MoreScreen />
+                {section.id === "home" ? (
+                  <HomeScreen />
+                ) : section.id === "tasks" ? (
+                  <TasksScreen />
+                ) : section.id === "progress" ? (
+                  <ProgressScreen />
+                ) : section.id === "budget" ? (
+                  <BudgetScreen />
+                ) : section.id === "rewards" ? (
+                  <RewardsScreen />
                 ) : (
-                  <SectionPlaceholderScreen
-                    title={section.label}
-                    description={`${section.label} section shell`}
-                    actionLabel={section.label}
-                  />
+                  <MoreScreen />
                 )}
                 {__DEV__ && section.id === "more" && <DevErrorTrigger />}
               </View>

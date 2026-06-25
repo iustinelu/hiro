@@ -1,21 +1,25 @@
-import { tokens } from "@hiro/ui-tokens";
 import type { ButtonProps, PrimitiveSize } from "../shared/types";
+import type { ResolvedTheme } from "./theme-context";
 
-export function resolveColor(tokenName: keyof typeof tokens.color): string {
-  return tokens.color[tokenName];
+export function resolveColor(t: ResolvedTheme, tokenName: keyof ResolvedTheme["color"]): string {
+  return t.color[tokenName];
 }
 
-export const buttonPaddingBySize: Record<PrimitiveSize, { paddingVertical: number; paddingHorizontal: number }> = {
-  sm: { paddingVertical: tokens.spacing.sm, paddingHorizontal: tokens.spacing.md },
-  md: { paddingVertical: tokens.spacing.md, paddingHorizontal: tokens.spacing.lg },
-  lg: { paddingVertical: tokens.spacing.lg, paddingHorizontal: tokens.spacing.xl }
-};
-
-export function getButtonColors(variant: NonNullable<ButtonProps["variant"]>) {
-  const config = tokens.component.button[variant];
+export function buttonPaddingBySize(
+  t: ResolvedTheme
+): Record<PrimitiveSize, { paddingVertical: number; paddingHorizontal: number }> {
   return {
-    background: resolveColor(config.bg),
-    foreground: resolveColor(config.fg),
-    border: resolveColor(config.border)
+    sm: { paddingVertical: t.spacing.sm, paddingHorizontal: t.spacing.md },
+    md: { paddingVertical: t.spacing.md, paddingHorizontal: t.spacing.lg },
+    lg: { paddingVertical: t.spacing.lg, paddingHorizontal: t.spacing.xl }
+  };
+}
+
+export function getButtonColors(t: ResolvedTheme, variant: NonNullable<ButtonProps["variant"]>) {
+  const config = t.component.button[variant];
+  return {
+    background: resolveColor(t, config.bg as keyof ResolvedTheme["color"]),
+    foreground: resolveColor(t, config.fg as keyof ResolvedTheme["color"]),
+    border: resolveColor(t, config.border as keyof ResolvedTheme["color"])
   };
 }

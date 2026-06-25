@@ -1,0 +1,74 @@
+import React, { useState, useEffect } from "react";
+import { View } from "react-native";
+import { MobileModalSheet, MobileInput, useTheme } from "@hiro/ui-primitives/mobile";
+
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  onSave: (title: string, pointCost: number) => Promise<void>;
+}
+
+export function RewardCreateModal({ open, onClose, onSave }: Props) {
+  const t = useTheme();
+  const [title, setTitle] = useState("");
+  const [pointCost, setPointCost] = useState("10");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setTitle("");
+      setPointCost("10");
+      setError(null);
+    }
+  }, [open]);
+
+  async function handleSave() {
+    const trimmed = title.trim();
+    if (!trimmed) { setError("Reward name is required."); return; }
+    const cost = parseInt(pointCost, 10);
+    if (!cost || cost < 1) { setError("Point cost must be at least 1."); return; }
+
+    setSaving(true);
+    setError(null);
+    try {
+      await onSave(trimmed, cost);
+      onClose();
+    } catch {
+      setError("Something went wrong. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <MobileModalSheet
+      open={open}
+      title="New Reward"
+      primaryActionLabel={saving ? "Saving…" : "Save"}
+      secondaryActionLabel="Cancel"
+      onPrimaryAction={() => { void handleSave(); }}
+      onSecondaryAction={onClose}
+      onClose={onClose}
+    >
+      <View style={{ gap: t.spacing.md }}>
+        <MobileInput
+          label="Reward Name"
+          placeholder="e.g. Movie Night"
+          value={title}
+          onChangeText={setTitle}
+          state={error && !title.trim() ? "error" : "default"}
+          helperText={error && !title.trim() ? error : undefined}
+        />
+        <MobileInput
+          label="Point Cost"
+          placeholder="10"
+          value={pointCost}
+          onChangeText={(v) => setPointCost(v.replace(/\D/g, ""))}
+          state={error && (!parseInt(pointCost, 10) || parseInt(pointCost, 10) < 1) ? "error" : "default"}
+          helperText={error && (!parseInt(pointCost, 10) || parseInt(pointCost, 10) < 1) ? error : undefined}
+        />
+      </View>
+    </MobileModalSheet>
+  );
+}

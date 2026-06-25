@@ -1,12 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { applyWebTheme } from "../theme/theme";
-
+// ThemeBridge is superseded by ThemeBootstrap (in src/theme/ThemeBootstrap.tsx).
+// Kept as an empty stub for any legacy imports that may reference this path.
 export function ThemeBridge() {
-  useEffect(() => {
-    applyWebTheme();
-  }, []);
-
   return null;
 }

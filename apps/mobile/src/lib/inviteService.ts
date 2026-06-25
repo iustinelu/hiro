@@ -73,6 +73,39 @@ export async function acceptInvite(
   return { householdId: data as string, error: null };
 }
 
+export async function acceptInviteAndLeave(token: string): Promise<{
+  householdId: string | null;
+  oldHouseholdDeleted: boolean;
+  oldHouseholdName: string | null;
+  error: string | null;
+}> {
+  const { data, error } = await supabase.rpc("accept_invite_and_leave", {
+    p_token: token,
+  });
+  if (error) {
+    if (error.message.includes("INVITE_NOT_FOUND")) {
+      return { householdId: null, oldHouseholdDeleted: false, oldHouseholdName: null, error: "Invite not found." };
+    }
+    if (error.message.includes("INVITE_ALREADY_ACCEPTED")) {
+      return { householdId: null, oldHouseholdDeleted: false, oldHouseholdName: null, error: "This invite has already been used." };
+    }
+    if (error.message.includes("INVITE_EXPIRED")) {
+      return { householdId: null, oldHouseholdDeleted: false, oldHouseholdName: null, error: "This invite has expired. Ask the household owner to send a new one." };
+    }
+    if (error.message.includes("ALREADY_A_MEMBER")) {
+      return { householdId: null, oldHouseholdDeleted: false, oldHouseholdName: null, error: "You're already a member of this household." };
+    }
+    return { householdId: null, oldHouseholdDeleted: false, oldHouseholdName: null, error: error.message };
+  }
+  const result = data as { household_id: string; old_household_deleted: boolean; old_household_name: string | null };
+  return {
+    householdId: result.household_id,
+    oldHouseholdDeleted: result.old_household_deleted,
+    oldHouseholdName: result.old_household_name,
+    error: null,
+  };
+}
+
 export async function getHouseholdInvites(
   householdId: string
 ): Promise<{ invites: HouseholdInvite[]; error: string | null }> {

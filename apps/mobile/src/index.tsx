@@ -2,20 +2,30 @@ import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { tokens } from "@hiro/ui-tokens";
+import { useTheme } from "@hiro/ui-primitives/mobile";
 import "./lib/supabase";
 import { RootNavigator } from "./navigation/RootNavigator";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { MobileThemeProvider } from "./theme/ThemeProvider";
+
+function ThemedRoot() {
+  const t = useTheme();
+  return (
+    <View style={{ flex: 1, backgroundColor: t.color.bg }}>
+      <StatusBar style="light" />
+      <ErrorBoundary>
+        <RootNavigator />
+      </ErrorBoundary>
+    </View>
+  );
+}
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <View style={{ flex: 1, backgroundColor: tokens.color.bg }}>
-        <StatusBar style="light" />
-        <ErrorBoundary>
-          <RootNavigator />
-        </ErrorBoundary>
-      </View>
+      <MobileThemeProvider>
+        <ThemedRoot />
+      </MobileThemeProvider>
     </SafeAreaProvider>
   );
 }

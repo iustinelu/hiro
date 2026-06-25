@@ -36,7 +36,7 @@
   border: 1px solid var(--hiro-color-border);
   border-radius: 28px;
   background: var(--hiro-color-surface);
-  box-shadow: 0 2px 8px rgba(28, 27, 46, 0.08);
+  box-shadow: var(--hiro-shadow-low);
   padding: 20px;
 }
 

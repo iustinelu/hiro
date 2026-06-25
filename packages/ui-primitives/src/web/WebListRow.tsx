@@ -1,6 +1,6 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { ListRowProps } from "../shared/types";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius, cssShadow } from "./utils";
 
 export function WebListRow({
   title,
@@ -24,22 +24,22 @@ export function WebListRow({
         alignItems: "center",
         textAlign: "left",
         gap: tokens.spacing.md,
-        borderRadius: tokens.radius.lg,
-        border: `1px solid ${resolveColor(tokens.component.listRow.border)}`,
+        borderRadius: cssRadius.lg,
+        border: `1px solid ${cssColor(tokens.component.listRow.border)}`,
         backgroundColor: disabled
-          ? resolveColor("surface")
-          : resolveColor(tokens.component.listRow.bg),
+          ? cssColor("surface")
+          : cssColor(tokens.component.listRow.bg),
         padding: `${verticalPadding}px ${tokens.spacing.md}px`,
         cursor: disabled ? "not-allowed" : "pointer",
-        boxShadow: tokens.elevation.low
+        boxShadow: cssShadow.low
       }}
     >
       <span style={{ minWidth: 0, display: "grid", gap: tokens.spacing.xs }}>
         <span
           style={{
             margin: 0,
-            fontFamily: tokens.typography.fontFamily,
-            color: resolveColor(tokens.component.listRow.fg),
+            fontFamily: cssFontFamily.default,
+            color: cssColor(tokens.component.listRow.fg),
             fontSize: tokens.typography.bodySize,
             fontWeight: 700,
             whiteSpace: "nowrap",
@@ -53,8 +53,8 @@ export function WebListRow({
           <span
             style={{
               margin: 0,
-              fontFamily: tokens.typography.fontFamily,
-              color: resolveColor("inkMuted"),
+              fontFamily: cssFontFamily.default,
+              color: cssColor("inkMuted"),
               fontSize: tokens.typography.bodySmallSize,
               whiteSpace: "nowrap",
               overflow: "hidden",
@@ -68,8 +68,8 @@ export function WebListRow({
       {meta ? (
         <span
           style={{
-            fontFamily: tokens.typography.fontFamily,
-            color: resolveColor("accentInk"),
+            fontFamily: cssFontFamily.default,
+            color: cssColor("accentInk"),
             fontSize: tokens.typography.labelSize,
             whiteSpace: "nowrap",
             fontWeight: 700

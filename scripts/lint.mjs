@@ -18,6 +18,38 @@ const mobileDisallowedInteractivePrimitives = new Set([
 ]);
 const webDisallowedIntrinsicInteractiveTags = ["button", "input", "select", "textarea", "form"];
 
+// Files exempt from theme-reactivity rules. Keep this list TINY and justified:
+// - theming infrastructure that legitimately bridges tokens <-> CSS variables
+// - surfaces that render before a theme is available / non-UI metadata
+// - design-system showcases that intentionally display raw token values
+const themingAllowlist = [
+  "packages/ui-primitives/src/web/utils.ts",
+  "packages/ui-primitives/src/mobile/utils.ts",
+  "apps/web/src/theme/",
+  "apps/web/src/app/manifest.ts",
+  "apps/web/src/app/layout.tsx",
+  "apps/web/src/app/global-error.tsx",
+  "apps/web/src/app/design-system/",
+  "apps/mobile/src/screens/DesignSystemGallery.tsx",
+  "apps/mobile/src/components/ErrorBoundary.tsx",
+  // Design-system documentation/showcase components — display raw token values,
+  // only rendered inside the (allowlisted) galleries.
+  "IconographySpec",
+  "SpacingMatrix",
+  "NavigationPattern"
+];
+
+function isThemingAllowlisted(path) {
+  return themingAllowlist.some((entry) => path.includes(entry));
+}
+
+// Raw color literals that don't react to the active theme.
+const colorLiteralRegex = /#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?)\s*\(/;
+// Static THEMED token access (color/elevation/radius/fontFamily) — bakes in the
+// default theme. Structural tokens (spacing/size/motion/typography sizes) are fine.
+const staticThemedTokenRegex =
+  /\btokens\.(?:color|elevation|radius)\.|\btokens\.typography\.fontFamily(?:Mono)?\b/;
+
 function hasLintableExtension(path) {
   return [...lintableExtensions].some((ext) => path.endsWith(ext));
 }
@@ -46,10 +78,26 @@ function walk(dir) {
       violations.push(`${full}: ${lineCount} lines exceeds hard limit of ${maxLinesPerFile}`);
     }
 
-    // Enforce tokenized colors outside token package.
+    // Theme-reactivity rules. The token package defines values; everything else
+    // must consume them through the theme-reactive path so all 4 themes apply.
     const isTokenSource = full.startsWith("packages/ui-tokens/");
-    if (!isTokenSource && /#[0-9a-fA-F]{3,8}\b/.test(content)) {
-      violations.push(`${full}: hardcoded hex color found; use packages/ui-tokens`);
+    const inThemeReactiveScope =
+      full.startsWith("apps/") || full.startsWith("packages/ui-primitives/");
+    const themingExempt = isTokenSource || isThemingAllowlisted(full);
+
+    // 1) No raw color literals (hex/rgb/rgba/hsl) — they never react to the theme.
+    if (!themingExempt && colorLiteralRegex.test(content)) {
+      violations.push(
+        `${full}: hardcoded color literal; theme via cssColor()/useTheme() or add a token in packages/ui-tokens`
+      );
+    }
+
+    // 2) No static themed-token access in app/primitive render code — it bakes in
+    //    the default theme and won't change when the user switches themes.
+    if (inThemeReactiveScope && !themingExempt && staticThemedTokenRegex.test(content)) {
+      violations.push(
+        `${full}: static themed token (color/elevation/radius/fontFamily) is not theme-reactive; use cssColor()/cssShadow()/cssRadius()/cssFontFamily() (web) or useTheme() (mobile)`
+      );
     }
 
     // Enforce DS primitives for app-level interactive controls.

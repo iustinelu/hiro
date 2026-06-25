@@ -1,7 +1,7 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { ModalSheetProps } from "../shared/types";
 import { WebButton } from "./WebButton";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius, cssShadow } from "./utils";
 
 export function WebModalSheet({
   open,
@@ -23,7 +23,7 @@ export function WebModalSheet({
       style={{
         position: "fixed",
         inset: 0,
-        backgroundColor: resolveColor(tokens.component.modalSheet.overlay),
+        backgroundColor: cssColor(tokens.component.modalSheet.overlay),
         display: "grid",
         alignItems: "end",
         zIndex: 1000,
@@ -34,14 +34,14 @@ export function WebModalSheet({
       <section
         onClick={(event) => event.stopPropagation()}
         style={{
-          backgroundColor: resolveColor(tokens.component.modalSheet.bg),
-          borderTopLeftRadius: tokens.radius.xxl,
-          borderTopRightRadius: tokens.radius.xxl,
-          borderTop: `1px solid ${resolveColor(tokens.component.modalSheet.border)}`,
+          backgroundColor: cssColor(tokens.component.modalSheet.bg),
+          borderTopLeftRadius: cssRadius.xxl,
+          borderTopRightRadius: cssRadius.xxl,
+          borderTop: `1px solid ${cssColor(tokens.component.modalSheet.border)}`,
           padding: tokens.spacing.xl,
           display: "grid",
           gap: tokens.spacing.md,
-          boxShadow: tokens.elevation.high,
+          boxShadow: cssShadow.high,
           transform: "translateY(0)",
           transition: `transform ${tokens.motion.duration.normal}ms ${tokens.motion.easing.emphasized}`
         }}
@@ -50,9 +50,9 @@ export function WebModalSheet({
           <h3
             style={{
               margin: 0,
-              fontFamily: tokens.typography.fontFamily,
+              fontFamily: cssFontFamily.default,
               fontSize: tokens.typography.subtitleSize,
-              color: resolveColor("ink")
+              color: cssColor("ink")
             }}
           >
             {title}
@@ -62,8 +62,8 @@ export function WebModalSheet({
           <p
             style={{
               margin: 0,
-              fontFamily: tokens.typography.fontFamily,
-              color: resolveColor("inkMuted"),
+              fontFamily: cssFontFamily.default,
+              color: cssColor("inkMuted"),
               fontSize: tokens.typography.bodySize
             }}
           >

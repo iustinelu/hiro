@@ -1,6 +1,6 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { InputProps } from "../shared/types";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius } from "./utils";
 
 export function WebInput({
   label,
@@ -14,18 +14,18 @@ export function WebInput({
 }: InputProps) {
   const borderColor =
     state === "error"
-      ? resolveColor(tokens.component.input.errorBorder)
+      ? cssColor(tokens.component.input.errorBorder)
       : state === "success"
-        ? resolveColor(tokens.component.input.successBorder)
-        : resolveColor(tokens.component.input.border);
+        ? cssColor(tokens.component.input.successBorder)
+        : cssColor(tokens.component.input.border);
 
   return (
     <label style={{ display: "grid", gap: tokens.spacing.xs, width: "100%" }}>
       {label ? (
         <span
           style={{
-            fontFamily: tokens.typography.fontFamily,
-            color: resolveColor("inkMuted"),
+            fontFamily: cssFontFamily.default,
+            color: cssColor("inkMuted"),
             fontSize: tokens.typography.labelSize,
             fontWeight: 700,
             letterSpacing: 0.4,
@@ -44,17 +44,17 @@ export function WebInput({
         style={{
           minHeight: tokens.size.touchMin,
           width: "100%",
-          borderRadius: tokens.radius.lg,
+          borderRadius: cssRadius.lg,
           border: `1px solid ${borderColor}`,
-          backgroundColor: resolveColor(tokens.component.input.bg),
-          color: resolveColor(tokens.component.input.fg),
+          backgroundColor: cssColor(tokens.component.input.bg),
+          color: cssColor(tokens.component.input.fg),
           padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
-          fontFamily: tokens.typography.fontFamily,
+          fontFamily: cssFontFamily.default,
           fontSize: tokens.typography.bodySize,
-          outlineColor: resolveColor(tokens.component.input.focusBorder),
+          outlineColor: cssColor(tokens.component.input.focusBorder),
           boxShadow:
             forceFocused || state === "default"
-              ? `inset 0 0 0 1px ${resolveColor("accentSoft")}, 0 0 0 2px ${forceFocused ? resolveColor("accentSoft") : "transparent"}`
+              ? `inset 0 0 0 1px ${cssColor("accentSoft")}, 0 0 0 2px ${forceFocused ? cssColor("accentSoft") : "transparent"}`
               : "none",
           transition: `all ${tokens.motion.duration.fast}ms ${tokens.motion.easing.standard}`
         }}
@@ -62,8 +62,8 @@ export function WebInput({
       {helperText ? (
         <span
           style={{
-            fontFamily: tokens.typography.fontFamily,
-            color: state === "error" ? resolveColor("error") : resolveColor("inkSoft"),
+            fontFamily: cssFontFamily.default,
+            color: state === "error" ? cssColor("error") : cssColor("inkSoft"),
             fontSize: tokens.typography.labelSize
           }}
         >

@@ -1,8 +1,8 @@
-import { webCssVariables } from "@hiro/ui-tokens";
+// This file is kept for back-compat. The theme system now injects CSS variables
+// via ThemeCssVars (server component, <style> tag in layout) scoped per
+// [data-theme="<id>"] attribute, and sets data-theme from the hiro-theme cookie
+// in layout.tsx. ThemeBootstrap (client) syncs localStorage on hydration.
+//
+// If you need the old imperative apply, import cssVariablesFor from @hiro/ui-tokens.
 
-export function applyWebTheme(): void {
-  if (typeof document === "undefined") return;
-  Object.entries(webCssVariables).forEach(([key, value]) => {
-    document.documentElement.style.setProperty(key, value);
-  });
-}
+export {};

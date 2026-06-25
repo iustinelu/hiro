@@ -1,6 +1,6 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { SpacingMatrixProps } from "../shared/types";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius } from "./utils";
 
 const spacingRows = [
   { px: 4, token: "token.xs" },
@@ -15,17 +15,17 @@ export function WebSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixProp
   return (
     <section style={{ display: "grid", gap: tokens.spacing.md }}>
       <header style={{ display: "flex", justifyContent: "space-between" }}>
-        <strong style={{ color: resolveColor("ink"), fontSize: tokens.typography.titleSize, fontFamily: tokens.typography.fontFamily, textTransform: "uppercase" }}>{title}</strong>
-        <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px`, letterSpacing: 1.4 }}>SPEC 05.1</span>
+        <strong style={{ color: cssColor("ink"), fontSize: tokens.typography.titleSize, fontFamily: cssFontFamily.default, textTransform: "uppercase" }}>{title}</strong>
+        <span style={{ color: cssColor("inkSoft"), fontFamily: cssFontFamily.mono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px`, letterSpacing: 1.4 }}>SPEC 05.1</span>
       </header>
       <div style={{ display: "grid", gap: tokens.spacing.sm }}>
         {spacingRows.map((row) => (
           <div
             key={row.token}
             style={{
-              borderRadius: tokens.radius.lg,
-              border: `1px solid ${resolveColor("border")}`,
-              backgroundColor: "rgba(12, 15, 28, 0.82)",
+              borderRadius: cssRadius.lg,
+              border: `1px solid ${cssColor("border")}`,
+              backgroundColor: cssColor("surfaceMuted"),
               padding: `${tokens.spacing.md}px ${tokens.spacing.lg}px`,
               display: "grid",
               gridTemplateColumns: "90px 1fr 110px",
@@ -33,20 +33,20 @@ export function WebSpacingMatrix({ title = "Spacing Matrix" }: SpacingMatrixProp
               gap: tokens.spacing.md
             }}
           >
-            <span style={{ color: resolveColor("inkMuted"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px`, fontWeight: 700 }}>{row.px}px</span>
+            <span style={{ color: cssColor("inkMuted"), fontFamily: cssFontFamily.mono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px`, fontWeight: 700 }}>{row.px}px</span>
             <div style={{ display: "flex", alignItems: "center", gap: tokens.spacing.md }}>
               <span
                 style={{
                   width: row.px,
                   height: row.px,
-                  borderRadius: tokens.radius.sm,
-                  backgroundColor: resolveColor("accent"),
-                  boxShadow: row.px >= 40 ? `0 0 14px ${resolveColor("accentSoft")}` : "none"
+                  borderRadius: cssRadius.sm,
+                  backgroundColor: cssColor("accent"),
+                  boxShadow: row.px >= 40 ? `0 0 14px ${cssColor("accentSoft")}` : "none"
                 }}
               />
-              <span style={{ flex: 1, height: 1, backgroundColor: "rgba(255,255,255,0.08)" }} />
+              <span style={{ flex: 1, height: 1, backgroundColor: cssColor("border") }} />
             </div>
-            <span style={{ color: resolveColor("inkSoft"), fontFamily: tokens.typography.fontFamilyMono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px` }}>{row.token}</span>
+            <span style={{ color: cssColor("inkSoft"), fontFamily: cssFontFamily.mono, fontSize: tokens.typography.bodySmallSize, lineHeight: `${tokens.typography.lineHeightLabel}px` }}>{row.token}</span>
           </div>
         ))}
       </div>

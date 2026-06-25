@@ -29,6 +29,7 @@ export interface ButtonProps {
   loading?: boolean;
   loadingLabel?: string;
   fullWidth?: boolean;
+  iconLeft?: ReactNode;
   onPress?: () => void;
 }
 

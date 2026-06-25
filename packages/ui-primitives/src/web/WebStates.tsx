@@ -3,14 +3,14 @@ import { tokens } from "@hiro/ui-tokens";
 import { defaultStateMessages } from "../shared/states";
 import type { FeedbackStateProps, IconName } from "../shared/types";
 import { WebIcon } from "./WebIcon";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius } from "./utils";
 
 type FeedbackVariant = "loading" | "empty" | "error";
 
-const variantConfig: Record<FeedbackVariant, { icon: IconName; accent: string }> = {
-  loading: { icon: "loading", accent: resolveColor("accent") },
-  empty: { icon: "empty", accent: resolveColor("inkSoft") },
-  error: { icon: "error", accent: resolveColor("error") }
+const variantConfig: Record<FeedbackVariant, { icon: IconName; accentKey: "accent" | "inkSoft" | "error" }> = {
+  loading: { icon: "loading", accentKey: "accent" },
+  empty: { icon: "empty", accentKey: "inkSoft" },
+  error: { icon: "error", accentKey: "error" }
 };
 
 function WebFeedbackState({
@@ -25,27 +25,27 @@ function WebFeedbackState({
   retryLabel?: string;
 }) {
   const config = variantConfig[variant];
+  const accentColor = cssColor(config.accentKey);
 
   return (
     <section
       style={{
         display: "grid",
         gap: tokens.spacing.sm,
-        borderRadius: tokens.radius.lg,
-        border: `1px solid ${resolveColor("border")}`,
-        backgroundColor: "rgba(15, 18, 30, 0.62)",
-        padding: tokens.spacing.lg,
-        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.02)"
+        borderRadius: cssRadius.lg,
+        border: `1px solid ${cssColor("border")}`,
+        backgroundColor: cssColor(tokens.component.feedback[variant]),
+        padding: tokens.spacing.lg
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: tokens.spacing.sm }}>
-        <span style={{ display: "grid", color: config.accent, filter: variant === "loading" ? `drop-shadow(0 0 6px ${config.accent})` : "none" }}>
-          <WebIcon name={config.icon} size={18} color={config.accent} />
+        <span style={{ display: "grid", color: accentColor, filter: variant === "loading" ? `drop-shadow(0 0 6px ${accentColor})` : "none" }}>
+          <WebIcon name={config.icon} size={18} color={accentColor} />
         </span>
         <strong
           style={{
-            fontFamily: tokens.typography.fontFamily,
-            color: config.accent,
+            fontFamily: cssFontFamily.default,
+            color: accentColor,
             fontSize: tokens.typography.bodySize,
             letterSpacing: 0.6,
             textTransform: "uppercase"
@@ -58,8 +58,8 @@ function WebFeedbackState({
         <p
           style={{
             margin: 0,
-            fontFamily: tokens.typography.fontFamily,
-            color: resolveColor("inkMuted"),
+            fontFamily: cssFontFamily.default,
+            color: cssColor("inkMuted"),
             fontSize: tokens.typography.bodySize,
             lineHeight: `${tokens.typography.lineHeightBody}px`
           }}
@@ -73,12 +73,12 @@ function WebFeedbackState({
             type="button"
             onClick={onRetry}
             style={{
-              borderRadius: tokens.radius.md,
-              border: `2px solid ${resolveColor("inkMuted")}`,
+              borderRadius: cssRadius.md,
+              border: `2px solid ${cssColor("inkMuted")}`,
               background: "transparent",
-              color: resolveColor("error"),
+              color: cssColor("error"),
               padding: `${tokens.spacing.sm}px ${tokens.spacing.lg}px`,
-              fontFamily: tokens.typography.fontFamily,
+              fontFamily: cssFontFamily.default,
               fontSize: tokens.typography.bodySmallSize,
               fontWeight: 800,
               letterSpacing: 1.2,

@@ -1,6 +1,6 @@
 import { tokens } from "@hiro/ui-tokens";
 import type { SwitchRowProps } from "../shared/types";
-import { resolveColor } from "./utils";
+import { cssColor, cssFontFamily, cssRadius } from "./utils";
 
 export function WebSwitchRow({ label, value, onToggle }: SwitchRowProps) {
   return (
@@ -10,15 +10,15 @@ export function WebSwitchRow({ label, value, onToggle }: SwitchRowProps) {
         alignItems: "center",
         justifyContent: "space-between",
         padding: `${tokens.spacing.sm}px ${tokens.spacing.md}px`,
-        borderRadius: tokens.radius.md,
-        border: `1px solid ${resolveColor("border")}`,
-        backgroundColor: "rgba(15, 18, 30, 0.72)"
+        borderRadius: cssRadius.md,
+        border: `1px solid ${cssColor("border")}`,
+        backgroundColor: cssColor("surfaceMuted")
       }}
     >
       <span
         style={{
-          color: resolveColor("ink"),
-          fontFamily: tokens.typography.fontFamily,
+          color: cssColor("ink"),
+          fontFamily: cssFontFamily.default,
           fontSize: tokens.typography.bodySmallSize,
           lineHeight: `${tokens.typography.lineHeightBody}px`,
           fontWeight: 600,
@@ -36,10 +36,10 @@ export function WebSwitchRow({ label, value, onToggle }: SwitchRowProps) {
         style={{
           width: 38,
           height: 22,
-          borderRadius: tokens.radius.pill,
+          borderRadius: cssRadius.pill,
           border: "none",
-          backgroundColor: value ? resolveColor("accent") : resolveColor("surfaceStrong"),
-          boxShadow: value ? `0 0 12px ${resolveColor("accentSoft")}` : "none",
+          backgroundColor: value ? cssColor(tokens.component.switch.trackOn) : cssColor(tokens.component.switch.trackOff),
+          boxShadow: value ? `0 0 12px ${cssColor("accentSoft")}` : "none",
           position: "relative",
           cursor: "pointer"
         }}
@@ -51,8 +51,8 @@ export function WebSwitchRow({ label, value, onToggle }: SwitchRowProps) {
             left: value ? 18 : 2,
             width: 18,
             height: 18,
-            borderRadius: tokens.radius.pill,
-            backgroundColor: value ? resolveColor("ink") : resolveColor("inkMuted"),
+            borderRadius: cssRadius.pill,
+            backgroundColor: value ? cssColor(tokens.component.switch.thumbOn) : cssColor(tokens.component.switch.thumbOff),
             transition: `left ${tokens.motion.duration.fast}ms ${tokens.motion.easing.standard}`
           }}
         />

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { tokens } from "@hiro/ui-tokens";
+import { cssColor, cssShadow, cssRadius, cssFontFamily } from "@hiro/ui-primitives/web";
 
 /* ─── Types ────────────────────────────────────────────────────────────── */
 
@@ -77,7 +77,7 @@ export default function PointsBurst({
                 width: p.size,
                 height: p.size,
                 borderRadius: "50%",
-                backgroundColor: tokens.color.accent,
+                backgroundColor: cssColor("accent"),
               }}
               initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
               animate={{
@@ -119,11 +119,11 @@ export default function PointsBurst({
               alignItems: "center",
               gap: 8,
               padding: "8px 18px",
-              borderRadius: tokens.radius.pill,
-              background: tokens.color.ink,
-              border: `2px solid ${tokens.color.accent}`,
-              boxShadow: `0 0 24px rgba(101,163,13,0.4), ${tokens.elevation.mid}`,
-              fontFamily: tokens.typography.fontFamily,
+              borderRadius: cssRadius.pill,
+              background: `color-mix(in srgb, ${cssColor("surface")} 92%, transparent)`,
+              border: `2px solid ${cssColor("accent")}`,
+              boxShadow: `0 0 24px ${cssColor("accentSoft")}, ${cssShadow.mid}`,
+              fontFamily: cssFontFamily.default,
             }}
             animate={{ scale: [1, 1.08, 1] }}
             transition={{ duration: 0.3, delay: 0.15 }}
@@ -132,7 +132,7 @@ export default function PointsBurst({
               style={{
                 fontSize: 22,
                 fontWeight: 800,
-                color: tokens.color.gold,
+                color: cssColor("ink"),
                 letterSpacing: "-0.02em",
               }}
             >
@@ -142,7 +142,7 @@ export default function PointsBurst({
               style={{
                 fontSize: 15,
                 fontWeight: 600,
-                color: tokens.color.accentInk,
+                color: cssColor("accentInk"),
                 maxWidth: 180,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -157,7 +157,7 @@ export default function PointsBurst({
                 style={{
                   fontSize: 16,
                   fontWeight: 800,
-                  color: tokens.color.accent,
+                  color: cssColor("accent"),
                   marginLeft: 2,
                 }}
                 initial={{ scale: 0, rotate: -20 }}
@@ -182,7 +182,7 @@ export default function PointsBurst({
             width: 120,
             height: 120,
             borderRadius: "50%",
-            border: `2px solid ${tokens.color.accent}`,
+            border: `2px solid ${cssColor("accent")}`,
           }}
           initial={{ scale: 0.3, opacity: 0.8 }}
           animate={{ scale: 2.2, opacity: 0 }}
