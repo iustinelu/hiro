@@ -1,0 +1,37 @@
+{
+  "projectId": "f5d7db8c-8502-46b9-b6d4-e01774d7179c",
+  "shape": "package",
+  "pkg": "@hiro/ui-primitives",
+  "globalName": "HiroUI",
+  "entry": "./packages/ui-primitives/src/web.ts",
+  "tsconfig": "../../tsconfig.base.json",
+  "tokensPkg": "@hiro/ui-tokens",
+  "tokensGlob": ".design-sync-theme-vars.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "WebInput": { "cardMode": "column" },
+    "WebModalSheet": { "cardMode": "single", "primaryStory": "ConfirmDelete" }
+  },
+  "componentSrcMap": {
+    "WebButton": "src/web/WebButton.tsx",
+    "WebCard": "src/web/WebCard.tsx",
+    "WebDayChip": "src/web/WebDayChip.tsx",
+    "WebChartContainer": "src/web/WebChartContainer.tsx",
+    "WebEmptyStatePanel": "src/web/WebEmptyStatePanel.tsx",
+    "WebIconographySpec": "src/web/WebIconographySpec.tsx",
+    "WebInteractiveChip": "src/web/WebInteractiveChip.tsx",
+    "WebInput": "src/web/WebInput.tsx",
+    "WebKpiTile": "src/web/WebKpiTile.tsx",
+    "WebListRow": "src/web/WebListRow.tsx",
+    "WebModalSheet": "src/web/WebModalSheet.tsx",
+    "WebNavigationPattern": "src/web/WebNavigationPattern.tsx",
+    "WebPresenceAvatar": "src/web/WebPresenceAvatar.tsx",
+    "WebSegmentedControl": "src/web/WebSegmentedControl.tsx",
+    "WebSpacingMatrix": "src/web/WebSpacingMatrix.tsx",
+    "WebStatusBadge": "src/web/WebStatusBadge.tsx",
+    "WebSwitchRow": "src/web/WebSwitchRow.tsx",
+    "WebLoadingState": "src/web/WebStates.tsx",
+    "WebEmptyState": "src/web/WebStates.tsx",
+    "WebErrorState": "src/web/WebStates.tsx"
+  }
+}
