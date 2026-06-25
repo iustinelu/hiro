@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hiro mark monochrome">
+    <defs><mask id="mono10">
+      <rect x="0" y="0" width="512" height="512" fill="black"/>
+      <path d="M186 252 C150 296 122 360 134 444 C176 421 202 426 256 452 C310 426 336 421 378 444 C390 360 362 296 326 252 Z" fill="white"/>
+      <rect x="181" y="248" width="150" height="150" rx="13" fill="white"/>
+      <path d="M256 150 L146 258 L366 258 Z" fill="white" stroke="white" stroke-width="8" stroke-linejoin="round"/>
+      
+      <circle cx="256" cy="222" r="19" fill="none" stroke="black" stroke-width="9"/>
+      <path d="M233 398 L233 354 A23 23 0 0 1 279 354 L279 398" fill="none" stroke="black" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      
+      <line x1="181" y1="258" x2="331" y2="258" stroke="black" stroke-width="9" stroke-linecap="round"/>
+      <path d="M181 258 L181 398 L331 398 L331 258" fill="none" stroke="black" stroke-width="9" stroke-linejoin="round"/>
+      <path d="M209 402 C198 420 192 432 190 444" fill="none" stroke="black" stroke-width="9" stroke-linecap="round"/>
+      <path d="M303 402 C314 420 320 432 322 444" fill="none" stroke="black" stroke-width="9" stroke-linecap="round"/>
+    </mask></defs>
+    <rect x="0" y="0" width="512" height="512" fill="#15121f" mask="url(#mono10)"/>
+  </svg>
