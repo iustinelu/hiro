@@ -1,7 +1,7 @@
 # Session handoff — 2026-06-25 (v0.1 ship push)
 
-## Branch
-`hir-design/themes` (off `hir-64/google-oauth`, which is off `main`). NOT merged to main yet. Nothing pushed.
+## Status
+**MERGED to `main`** via PR #29 (merge commit `f766a35`). Continue from `main`. The whole v0.1 body of work (incl. the prior on-main `#28` lime-on-cream overhaul, superseded by our 4-theme system) is now on main. `npm run check` green. GitHub branch-protection ruleset was deleted (no required checks).
 
 ## What shipped this session (all committed on hir-design/themes)
 1. **4-theme design system** — Aurora (default dark), Daylight (light), Super Chore (retro), Neon Grid (cyberpunk). Per-person, persisted (cookie on web, SecureStore on mobile; **DB sync via `profiles.theme` still TODO**). Switcher in More → Appearance on both platforms. Token contract in `@hiro/ui-tokens` (`themes`, `resolveTheme`, `cssVariablesFor`, `tokens`=aurora back-compat), split into types/structural/themes/css modules.
