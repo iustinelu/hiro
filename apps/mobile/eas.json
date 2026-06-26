@@ -38,11 +38,7 @@
         "track": "internal",
         "releaseStatus": "completed"
       },
-      "ios": {
-        "ascApiKeyPath": "./credentials/asc-api-key.p8",
-        "ascApiKeyId": "REPLACE_WITH_ASC_API_KEY_ID",
-        "ascApiKeyIssuerId": "REPLACE_WITH_ASC_API_KEY_ISSUER_ID"
-      }
+      "ios": {}
     }
   }
 }
