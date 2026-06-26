@@ -32,6 +32,17 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./credentials/google-play-service-account.json",
+        "track": "internal",
+        "releaseStatus": "draft"
+      },
+      "ios": {
+        "ascApiKeyPath": "./credentials/asc-api-key.p8",
+        "ascApiKeyId": "REPLACE_WITH_ASC_API_KEY_ID",
+        "ascApiKeyIssuerId": "REPLACE_WITH_ASC_API_KEY_ISSUER_ID"
+      }
+    }
   }
 }

@@ -6,7 +6,7 @@
       "expo-web-browser"
     ],
     "slug": "hiro",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "scheme": "hiro",
     "newArchEnabled": false,
     "orientation": "portrait",

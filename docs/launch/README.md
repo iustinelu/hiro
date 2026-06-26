@@ -45,12 +45,29 @@ Without this, Google OAuth + magic-link redirects bounce.
 ## Track B — Native iOS + Android (EAS)
 
 EAS is signed in as **justins9269** (owner of `justins9269s-team`), project linked
-(`projectId b732bece-946b-4fc7-8407-7088f6ef4873`), bundle IDs `com.hiro.app` on both platforms.
+(`projectId b732bece-946b-4fc7-8407-7088f6ef4873`), bundle IDs `com.behiro.app` on both platforms.
 
-### Done in repo (this session)
-- `apps/mobile/eas.json` created — `preview` (internal testers) + `production` (store) profiles,
+### Done in repo
+- `apps/mobile/eas.json` — `preview` (internal testers) + `production` (store) profiles,
   `appVersionSource: remote` + `autoIncrement` so build numbers self-manage. Prod
   `EXPO_PUBLIC_*` env baked into both profiles.
+- `submit.production` profile wired for **automated upload** (`eas submit`) to both stores — see
+  "Automated submission" below.
+
+### Crash postmortem (2026-06-26) — the first Play Store build crashed on launch
+Root cause: the app entry imports `./lib/supabase` at module load, which called
+`validateRuntimeEnv()` and **threw** when `EXPO_PUBLIC_*` were missing. A throw during module
+init happens before React mounts, so the `ErrorBoundary` couldn't catch it → instant native crash.
+Dev worked because Metro loads the local `.env`. Fixes shipped:
+- `supabase.ts` is now **fail-soft**: it captures the init error in `supabaseInitError` instead of
+  throwing; the entry renders a visible "Configuration error" screen instead of crashing.
+- Unit test on `validateRuntimeEnv` (`packages/runtime/src/index.test.ts`) locks the contract.
+
+### ⚠️ Preview-before-production gate (MANDATORY)
+**No production mobile build is submitted until an internal `preview` build has been verified
+on a real device.** The first store binary crashed on launch and there was no on-device check
+between build and submit. Always: `eas build --profile preview` → install → confirm launch +
+core flow → only then `eas build --profile production` → `eas submit`.
 
 ### Founder steps — store accounts (THE LONG POLE, start now)
 1. **Apple Developer Program** enrollment for the team — ~24–48h to approve. Required before any
@@ -64,6 +81,7 @@ EAS is signed in as **justins9269** (owner of `justins9269s-team`), project link
 # first build per platform prompts to create/manage signing credentials — let EAS manage them
 npx eas-cli build --profile preview --platform android   # APK for sideload / internal testers
 npx eas-cli build --profile preview --platform ios       # needs registered test devices
+# --- verify the preview build on a real device (MANDATORY gate) ---
 # store builds:
 npx eas-cli build --profile production --platform android # AAB for Play
 npx eas-cli build --profile production --platform ios     # IPA for App Store / TestFlight
@@ -71,6 +89,27 @@ npx eas-cli build --profile production --platform ios     # IPA for App Store / 
 npx eas-cli submit --profile production --platform ios
 npx eas-cli submit --profile production --platform android
 ```
+
+### Automated submission (no manual Play Console / App Store Connect upload)
+`eas submit` uploads the built artifact straight to the stores using the `submit.production`
+block in `eas.json`. One-time secret setup (files live in `apps/mobile/credentials/`, which is
+gitignored — never commit them):
+
+- **Android** → `serviceAccountKeyPath: ./credentials/google-play-service-account.json`
+  1. Play Console → Setup → API access → create / link a Google Cloud service account.
+  2. Grant it the "Release to testing tracks" + "Release apps to production" permissions.
+  3. Download its JSON key to `apps/mobile/credentials/google-play-service-account.json`.
+  - Submits to the `internal` track as a `draft` (see eas.json). Promote in Play Console.
+  - **First-ever upload caveat:** Google requires the *first* AAB of a brand-new app to be
+    uploaded by hand in Play Console once; `eas submit` automates every release after that.
+- **iOS** → App Store Connect API key (`.p8`) + key id + issuer id.
+  1. App Store Connect → Users and Access → Integrations → App Store Connect API → generate key.
+  2. Save the `.p8` to `apps/mobile/credentials/asc-api-key.p8`.
+  3. Replace `REPLACE_WITH_ASC_API_KEY_ID` / `REPLACE_WITH_ASC_API_KEY_ISSUER_ID` in `eas.json`.
+  - (Alternatively store all of these with `eas credentials` instead of file paths.)
+
+Once configured: `npx eas-cli submit --profile production --platform android` (or `ios`) does the
+upload with zero manual steps. Store *review/rollout* is still done in the consoles.
 
 ### Still open before a clean store submission
 - **App Store / Play listing assets** — app icon (have it), screenshots, description, privacy
