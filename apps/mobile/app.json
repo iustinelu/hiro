@@ -11,10 +11,10 @@
     "platforms": ["ios", "android"],
     "owner": "justins9269s-team",
     "ios": {
-      "bundleIdentifier": "com.hiro.app"
+      "bundleIdentifier": "com.behiro.app"
     },
     "android": {
-      "package": "com.hiro.app"
+      "package": "com.behiro.app"
     },
     "extra": {
       "eas": {
