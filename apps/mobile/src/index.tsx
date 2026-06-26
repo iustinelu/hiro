@@ -21,8 +21,8 @@ import {
   IBMPlexMono_400Regular,
   IBMPlexMono_500Medium
 } from "@expo-google-fonts/ibm-plex-mono";
-import { useTheme } from "@hiro/ui-primitives/mobile";
-import "./lib/supabase";
+import { useTheme, MobileErrorState } from "@hiro/ui-primitives/mobile";
+import { supabaseInitError } from "./lib/supabase";
 import { RootNavigator } from "./navigation/RootNavigator";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MobileThemeProvider } from "./theme/ThemeProvider";
@@ -32,9 +32,21 @@ function ThemedRoot() {
   return (
     <View style={{ flex: 1, backgroundColor: t.color.bg }}>
       <StatusBar style="light" />
-      <ErrorBoundary>
-        <RootNavigator />
-      </ErrorBoundary>
+      {supabaseInitError ? (
+        // Missing/invalid runtime env (e.g. a release build without EXPO_PUBLIC_* baked
+        // in). Show a diagnosable screen instead of an instant native crash.
+        <View style={{ flex: 1, justifyContent: "center", padding: t.spacing.lg }}>
+          <MobileErrorState
+            title="Configuration error"
+            description="The app is missing its runtime configuration and can't start. Please update to the latest version or contact support."
+            retryLabel=""
+          />
+        </View>
+      ) : (
+        <ErrorBoundary>
+          <RootNavigator />
+        </ErrorBoundary>
+      )}
     </View>
   );
 }

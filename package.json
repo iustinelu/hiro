@@ -12,9 +12,11 @@
     "mobile:reset": "node scripts/mobile-orbital-reset.mjs",
     "lint": "node scripts/lint.mjs",
     "typecheck": "node scripts/typecheck.mjs",
-    "test": "node scripts/test.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:governance": "node scripts/check-governance.mjs",
+    "check:migrations": "node scripts/check-migrations.mjs",
     "check:pr-governance": "node scripts/check-pr-governance.mjs",
     "check:expo-root-artifacts": "node scripts/check-expo-root-artifacts.mjs",
     "check:mobile-runtime": "node scripts/check-mobile-runtime.mjs",
@@ -24,7 +26,7 @@
     "pr:create:fallback": "node scripts/create-pr.mjs",
     "pr:create": "node scripts/create-pr.mjs"
   },
-  "dependencies": {
-    "expo-web-browser": "~15.0.10"
+  "devDependencies": {
+    "vitest": "^4.1.9"
   }
 }

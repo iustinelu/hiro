@@ -10,6 +10,10 @@ apps/mobile/ios
 .env
 .env.*
 !.env.example
+
+# EAS submit credentials (founder-supplied secrets — never commit)
+apps/mobile/credentials/
+
 *.tsbuildinfo
 .worktrees
 .playwright-mcp

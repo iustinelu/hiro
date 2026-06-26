@@ -87,6 +87,15 @@ Schema rules:
 - Add indexes for foreign keys and frequent filters.
 - Enable RLS on all household-scoped tables.
 
+Function / RPC rules (enforced by `scripts/check-migrations.mjs`):
+- **No overloaded public functions.** PostgREST resolves `.rpc("name", {...})` by name; two
+  signatures (e.g. `f(text)` and `f(text, text default ...)`) make a call ambiguous —
+  *"Could not choose the best candidate function"*. `CREATE OR REPLACE` with a NEW signature
+  does **not** drop the old one. When changing a function's parameters, `DROP FUNCTION` the old
+  signature in the same migration, or keep one signature and use a default-valued parameter.
+- After deploying a function change, verify `pg_proc` has exactly one live signature for that name.
+- Every `.rpc("name")` in app source must resolve to a defined function (the guard checks this too).
+
 RLS conventions:
 - Policies must deny cross-household reads/writes by default.
 - Prefer explicit `USING` and `WITH CHECK` clauses.

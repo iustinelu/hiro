@@ -1,4 +1,5 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { join, extname } from "node:path";
 import { spawnSync } from "node:child_process";
 
 const REQUIRED_EXPO_MAJOR = 54;
@@ -148,7 +149,72 @@ for (const dependency of ["react", "react-dom", "react-native", "expo-font"]) {
   }
 }
 
+// Native modules must be declared in apps/mobile/package.json — not the monorepo root.
+// Expo Go bundles every SDK native module, so a missing/misplaced native dep only crashes in a
+// standalone EAS build ("Cannot find native module 'X'") — exactly what shipped in the first
+// Play Store build (expo-web-browser was in the root package.json, so it wasn't autolinked).
+function checkMobileNativeDeps() {
+  const declared = new Set([
+    ...Object.keys(mobilePackage.dependencies ?? {}),
+    ...Object.keys(mobilePackage.devDependencies ?? {})
+  ]);
+
+  const isNativeCandidate = (name) =>
+    name.startsWith("expo-") || name.startsWith("@expo/") || name.startsWith("react-native-");
+
+  const pkgName = (spec) =>
+    spec.startsWith("@") ? spec.split("/").slice(0, 2).join("/") : spec.split("/")[0];
+
+  const violations = [];
+
+  // 1. Every app.json plugin must be a declared dependency.
+  const appJson = JSON.parse(readFileSync("apps/mobile/app.json", "utf8"));
+  for (const plugin of appJson.expo?.plugins ?? []) {
+    const name = Array.isArray(plugin) ? plugin[0] : plugin;
+    if (typeof name === "string" && isNativeCandidate(name) && !declared.has(name)) {
+      violations.push(`  - app.json plugin "${name}" is not in apps/mobile/package.json dependencies`);
+    }
+  }
+
+  // 2. Every expo-*/@expo/*/react-native-* import in src must be a declared dependency.
+  const importRe = /(?:import\s[^"']*?from\s*|require\(\s*)["']([^"']+)["']/g;
+  const srcFiles = [];
+  const walk = (dir) => {
+    for (const entry of readdirSync(dir)) {
+      const full = join(dir, entry);
+      if (statSync(full).isDirectory()) walk(full);
+      else if ([".ts", ".tsx"].includes(extname(entry))) srcFiles.push(full);
+    }
+  };
+  walk("apps/mobile/src");
+
+  const seen = new Set();
+  for (const file of srcFiles) {
+    const code = readFileSync(file, "utf8");
+    let m;
+    importRe.lastIndex = 0;
+    while ((m = importRe.exec(code)) !== null) {
+      const name = pkgName(m[1]);
+      if (isNativeCandidate(name) && !declared.has(name) && !seen.has(name)) {
+        seen.add(name);
+        violations.push(`  - "${name}" imported in ${file} but not in apps/mobile/package.json dependencies`);
+      }
+    }
+  }
+
+  if (violations.length > 0) {
+    fail([
+      "Mobile native-dependency check failed: native modules must be declared in apps/mobile/package.json.",
+      "(Expo Go bundles all SDK modules, so this only crashes in a standalone build with",
+      " \"Cannot find native module 'X'\" — not in dev. Move the dep into apps/mobile, then npm install.)",
+      "",
+      ...violations
+    ]);
+  }
+}
+
 validateInstalledTree();
+checkMobileNativeDeps();
 
 console.log(`Mobile runtime check passed: Expo SDK ${parsed.major} (${expoRange}).`);
 console.log(`Mobile runtime check passed: react=${mobileReact} react-dom=${mobileReactDom} react-native=${mobileReactNative}.`);
