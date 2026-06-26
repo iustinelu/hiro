@@ -1,40 +1,61 @@
-# Session handoff — 2026-06-25 (evening: v0.1 polish complete + EAS prep)
+# Session handoff — 2026-06-26 (launch day: crash fixed, Android + iOS live, auth working)
 
-## Status
-All on `main`, clean, `npm run check` green, `npm run dev:web` + native `dev:mobile` both verified working. **v0.1 polish queue is COMPLETE** — all 4 items merged.
+## TL;DR for the orchestrator
+Both apps are **fixed, installable, and crash-free**, Google sign-in **works**, store auto-submit is **live for Android + iOS**, and there's a big, well-specced backlog (HIR-67…HIR-79) ready to execute. Tomorrow = **pile features into 0.1.2**. `main` is clean, `npm run check` is green.
 
-## What shipped THIS session
-1. **Tab icons (HIR-62 + HIR-61)** — PR #31, last polish item. Real production icons via the `IconName` primitive on both shells (web→lucide, mobile→Ionicons outline+filled), theme-reactive, active/inactive states. `IconName` extended with `tasks/progress/budget/rewards/more`; `WebIcon`/`MobileIcon`/`IconName` now exported from the platform barrels. HIR-61 = confirm+document the 6-section tab IA (no change to `appShellSections`).
-   - **Web alignment fix:** rail/bottom-bar links are now flex (icon+label aligned).
-   - **Mobile bug fix:** Progress + Rewards refetched only on mount, but tab screens stay mounted → stale on revisit. Now refetch on focus via `useFocusEffect`. See `project_mobile_tab_refetch` memory.
-2. **Dropped Expo web** + **relocated EAS config** — PR #32. Removed `"web"` from `apps/mobile/app.json` platforms (the Expo app can't run in a browser — `expo-secure-store` is native-only; the web target is the Next.js app). Moved the EAS linkage (`owner: justins9269s-team`, `extra.eas.projectId: b732bece-946b-4fc7-8407-7088f6ef4873`) out of a stray **root** `app.json` into `apps/mobile/app.json`, clearing the `check:expo-root-artifacts` guard.
-3. **Fixed RSC build error** — PR #33. `WebButton` (useState) + `WebStates` (useMemo) lacked `"use client"`; the web barrel re-exports them and Server Components (auth/onboarding/invite layouts) import the barrel's `css*` helpers → build error when those routes compile. Added the directive. **Latent-bug trap:** dev compiles routes on-demand and `npm run check` doesn't run a Next build, so this only shows when you hit an auth route. See `project_web_primitive_use_client` memory.
+## Current deployed state
+| Surface | Version | Where | Notes |
+|---|---|---|---|
+| Android | 0.1.1 (versionCode 4) | Play **internal** track | crash fixed; auto-submitted via `eas submit` |
+| iOS | 0.1.1 (build 2) | **TestFlight** (internal) | verified on founder's iPhone, working |
+| Founder's Pixel | **0.1.2 preview APK** (sideloaded) | not released | has the PKCE Google-OAuth fix; Google sign-in verified working here |
 
-## What's next: native deploy to iOS + Android (founder's stated goal)
-EAS is signed in and linked (projectId above), bundle IDs set (`com.hiro.app` both platforms). Still missing before `eas build` runs clean — **next session should audit then scaffold:**
-1. **`eas.json`** — no build profiles exist yet. Need production + preview profiles.
-2. **Production `EXPO_PUBLIC_*` env** baked into the build profile (native binary must point at prod Supabase, not local `.env`).
-3. **Version/build numbers** in `app.json` (currently `0.1.0`).
-4. **Store credentials** — Apple Developer team (long pole, may need ~24–48h enrollment) + Google Play service account; EAS can manage signing but the first build prompts.
-   - Suggested kickoff: read-only audit of EAS state + `app.json`, then a plan, before changing anything.
+⚠️ **IMPORTANT:** the **PKCE Google-OAuth fix is on `main` (0.1.2) but NOT yet in the store/TestFlight builds.** Play internal (0.1.1) and TestFlight (0.1.1) still have the *broken* implicit-flow Google sign-in. Working Google auth reaches stores only when **0.1.2 is built + submitted** (part of tomorrow's push). Founder's instruction tonight: do an Android check only, **no release** today.
 
-## Worktree workflow gotchas (bit us twice this session — see `project_worktree_env_files` memory)
-- Fresh `git worktree` checkouts lack the **gitignored `.env` files**. After `git worktree add`, copy both: `apps/web/.env.local` and `apps/mobile/.env` from the main checkout, or the apps crash (web 500; mobile `Missing APP_ENV` crash-on-boot that looks like a blank screen).
-- Mobile: `EXPO_PUBLIC_*` are read when **Metro starts** — restart Metro (not just device reload) after adding `.env`.
-- Integrate worktree work by **rebasing on current `main`** before merge (worktrees branch from main at creation; main moves). All 4 polish items did this cleanly.
+## What shipped today (all merged to `main`)
+1. **`create_household` overload bug** — dropped the redundant 1-arg RPC; migration applied to live DB; verified. ([[project_mobile_crash_native_module]] sibling: see migration guard.)
+2. **Play Store launch crash** — root cause via on-device `adb logcat`: `Cannot find native module 'ExpoWebBrowser'`. `expo-web-browser` was in the **root** `package.json`, not `apps/mobile` → not autolinked into the standalone build. Moved it. ([[project_mobile_crash_native_module]])
+3. **Mobile Google OAuth** — `createMobileClient` defaulted to `flowType: implicit`, breaking the PKCE `exchangeCodeForSession` path. Set `flowType: "pkce"`. Founder added `hiro://auth/callback` + `hiro://**` to Supabase redirect URLs. Verified on Pixel. ([[project_mobile_google_oauth]])
+4. **Test infra (was a placeholder)** — Vitest live (`npm run test`), unit tests for `validateRuntimeEnv` + `formatCurrency`; **`scripts/check-migrations.mjs`** (function-overload + RPC-exists guard) and a **native-dep guard** in `check-mobile-runtime.mjs`. Both wired into `npm run check` + CI. Both verified to catch their bug class.
+5. **EAS auto-submit for Android + iOS** — no manual store uploads. ([[project_eas_autosubmit]])
+6. Fail-soft env handling in `apps/mobile/src/lib/supabase.ts` (config-error screen instead of crash); docs: launch runbook postmortem + preview-before-prod gate, `docs/dev-process-improvements.md` (the "1%/session" log).
+
+## Tomorrow's plan: 0.1.2 feature push
+`app.json` is already at **0.1.2**. The backlog (all in Linear, project **Hiro MVP**, full specs in each ticket):
+
+**Build (features):**
+- **HIR-69 (High)** — Interactive onboarding (researched; guided-first-win, gamified). Likely the priority; also a prerequisite for the beta.
+- **HIR-70 (High)** — Ad-hoc tasks: self-assigned points + contest/settle + activity board. **Mandates spawning a UX-research subagent** before building.
+- **HIR-67** — Household chore backlog (claimable one-offs). Overlaps HIR-70 — reconcile.
+- **HIR-71 (High)** — Auth: offer to link sign-in methods instead of "sign-in failed".
+
+**Decide / research (do before or alongside):**
+- **HIR-68** — App IA research spike (gates placement of HIR-67/69/70).
+- **HIR-72 (High)** — Verify/fix Google OAuth config (consent-screen publish for non-test users) + which account owns it.
+- **HIR-73** — One vs. multiple households per user (founder leans one; current `accept_invite_and_leave` already does join-new=leave-old).
+- **HIR-74** — Consolidate all infra under one owner account (account sprawl).
+- **HIR-75/76/77** — Monetization / beta timing / influencer strategy (deep-research agents).
+- **HIR-78** — Evaluate Linear → Beads for agentic dev.
+- **HIR-79 (High)** — Stand up the fully automated agent dev cycle (plan→spec→implement→test→evals) + agent-run mobile/web tests on the Claude Team sub.
+
+## Deploy mechanics (proven today)
+- **Build:** from `apps/mobile/`: `npx eas-cli build --profile production --platform android|ios` (preview profile → APK for the on-device gate). versionCode/buildNumber auto-increment (`appVersionSource: remote`).
+- **Submit:** `npx eas-cli submit --profile production --platform android|ios --id <buildId>`. Android → Play internal track; iOS → App Store Connect (ascAppId `6784593514`, EAS-managed ASC key). The CLI's wait often dies on a transient `GraphQL request failed` — submission still completes; poll EAS GraphQL `submissions{byId(submissionId){status}}` with the `expo-session` token from `~/.expo/state.json`.
+- **On-device gate (MANDATORY before prod):** preview APK → `adb install` → launch → verify. Founder's Pixel connects over USB (set USB mode to **File transfer**, not tethering, or `adb` won't see it; product id should be `4ee2`/`4ee7`).
+- **TestFlight:** internal = no review (instant once processed); external = needs Beta App Review. Use internal to dogfdood fast.
 
 ## Process notes
-- **Founder pre-authorizes autonomous commit/push/PR/merge** (gh logged in). Branch (not straight to `main` for code), run `npm run check`, then PR + merge. Handoff/docs commits go direct to `main`. (`feedback_autonomous_git.md`.)
-- PR governance is scrapped (plain `gh pr create`).
-- No emulator/simulator on this Linux box — can't render mobile here; native QA is founder-run on device.
-- `dev:web` may pick port 3001/3002 if 3000 is busy — use the port the startup log prints.
+- **Founder pre-authorizes autonomous commit/push/PR/merge** (gh logged in). Branch for code, `npm run check`, then PR + merge (`--admin` to bypass the scrapped `pr-governance` CI check, which always fails by design). Docs/handoff commits go direct to `main`. PR governance is scrapped — plain `gh pr create`.
+- **Continuous improvement is a standing ask** ([[feedback_continuous_improvement]]): every session leave the dev process ≥1% better; log it in `docs/dev-process-improvements.md`. When fixing a bug, add the cheapest guardrail for its class.
+- `npm run check` chain: boundaries → governance → **migrations** → expo-root-artifacts → mobile-runtime (incl. native-dep guard) → lint → typecheck → **test**.
+- No emulator/simulator on this Linux box — mobile QA is on the founder's connected devices (Pixel via adb; iPhone via TestFlight).
+- THE THEMING RULE still enforced by `scripts/lint.mjs`: themed values must be reactive (web `cssColor/…`, mobile `useTheme()`); 4 themes aurora/daylight/superchore/neon.
 
-## THE THEMING RULE (enforced by `scripts/lint.mjs` in `npm run check`)
-- Themed values (color/elevation/radius/typography.fontFamily) MUST be reactive: web → `cssColor/cssShadow/cssRadius/cssFontFamily`; mobile → `useTheme()`. Structural tokens (spacing/size/motion/type sizes) may be static.
-- New design token → add to the `Theme`/`ColorScale` interface; TS forces all 4 themes to define it.
-- `packages/ui-tokens/` is lint-exempt for color literals (it's the token source).
+## Open config (not blocking today, needed for full launch)
+- **Web prod (Vercel):** project + `NEXT_PUBLIC_*` env + domain + Supabase redirect URLs not done yet (launch runbook Track A). Web Google sign-in works locally (JS origin `localhost:3000`); prod domain must be added to the OAuth client + Supabase.
+- **Google OAuth consent screen:** publish to production (or add testers) so non-test users can sign in (HIR-72).
 
 ## Reference
-- 4 themes: aurora / daylight / superchore / neon (per-person).
-- Supabase project `pfokfopwjrahclmseper` (eu-central-1) — can auto-pause on free tier; consider Pro for the live test.
-- claude.ai/design mirror of `@hiro/ui-primitives` web: "Hiro Design System" — https://claude.ai/design/p/f5d7db8c-8502-46b9-b6d4-e01774d7179c (re-sync: read `.design-sync/NOTES.md` first).
+- Supabase project `pfokfopwjrahclmseper` (eu-central-1; one project for dev+prod). Auth helpers `current_profile_id()`/`current_household_ids()` (SECURITY DEFINER) — always use in RLS.
+- Key docs: `docs/launch/README.md` (runbook + crash postmortem + auto-submit setup), `docs/dev-process-improvements.md`, `docs/architecture-standards.md` (now includes Function/RPC rules).
+- Memory index: `MEMORY.md` — see [[project_eas_autosubmit]], [[project_mobile_google_oauth]], [[project_mobile_crash_native_module]], [[feedback_continuous_improvement]].
