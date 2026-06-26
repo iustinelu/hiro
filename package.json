@@ -26,9 +26,6 @@
     "pr:create:fallback": "node scripts/create-pr.mjs",
     "pr:create": "node scripts/create-pr.mjs"
   },
-  "dependencies": {
-    "expo-web-browser": "~15.0.10"
-  },
   "devDependencies": {
     "vitest": "^4.1.9"
   }

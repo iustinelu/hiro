@@ -55,13 +55,28 @@ EAS is signed in as **justins9269** (owner of `justins9269s-team`), project link
   "Automated submission" below.
 
 ### Crash postmortem (2026-06-26) — the first Play Store build crashed on launch
-Root cause: the app entry imports `./lib/supabase` at module load, which called
-`validateRuntimeEnv()` and **threw** when `EXPO_PUBLIC_*` were missing. A throw during module
-init happens before React mounts, so the `ErrorBoundary` couldn't catch it → instant native crash.
-Dev worked because Metro loads the local `.env`. Fixes shipped:
-- `supabase.ts` is now **fail-soft**: it captures the init error in `supabaseInitError` instead of
-  throwing; the entry renders a visible "Configuration error" screen instead of crashing.
-- Unit test on `validateRuntimeEnv` (`packages/runtime/src/index.test.ts`) locks the contract.
+**Confirmed root cause (via on-device `adb logcat`):**
+`FATAL EXCEPTION ... JavascriptException: Error: Cannot find native module 'ExpoWebBrowser'`.
+`expo-web-browser` was declared in the **monorepo root `package.json`**, not in
+`apps/mobile/package.json`, and is imported at startup (`authService.ts`) + listed in `app.json`
+plugins. Expo Go bundles every SDK native module so it worked there, but a standalone EAS build
+only autolinks native modules from the **app's own** dependencies → the `ExpoWebBrowser` native
+module was never compiled in → `requireNativeModule` threw on launch. This was the first
+standalone build ever, so the latent misplacement had never surfaced (all prior QA was Expo Go).
+
+Fix: moved `expo-web-browser` into `apps/mobile/package.json`; `npm install`; rebuild.
+
+Two earlier hypotheses were **investigated and ruled out** before the logcat (recorded so we don't
+re-chase them): (1) *missing env* — disproved by extracting the live AAB's Hermes bundle and
+finding the Supabase URL + anon key correctly baked in; (2) *New Architecture mismatch
+(`newArchEnabled: false`)* — plausible but not the cause.
+
+Defensive fixes shipped alongside (keep regardless — they harden against future mistakes):
+- **`scripts/check-mobile-runtime.mjs`** now fails if any `expo-*`/`@expo/*`/`react-native-*`
+  package imported in `apps/mobile/src` (or named in `app.json` plugins) is not declared in
+  `apps/mobile/package.json`. This is the guardrail that would have caught this crash pre-build.
+- `supabase.ts` is **fail-soft**: a missing-env throw now renders a "Configuration error" screen
+  instead of an instant crash; `validateRuntimeEnv` has a unit test locking the contract.
 
 ### ⚠️ Preview-before-production gate (MANDATORY)
 **No production mobile build is submitted until an internal `preview` build has been verified

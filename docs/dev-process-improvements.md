@@ -24,9 +24,17 @@ beats a heavyweight framework. Append an entry below each session.
   Prevents the `create_household` ambiguity class: forbids >1 live signature per public function
   and verifies every `.rpc("name")` call resolves to a defined function. Caught the live bug in a
   negative test.
+- **Mobile native-dependency guard** — `scripts/check-mobile-runtime.mjs` now fails if any
+  `expo-*`/`@expo/*`/`react-native-*` package imported in `apps/mobile/src` (or named in `app.json`
+  plugins) isn't declared in `apps/mobile/package.json`. This is the **actual** guardrail for the
+  Play Store crash: `expo-web-browser` lived in the root package.json, so its native module wasn't
+  autolinked into the standalone build → "Cannot find native module 'ExpoWebBrowser'" on launch.
+  Only ever crashes in a standalone build (Expo Go bundles all SDK modules), so a static check is
+  the only thing that catches it pre-build. Confirmed via on-device `adb logcat`.
 - **Fail-soft runtime env** — `apps/mobile/src/lib/supabase.ts` no longer throws at module load;
-  the entry shows a "Configuration error" screen instead of crashing. Prevents the Play Store
-  instant-crash class (missing `EXPO_PUBLIC_*` in a release build).
+  the entry shows a "Configuration error" screen instead of crashing. Defense-in-depth against a
+  missing-`EXPO_PUBLIC_*` release build (was an early hypothesis for the crash above; ruled out by
+  AAB inspection, but the hardening is worth keeping).
 - **First real unit tests + Vitest** — `npm run test` now runs Vitest (was a placeholder).
   `validateRuntimeEnv` and `formatCurrency` covered. CI runs tests on every PR.
 - **Preview-before-production gate** — documented as mandatory in `docs/launch/README.md`: no store
