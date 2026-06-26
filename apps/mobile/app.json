@@ -1,20 +1,33 @@
 {
   "expo": {
     "name": "Hiro",
-    "plugins": ["expo-web-browser"],
+    "icon": "./assets/icon.png",
+    "plugins": [
+      "expo-web-browser"
+    ],
     "slug": "hiro",
     "version": "0.1.0",
     "scheme": "hiro",
     "newArchEnabled": false,
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "owner": "justins9269s-team",
     "ios": {
-      "bundleIdentifier": "com.behiro.app"
+      "bundleIdentifier": "com.behiro.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
-      "package": "com.behiro.app"
+      "package": "com.behiro.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#15121f"
+      }
     },
     "extra": {
       "eas": {
