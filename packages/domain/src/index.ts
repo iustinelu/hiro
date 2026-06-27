@@ -24,6 +24,9 @@ export interface Profile {
   // package imports (enforced by scripts/check-boundaries.mjs); the UI layer validates the
   // value against its theme id list before applying.
   theme: string | null;
+  // Whether the interactive first-win onboarding tour has been completed/dismissed.
+  // Gates the gamified tour only (not the household gate); see HIR-69.
+  onboardingCompleted: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -301,3 +304,7 @@ export type AppShellSectionId = AppShellSection["id"];
 
 export const appSections = ["Home", "Tasks", "Progress", "Budget", "Rewards", "More"] as const;
 export type AppSection = (typeof appSections)[number];
+
+// ─── Auth method guidance (HIR-71) ──────────────────────────────────────────
+
+export * from "./auth";

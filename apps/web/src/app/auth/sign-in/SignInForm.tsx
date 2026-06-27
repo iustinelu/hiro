@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { WebInput, WebButton, cssFontFamily } from "@hiro/ui-primitives/web";
-import { signIn, signInWithGoogle } from "../../../lib/authService";
+import { WebInput, WebButton, cssFontFamily, cssRadius } from "@hiro/ui-primitives/web";
+import { signIn, signInWithGoogle, getAccountMethods } from "../../../lib/authService";
+import { resolveSignInFailure } from "@hiro/domain";
 import { tokens, brand } from "@hiro/ui-tokens";
 
 const GoogleIcon = () => (
@@ -25,21 +26,44 @@ export function SignInForm() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // HIR-71: friendly guidance when the account uses Google (points up to the button).
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function handleSignIn() {
     setError(null);
+    setNotice(null);
     setLoading(true);
     const { error: authError } = await signIn(email, password);
-    setLoading(false);
     if (authError) {
-      setError(authError);
+      if (/rate.?limit|too many|exceeded/i.test(authError)) {
+        setError("Too many sign-in attempts. Please wait a few minutes and try again.");
+        setLoading(false);
+        return;
+      }
+      // The email may belong to a Google-only account. Ask the backend which method it uses
+      // and guide the user there instead of showing a generic failure. If the lookup itself
+      // fails (null), fall back to a safe generic message rather than "no account found".
+      const methods = await getAccountMethods(email);
+      if (methods === null) {
+        setError("Incorrect email or password. Try again, or reset your password.");
+      } else {
+        const guidance = resolveSignInFailure(methods);
+        if (guidance.highlightGoogle) {
+          setNotice(guidance.message);
+        } else {
+          setError(guidance.message);
+        }
+      }
+      setLoading(false);
       return;
     }
+    setLoading(false);
     router.push(redirect && redirect.startsWith("/") ? redirect : "/home");
   }
 
   async function handleGoogleSignIn() {
     setError(null);
+    setNotice(null);
     setGoogleLoading(true);
     const { error: authError } = await signInWithGoogle(redirect ?? undefined);
     setGoogleLoading(false);
@@ -60,6 +84,23 @@ export function SignInForm() {
       >
         Sign in
       </h1>
+
+      {notice && (
+        <div
+          role="status"
+          style={{
+            fontFamily: cssFontFamily.default,
+            fontSize: tokens.typography.bodySmallSize,
+            color: "var(--hiro-color-ink)",
+            background: "var(--hiro-color-surface)",
+            border: "1px solid var(--hiro-color-accent)",
+            borderRadius: cssRadius.md,
+            padding: tokens.spacing.md,
+          }}
+        >
+          {notice}
+        </div>
+      )}
 
       <WebButton
         label="Continue with Google"

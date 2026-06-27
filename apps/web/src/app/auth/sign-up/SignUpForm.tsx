@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { WebInput, WebButton, cssFontFamily } from "@hiro/ui-primitives/web";
-import { signUp, signInWithGoogle } from "../../../lib/authService";
+import { WebInput, WebButton, cssFontFamily, cssRadius } from "@hiro/ui-primitives/web";
+import { signUp, signInWithGoogle, getAccountMethods } from "../../../lib/authService";
+import { resolveSignUpCollision } from "@hiro/domain";
 import { tokens, brand } from "@hiro/ui-tokens";
 
 const GoogleIcon = () => (
@@ -29,9 +30,12 @@ export function SignUpForm() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // HIR-71: friendly guidance when the email already has an account (existing method).
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function handleSignUp() {
     setError(null);
+    setNotice(null);
 
     if (!displayName.trim()) {
       setError("Please enter your name.");
@@ -51,6 +55,19 @@ export function SignUpForm() {
     }
 
     setLoading(true);
+
+    // Pre-check for an existing account. Supabase returns an obfuscated fake-success for an
+    // already-registered email (anti-enumeration), which would otherwise send the user to a
+    // dead-end. The backend lookup lets us guide them to their existing method instead. If the
+    // lookup fails (null), proceed with sign-up - Supabase's own guard still applies.
+    const methods = await getAccountMethods(email);
+    const collision = methods ? resolveSignUpCollision(methods) : null;
+    if (collision) {
+      setNotice(collision.message);
+      setLoading(false);
+      return;
+    }
+
     const { error: authError } = await signUp(email, password, displayName.trim());
     setLoading(false);
 
@@ -67,6 +84,7 @@ export function SignUpForm() {
 
   async function handleGoogleSignIn() {
     setError(null);
+    setNotice(null);
     setGoogleLoading(true);
     const { error: authError } = await signInWithGoogle(redirect ?? undefined);
     setGoogleLoading(false);
@@ -86,6 +104,23 @@ export function SignUpForm() {
       >
         Create account
       </h1>
+
+      {notice && (
+        <div
+          role="status"
+          style={{
+            fontFamily: cssFontFamily.default,
+            fontSize: tokens.typography.bodySmallSize,
+            color: "var(--hiro-color-ink)",
+            background: "var(--hiro-color-surface)",
+            border: "1px solid var(--hiro-color-accent)",
+            borderRadius: cssRadius.md,
+            padding: tokens.spacing.md,
+          }}
+        >
+          {notice}
+        </div>
+      )}
 
       <WebButton
         label="Continue with Google"

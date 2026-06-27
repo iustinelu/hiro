@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { RecurringTask, LeaderboardEntry, TaskCadence, CadenceMeta } from "@hiro/domain";
@@ -15,8 +15,11 @@ import {
   isDueToday,
 } from "../lib/taskService";
 import { getBacklogTasks, type BacklogTask } from "../lib/oneOffService";
+import { registerForPushNotifications } from "../lib/notificationService";
 import { TaskCreateModal } from "./TaskCreateModal";
 import { PointsBurst, AllDoneCelebration } from "./celebrations";
+import { useOnboardingTour } from "../onboarding/OnboardingTourProvider";
+import { OnboardingTourCard, type TourStep } from "../onboarding/OnboardingTourCard";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -46,6 +49,16 @@ export function HomeScreen() {
   const [showAllDone, setShowAllDone] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [undoableTaskId, setUndoableTaskId] = useState<string | null>(null);
+
+  /* ── Onboarding tour ─────────────────────────────────────────────────── */
+  const { tourActive, endTour } = useOnboardingTour();
+  const [tourStep, setTourStep] = useState<TourStep>("create");
+  const [notifLoading, setNotifLoading] = useState(false);
+  // Counts at the moment the tour (re)starts. Advancing requires progress made
+  // *during* the tour, so a Replay for an established user still walks the full
+  // create → complete → celebrate flow instead of jumping to the end.
+  const tourBaseline = useRef({ tasks: 0, completions: 0 });
+  const prevTourActive = useRef(false);
 
   /* ── Bootstrap profile + household ───────────────────────────────────── */
   useEffect(() => {
@@ -94,6 +107,34 @@ export function HomeScreen() {
     const timer = setTimeout(() => setUndoableTaskId(null), 5000);
     return () => clearTimeout(timer);
   }, [undoableTaskId]);
+
+  /* ── Tour: snapshot baseline + reset to step 1 on each (re)start ───────── */
+  useEffect(() => {
+    if (tourActive && !prevTourActive.current) {
+      tourBaseline.current = { tasks: tasks.length, completions: completedIds.size };
+      setTourStep("create");
+    }
+    prevTourActive.current = tourActive;
+  }, [tourActive, tasks.length, completedIds.size]);
+
+  /* ── Tour: auto-advance as the user performs each real action ──────────── */
+  useEffect(() => {
+    if (!tourActive) return;
+    if (tourStep === "create" && tasks.length > tourBaseline.current.tasks) {
+      setTourStep("complete");
+    } else if (tourStep === "complete" && completedIds.size > tourBaseline.current.completions) {
+      setTourStep("celebrate");
+    }
+  }, [tourActive, tourStep, tasks.length, completedIds.size]);
+
+  const handleEnableNotifications = useCallback(async () => {
+    setNotifLoading(true);
+    // Push (HIR-66) is live: the tour's contextual prompt both asks OS permission
+    // and registers this device's push token. Never throws; ends the tour either way.
+    await registerForPushNotifications();
+    setNotifLoading(false);
+    endTour();
+  }, [endTour]);
 
   /* ── Complete a task ─────────────────────────────────────────────────── */
   const handleComplete = useCallback(async (taskId: string) => {
@@ -157,8 +198,10 @@ export function HomeScreen() {
 
   const handleBurstComplete = useCallback(() => {
     setLastCompletion(null);
-    if (allDone) setShowAllDone(true);
-  }, [allDone]);
+    // During the tour the coaching card is the celebration; don't stack the
+    // full-screen "all done" modal on top of it.
+    if (allDone && !tourActive) setShowAllDone(true);
+  }, [allDone, tourActive]);
 
   const containerStyle = { padding: t.spacing.lg, gap: t.spacing.md };
 
@@ -326,6 +369,19 @@ export function HomeScreen() {
         onSave={handleCreate}
         onUpdate={async () => {}}
       />
+
+      {tourActive && !modalOpen && (
+        <OnboardingTourCard
+          step={tourStep}
+          pointsEarned={totalPointsToday}
+          streak={streak}
+          notifLoading={notifLoading}
+          onAddChore={() => setModalOpen(true)}
+          onFinish={() => setTourStep("notify")}
+          onEnableNotifications={() => void handleEnableNotifications()}
+          onSkip={endTour}
+        />
+      )}
     </View>
   );
 }

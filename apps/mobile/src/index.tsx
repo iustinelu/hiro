@@ -21,6 +21,7 @@ import {
   IBMPlexMono_400Regular,
   IBMPlexMono_500Medium
 } from "@expo-google-fonts/ibm-plex-mono";
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme, MobileErrorState } from "@hiro/ui-primitives/mobile";
 import { supabaseInitError } from "./lib/supabase";
 import { RootNavigator } from "./navigation/RootNavigator";
@@ -60,7 +61,11 @@ export default function App() {
   // Bundle the leading family of every theme stack (Inter / Rajdhani / Press Start 2P
   // display, IBM Plex Mono mono). Each weight registers under its own RN family name;
   // resolveFontFamily()/resolveFontFamilyMono() map the active theme + weight to these.
+  // Ionicons.font is co-loaded here because bare/prebuilt Android builds don't
+  // auto-bundle @expo/vector-icons fonts (only managed/EAS builds do) - without
+  // this the bottom tab glyphs render blank.
   const [fontsLoaded] = useFonts({
+    ...Ionicons.font,
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
