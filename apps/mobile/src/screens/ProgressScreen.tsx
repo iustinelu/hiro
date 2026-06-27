@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import type { DailyPoints, LeaderboardEntry, PersonalStats, TaskStats } from "@hiro/domain";
 import { MobileEmptyStatePanel, useTheme } from "@hiro/ui-primitives/mobile";
@@ -23,6 +23,7 @@ export function ProgressScreen() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [taskStats, setTaskStats] = useState<TaskStats[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   /* ── Bootstrap profile + household ─────────────────────────────────────── */
   useEffect(() => {
@@ -71,6 +72,12 @@ export function ProgressScreen() {
     }, [bootstrapped, profileId, householdId, loadData])
   );
 
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadData();
+    setRefreshing(false);
+  }, [loadData]);
+
   /* ── Loading state ──────────────────────────────────────────────────────── */
   if (!bootstrapped || loading) {
     return (
@@ -100,13 +107,19 @@ export function ProgressScreen() {
 
   if (isEmpty) {
     return (
-      <View style={{ flex: 1, padding: t.spacing.lg, backgroundColor: t.color.bg }}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: t.color.bg }}
+        contentContainerStyle={{ flexGrow: 1, padding: t.spacing.lg }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={() => void handleRefresh()} />
+        }
+      >
         <MobileEmptyStatePanel
           title="No progress yet"
           description="Complete your first task to see progress here."
           icon="empty"
         />
-      </View>
+      </ScrollView>
     );
   }
 
@@ -115,6 +128,9 @@ export function ProgressScreen() {
     <ScrollView
       style={{ flex: 1, backgroundColor: t.color.bg }}
       contentContainerStyle={{ padding: t.spacing.lg, gap: t.spacing.md }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={() => void handleRefresh()} />
+      }
     >
       {stats && <StatsGrid stats={stats} />}
       {trend.length > 0 && <WeeklyChart trend={trend} />}

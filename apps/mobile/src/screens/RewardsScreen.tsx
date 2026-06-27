@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Easing, ScrollView, Text, View } from "react-native";
+import { Animated, Easing, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   MobileButton,
@@ -89,6 +89,7 @@ export function RewardsScreen() {
   const [balance, setBalance] = useState(0);
   const [redemptions, setRedemptions] = useState<RewardRedemptionWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [confirming, setConfirming] = useState<string | null>(null);
   const [redeeming, setRedeeming] = useState<string | null>(null);
@@ -129,6 +130,13 @@ export function RewardsScreen() {
       }
     }, [profileId, householdId, loadData])
   );
+
+  const handleRefresh = useCallback(async () => {
+    if (!profileId || !householdId) return;
+    setRefreshing(true);
+    await loadData(profileId, householdId);
+    setRefreshing(false);
+  }, [profileId, householdId, loadData]);
 
   /* ── Realtime subscription ───────────────────────────────────────── */
 
@@ -218,6 +226,9 @@ export function RewardsScreen() {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: t.spacing.lg, gap: t.spacing.md }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={() => void handleRefresh()} />
+        }
       >
         {/* Balance KPI */}
         <MobileKpiTile
