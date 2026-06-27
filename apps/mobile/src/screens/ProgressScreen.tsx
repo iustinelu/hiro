@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import type { DailyPoints, LeaderboardEntry, PersonalStats, TaskStats } from "@hiro/domain";
-import { MobileEmptyStatePanel, useTheme } from "@hiro/ui-primitives/mobile";
+import { MobileEmptyState, MobileErrorState, useTheme } from "@hiro/ui-primitives/mobile";
 import { supabase } from "../lib/supabase";
 import { getPersonalStats, getWeeklyPointsTrend, getTaskStats } from "../lib/progressService";
 import { getWeeklyLeaderboard } from "../lib/taskService";
@@ -23,6 +23,7 @@ export function ProgressScreen() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [taskStats, setTaskStats] = useState<TaskStats[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   /* ── Bootstrap profile + household ─────────────────────────────────────── */
   useEffect(() => {
@@ -54,6 +55,12 @@ export function ProgressScreen() {
       getWeeklyLeaderboard(householdId),
       getTaskStats(householdId),
     ]);
+    if (statsRes.error || trendRes.error || leaderboardRes.error || taskStatsRes.error) {
+      setLoadError(true);
+      setLoading(false);
+      return;
+    }
+    setLoadError(false);
     setStats(statsRes.stats);
     setTrend(trendRes.trend);
     setLeaderboard(leaderboardRes.entries);
@@ -90,6 +97,18 @@ export function ProgressScreen() {
     );
   }
 
+  /* ── Error state ────────────────────────────────────────────────────────── */
+  if (loadError) {
+    return (
+      <View style={{ flex: 1, padding: t.spacing.lg, backgroundColor: t.color.bg }}>
+        <MobileErrorState
+          description="We couldn't load your progress. Check your connection and try again."
+          onRetry={() => { setLoading(true); void loadData(); }}
+        />
+      </View>
+    );
+  }
+
   /* ── Empty state ────────────────────────────────────────────────────────── */
   const isEmpty =
     !stats ||
@@ -101,10 +120,9 @@ export function ProgressScreen() {
   if (isEmpty) {
     return (
       <View style={{ flex: 1, padding: t.spacing.lg, backgroundColor: t.color.bg }}>
-        <MobileEmptyStatePanel
+        <MobileEmptyState
           title="No progress yet"
           description="Complete your first task to see progress here."
-          icon="empty"
         />
       </View>
     );
