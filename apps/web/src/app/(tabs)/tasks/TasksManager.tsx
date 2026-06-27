@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import useSWR from "swr";
 import type { RecurringTask, TaskCadence, CadenceMeta } from "@hiro/domain";
 import { WebSegmentedControl, WebButton } from "@hiro/ui-primitives/web";
 import {
@@ -10,8 +11,27 @@ import {
   updateTask,
   archiveTask,
 } from "../../../lib/taskService";
+import { cacheKeys, revalidateHousehold } from "../../../lib/cacheKeys";
+import { DashboardSkeleton } from "../DashboardSkeleton";
 import { TaskCreateModal } from "./TaskCreateModal";
 import styles from "./tasks.module.css";
+
+interface TasksData {
+  tasks: RecurringTask[];
+  completedIds: Set<string>;
+}
+
+const EMPTY_TASKS: RecurringTask[] = [];
+const EMPTY_SET: Set<string> = new Set();
+const EMPTY_TASKS_DATA: TasksData = { tasks: EMPTY_TASKS, completedIds: EMPTY_SET };
+
+async function fetchTasksData(householdId: string, profileId: string): Promise<TasksData> {
+  const [tasksRes, completionsRes] = await Promise.all([
+    getHouseholdTasks(householdId),
+    getTodayCompletions(profileId),
+  ]);
+  return { tasks: tasksRes.tasks, completedIds: new Set(completionsRes.completedTaskIds) };
+}
 
 const DAY_MAP: Record<string, string> = {
   sunday: "sun", monday: "mon", tuesday: "tue", wednesday: "wed",
@@ -44,27 +64,18 @@ const SEGMENTS = [{ label: "Today", value: "today" }, { label: "All Tasks", valu
 interface Props { householdId: string; profileId: string; }
 
 export function TasksManager({ householdId, profileId }: Props) {
+  const { data, isLoading, mutate } = useSWR(
+    cacheKeys.tasks(householdId, profileId),
+    () => fetchTasksData(householdId, profileId),
+  );
+
+  const tasks = data?.tasks ?? EMPTY_TASKS;
+  const completedIds = data?.completedIds ?? EMPTY_SET;
+
   const [tab, setTab] = useState("today");
-  const [tasks, setTasks] = useState<RecurringTask[]>([]);
-  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
-  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<RecurringTask | null>(null);
   const [showCompleted, setShowCompleted] = useState(false);
-
-  /* ── Fetch ─────────────────────────────────────────────────────────── */
-
-  const fetchData = useCallback(async () => {
-    const [tasksRes, completionsRes] = await Promise.all([
-      getHouseholdTasks(householdId),
-      getTodayCompletions(profileId),
-    ]);
-    setTasks(tasksRes.tasks);
-    setCompletedIds(new Set(completionsRes.completedTaskIds));
-    setLoading(false);
-  }, [householdId, profileId]);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
 
   /* ── Actions ───────────────────────────────────────────────────────── */
 
@@ -73,8 +84,9 @@ export function TasksManager({ householdId, profileId }: Props) {
   ) => {
     const result = await createTask(householdId, name, points, cadence, cadenceMeta);
     if (result.error) throw new Error(result.error);
-    await fetchData();
-  }, [householdId, fetchData]);
+    await mutate();
+    void revalidateHousehold(householdId);
+  }, [householdId, mutate]);
 
   const handleUpdate = useCallback(async (
     taskId: string,
@@ -82,13 +94,32 @@ export function TasksManager({ householdId, profileId }: Props) {
   ) => {
     const result = await updateTask(taskId, updates);
     if (result.error) throw new Error(result.error);
-    await fetchData();
-  }, [fetchData]);
+    await mutate();
+    void revalidateHousehold(householdId);
+  }, [householdId, mutate]);
 
   const handleArchive = useCallback(async (taskId: string) => {
-    const result = await archiveTask(taskId);
-    if (!result.error) setTasks((prev) => prev.filter((t) => t.id !== taskId));
-  }, []);
+    try {
+      await mutate(
+        async () => {
+          const result = await archiveTask(taskId);
+          if (result.error) throw new Error(result.error);
+          return fetchTasksData(householdId, profileId);
+        },
+        {
+          optimisticData: (current) => {
+            const base = current ?? EMPTY_TASKS_DATA;
+            return { ...base, tasks: base.tasks.filter((t) => t.id !== taskId) };
+          },
+          rollbackOnError: true,
+          revalidate: false,
+        },
+      );
+      void revalidateHousehold(householdId);
+    } catch {
+      // rolled back automatically
+    }
+  }, [householdId, profileId, mutate]);
 
   function openCreate() { setEditingTask(null); setModalOpen(true); }
   function openEdit(task: RecurringTask) { setEditingTask(task); setModalOpen(true); }
@@ -102,7 +133,7 @@ export function TasksManager({ householdId, profileId }: Props) {
 
   /* ── Render ────────────────────────────────────────────────────────── */
 
-  if (loading) return <div className={styles.loading}>Loading tasks...</div>;
+  if (isLoading && !data) return <DashboardSkeleton />;
 
   return (
     <div className={styles.container}>

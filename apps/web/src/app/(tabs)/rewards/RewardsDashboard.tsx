@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import useSWR from "swr";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Reward, RewardRedemptionWithDetails } from "@hiro/domain";
 import { ServiceErrorCode, pointsShortfall } from "@hiro/domain";
@@ -14,11 +15,37 @@ import {
   archiveReward,
 } from "../../../lib/rewardService";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/client";
+import { cacheKeys, revalidateHousehold } from "../../../lib/cacheKeys";
+import { DashboardSkeleton } from "../DashboardSkeleton";
 import { RewardCardGrid } from "./RewardCardGrid";
 import { RedemptionFeed } from "./RedemptionFeed";
 import { RewardCreateModal } from "./RewardCreateModal";
 import PointsBurst from "../home/PointsBurst";
 import styles from "./rewards.module.css";
+
+/* ─── Data ──────────────────────────────────────────────────────────────── */
+
+interface RewardsData {
+  rewards: Reward[];
+  balance: number;
+  redemptions: RewardRedemptionWithDetails[];
+}
+
+const EMPTY_REWARDS: Reward[] = [];
+const EMPTY_REDEMPTIONS: RewardRedemptionWithDetails[] = [];
+
+async function fetchRewardsData(householdId: string, profileId: string): Promise<RewardsData> {
+  const [rewardsRes, balanceRes, feedRes] = await Promise.all([
+    getHouseholdRewards(householdId),
+    getPointBalance(profileId, householdId),
+    getRedemptionHistory(householdId),
+  ]);
+  return {
+    rewards: rewardsRes.rewards,
+    balance: balanceRes.balance,
+    redemptions: feedRes.redemptions,
+  };
+}
 
 /* ─── Toast ─────────────────────────────────────────────────────────────── */
 
@@ -60,32 +87,21 @@ interface Props {
 }
 
 export function RewardsDashboard({ householdId, profileId }: Props) {
-  const [rewards, setRewards] = useState<Reward[]>([]);
-  const [balance, setBalance] = useState(0);
-  const [redemptions, setRedemptions] = useState<RewardRedemptionWithDetails[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, mutate } = useSWR(
+    cacheKeys.rewards(householdId, profileId),
+    () => fetchRewardsData(householdId, profileId),
+  );
+
+  const rewards = data?.rewards ?? EMPTY_REWARDS;
+  const balance = data?.balance ?? 0;
+  const redemptions = data?.redemptions ?? EMPTY_REDEMPTIONS;
+
   const [modalOpen, setModalOpen] = useState(false);
   const [confirming, setConfirming] = useState<string | null>(null);
   const [redeeming, setRedeeming] = useState<string | null>(null);
   const [burst, setBurst] = useState<{ points: number; title: string } | null>(null);
   const [toast, setToast] = useState<RewardRedemptionWithDetails | null>(null);
   const [redeemError, setRedeemError] = useState<string | null>(null);
-
-  /* ── Data loading ───────────────────────────────────────────────────── */
-
-  const loadData = useCallback(async () => {
-    const [rewardsRes, balanceRes, feedRes] = await Promise.all([
-      getHouseholdRewards(householdId),
-      getPointBalance(profileId, householdId),
-      getRedemptionHistory(householdId),
-    ]);
-    setRewards(rewardsRes.rewards);
-    setBalance(balanceRes.balance);
-    setRedemptions(feedRes.redemptions);
-    setLoading(false);
-  }, [householdId, profileId]);
-
-  useEffect(() => { loadData(); }, [loadData]);
 
   /* ── Realtime subscription ──────────────────────────────────────────── */
 
@@ -106,32 +122,25 @@ export function RewardsDashboard({ householdId, profileId }: Props) {
           const row = payload.new as { redeemed_by_profile_id: string };
           const isOtherMember = row.redeemed_by_profile_id !== profileId;
 
-          const [feedRes, balRes] = await Promise.all([
-            getRedemptionHistory(householdId),
-            getPointBalance(profileId, householdId),
-          ]);
-
-          if (!feedRes.error) {
-            setRedemptions(feedRes.redemptions);
-            if (isOtherMember && feedRes.redemptions[0]) {
-              setToast(feedRes.redemptions[0]);
-            }
+          const updated = await mutate();
+          if (isOtherMember && updated?.redemptions[0]) {
+            setToast(updated.redemptions[0]);
           }
-          if (!balRes.error) setBalance(balRes.balance);
         }
       )
       .subscribe();
 
     return () => { void supabase.removeChannel(channel); };
-  }, [householdId, profileId]);
+  }, [householdId, profileId, mutate]);
 
   /* ── Handlers ───────────────────────────────────────────────────────── */
 
   const handleCreate = useCallback(async (title: string, pointCost: number) => {
     const { error } = await createReward(householdId, title, pointCost);
     if (error) throw new Error(error);
-    await loadData();
-  }, [householdId, loadData]);
+    await mutate();
+    void revalidateHousehold(householdId);
+  }, [householdId, mutate]);
 
   const handleConfirmRedeem = useCallback((rewardId: string) => {
     setConfirming(rewardId);
@@ -154,20 +163,21 @@ export function RewardsDashboard({ householdId, profileId }: Props) {
       return;
     }
 
-    setBalance(result.remainingBalance);
     setBurst({ points: result.pointsSpent, title: result.rewardTitle });
-    await loadData();
-  }, [balance, loadData]);
+    await mutate();
+    void revalidateHousehold(householdId);
+  }, [balance, householdId, mutate]);
 
   const handleArchive = useCallback(async (rewardId: string) => {
     await archiveReward(rewardId);
-    await loadData();
-  }, [loadData]);
+    await mutate();
+    void revalidateHousehold(householdId);
+  }, [householdId, mutate]);
 
-  /* ── Loading ────────────────────────────────────────────────────────── */
+  /* ── Loading (first visit only — cached visits paint instantly) ──────── */
 
-  if (loading) {
-    return <div className={styles.loading}>Loading rewards…</div>;
+  if (isLoading && !data) {
+    return <DashboardSkeleton />;
   }
 
   /* ── Render ─────────────────────────────────────────────────────────── */

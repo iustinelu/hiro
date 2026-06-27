@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { SWRConfig } from "swr";
 import { appShellSections } from "@hiro/domain";
 import { WebIcon } from "@hiro/ui-primitives/web";
 import { getSupabaseBrowserClient } from "../../lib/supabase/client";
@@ -63,7 +64,9 @@ export default function TabsLayout({ children }: { children: ReactNode }) {
           <span style={{ width: 28 }} />
         </header>
         <main className={styles.main}>
-          <HouseholdProvider>{children}</HouseholdProvider>
+          <SWRConfig value={{ revalidateOnFocus: true, dedupingInterval: 5000, keepPreviousData: true }}>
+            <HouseholdProvider>{children}</HouseholdProvider>
+          </SWRConfig>
         </main>
       </div>
 
