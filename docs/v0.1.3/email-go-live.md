@@ -18,7 +18,10 @@ source of truth; this runbook installs them.
 > - ✅ Domain `gethiro.xyz` **Verified** in Resend (eu-west-1); DKIM/SPF/MX/DMARC live at Namecheap.
 > - ✅ Logo hosted (`.../public-assets/icon-192.png`) and baked into the 3 templates in `email-templates/` (no more `__LOGO_URL__`).
 > - ✅ Custom SMTP enabled in Supabase (host/port/user/password set).
-> - ⚠️ **REMAINING:** (1) set SMTP **Sender email = `no-reply@gethiro.xyz`** (was a gmail address - Resend will reject non-domain senders); (2) install the 3 branded templates + subjects in Authentication → Email Templates (paste, or via Management API `PATCH /v1/projects/{ref}/config/auth` fields `mailer_templates_confirmation_content`/`mailer_subjects_confirmation`, `mailer_templates_recovery_content`/`mailer_subjects_recovery`, `mailer_templates_invite_content`/`mailer_subjects_invite`); (3) a test-send to confirm delivery.
+> - ✅ SMTP **Sender = `no-reply@gethiro.xyz`** (fixed).
+> - ✅ **3 branded templates + subjects installed & verified** via Management API `PATCH /config/auth` (Confirm your Hiro email / Reset your Hiro password / You're invited to Hiro). Logo + `{{ .ConfirmationURL }}` present. (Gotcha: Cloudflare returns `403 error code 1010` for the default `Python-urllib` User-Agent - send a normal `User-Agent` header.)
+> - ⚠️ **`mailer_autoconfirm = true`** on this project, so signup does NOT send a confirmation email (users auto-confirm). The branded **Confirm signup** template only sends if you turn email confirmation ON. The **Reset password** email DOES send - use it to test branded delivery.
+> - ⏳ **REMAINING:** (1) live test - trigger a password reset to a real inbox, confirm the branded email arrives via Resend; (2) **revoke the Supabase access token** used for this setup.
 > - None of this blocks the v0.1.3 code fixes.
 
 > **Why this matters:** Supabase's default mailer is rate-limited (it will start dropping real
