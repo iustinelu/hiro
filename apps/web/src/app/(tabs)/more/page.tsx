@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import useSWR from "swr";
 import { WebButton, WebCard, WebListRow, WebInput } from "@hiro/ui-primitives/web";
 import { signOut, getMyAccountMethods, updatePassword } from "../../../lib/authService";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/client";
@@ -12,19 +13,63 @@ import {
 } from "../../../lib/householdService";
 import { createInvite, getHouseholdInvites } from "../../../lib/inviteService";
 import { getDisplayName, updateDisplayName } from "../../../lib/profileService";
+import { cacheKeys } from "../../../lib/cacheKeys";
 import { tokens } from "@hiro/ui-tokens";
 import { cssColor, cssRadius, cssFontFamily } from "@hiro/ui-primitives/web";
 import type { Household, HouseholdMemberWithProfile, HouseholdInvite, AuthMethod } from "@hiro/domain";
+import { DashboardSkeleton } from "../DashboardSkeleton";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+
+interface MoreData {
+  email: string | null;
+  profileId: string | null;
+  displayName: string;
+  household: Household | null;
+  members: HouseholdMemberWithProfile[];
+  invites: HouseholdInvite[];
+}
+
+async function fetchMoreData(): Promise<MoreData> {
+  const supabase = getSupabaseBrowserClient();
+  const [{ data: userData }, { data: pid }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.rpc("current_profile_id"),
+  ]);
+  const email = userData.user?.email ?? null;
+  const profileId = (pid as string | null) ?? null;
+
+  let displayName = "";
+  if (profileId) {
+    const { displayName: name } = await getDisplayName(profileId);
+    if (name) displayName = name;
+  }
+
+  const { household } = await getMyHousehold();
+  let members: HouseholdMemberWithProfile[] = [];
+  let invites: HouseholdInvite[] = [];
+  if (household) {
+    const [{ members: m }, { invites: inv }] = await Promise.all([
+      getHouseholdMembers(household.id),
+      getHouseholdInvites(household.id),
+    ]);
+    members = m;
+    invites = inv;
+  }
+
+  return { email, profileId, displayName, household, members, invites };
+}
 
 export default function MorePage() {
   const router = useRouter();
-  const [email, setEmail] = useState<string | null>(null);
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [household, setHousehold] = useState<Household | null>(null);
-  const [members, setMembers] = useState<HouseholdMemberWithProfile[]>([]);
-  const [invites, setInvites] = useState<HouseholdInvite[]>([]);
-  const [householdLoaded, setHouseholdLoaded] = useState(false);
+
+  const { data, isLoading, mutate } = useSWR(cacheKeys.more(), fetchMoreData);
+
+  const email = data?.email ?? null;
+  const profileId = data?.profileId ?? null;
+  const household = data?.household ?? null;
+  const members = data?.members ?? [];
+  const invites = data?.invites ?? [];
+
   const [newName, setNewName] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -36,8 +81,9 @@ export default function MorePage() {
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Display name state
+  // Display name state — seeded once from the cached profile, then user-editable.
   const [displayName, setDisplayName] = useState("");
+  const [displaySeeded, setDisplaySeeded] = useState(false);
   const [savingName, setSavingName] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
   const [nameSaved, setNameSaved] = useState(false);
@@ -51,35 +97,16 @@ export default function MorePage() {
   const [passwordSet, setPasswordSet] = useState(false);
 
   useEffect(() => {
-    const supabase = getSupabaseBrowserClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user?.email) setEmail(data.user.email);
-    });
-    getMyAccountMethods().then(setAccountMethods);
-    supabase.rpc("current_profile_id").then(({ data }) => {
-      if (data) {
-        const id = data as string;
-        setProfileId(id);
-        getDisplayName(id).then(({ displayName: name }) => {
-          if (name) setDisplayName(name);
-        });
-      }
-    });
-
-    loadHousehold();
-  }, []);
-
-  async function loadHousehold() {
-    const { household: h } = await getMyHousehold();
-    setHousehold(h);
-    if (h) {
-      const { members: m } = await getHouseholdMembers(h.id);
-      setMembers(m);
-      const { invites: inv } = await getHouseholdInvites(h.id);
-      setInvites(inv);
+    if (!displaySeeded && data?.displayName) {
+      setDisplayName(data.displayName);
+      setDisplaySeeded(true);
     }
-    setHouseholdLoaded(true);
-  }
+  }, [data?.displayName, displaySeeded]);
+
+  // HIR-71: load the signed-in user's auth methods to gate the "Set a password" affordance.
+  useEffect(() => {
+    getMyAccountMethods().then(setAccountMethods);
+  }, []);
 
   async function handleCreateHousehold() {
     if (!newName.trim()) return;
@@ -92,7 +119,7 @@ export default function MorePage() {
       return;
     }
     setNewName("");
-    await loadHousehold();
+    await mutate();
   }
 
   async function handleInvite() {
@@ -110,9 +137,7 @@ export default function MorePage() {
     if (token) {
       setInviteLink(`${window.location.origin}/invite/${token}`);
       setInviteEmail("");
-      // Refresh invite list
-      const { invites: inv } = await getHouseholdInvites(household.id);
-      setInvites(inv);
+      await mutate();
     }
   }
 
@@ -134,6 +159,7 @@ export default function MorePage() {
       setNameError(error);
     } else {
       setNameSaved(true);
+      void mutate();
     }
   }
 
@@ -171,9 +197,13 @@ export default function MorePage() {
   const isGoogleOnly =
     accountMethods !== null && accountMethods.includes("google") && !accountMethods.includes("email");
 
+  if (isLoading && !data) {
+    return <DashboardSkeleton />;
+  }
+
   return (
     <div style={{ padding: tokens.spacing.lg, display: "grid", gap: tokens.spacing.md }}>
-      {householdLoaded && !household && (
+      {!household && (
         <WebCard title="Create your household">
           <div style={{ display: "grid", gap: tokens.spacing.md }}>
             <WebInput

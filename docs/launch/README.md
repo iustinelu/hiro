@@ -40,6 +40,13 @@ In Supabase → Authentication → URL Configuration, add the Vercel URL (and cu
 
 Without this, Google OAuth + magic-link redirects bounce.
 
+> **Google OAuth production go-live (consent publish + redirect audit):** see the click-by-click
+> founder runbook at [`docs/v0.1.3/oauth-go-live.md`](../v0.1.3/oauth-go-live.md) (HIR-72). It
+> covers publishing the consent screen out of "Testing" mode (the thing that blocks non-test
+> friends), the exact two redirect values to register, and project/account consolidation. Note:
+> as of v0.1.3 distribution is **mobile-only**, so the runbook targets the native flow
+> (`hiro://auth/callback`); the web/Vercel steps above are parked.
+
 ---
 
 ## Track B — Native iOS + Android (EAS)
