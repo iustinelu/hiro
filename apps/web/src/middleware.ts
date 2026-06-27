@@ -35,8 +35,13 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAuthRoute = pathname.startsWith("/auth");
   const isInviteRoute = pathname.startsWith("/invite");
+  // Public link-resolver routes — must never be auth-gated. `/join/[code]` is
+  // the open household-join landing page (tapped by people without the app);
+  // `/.well-known/*` serves the iOS/Android app-link verification files.
+  const isJoinRoute = pathname.startsWith("/join");
+  const isWellKnownRoute = pathname.startsWith("/.well-known");
 
-  if (!user && !isAuthRoute && !isInviteRoute) {
+  if (!user && !isAuthRoute && !isInviteRoute && !isJoinRoute && !isWellKnownRoute) {
     return NextResponse.redirect(new URL("/auth/sign-in", request.url));
   }
 
