@@ -1,5 +1,31 @@
 import * as WebBrowser from "expo-web-browser";
+import type { AuthMethod } from "@hiro/domain";
 import { supabase } from "./supabase";
+
+// HIR-71: which sign-in method(s) an email is registered with (via SECURITY DEFINER RPC),
+// so the UI can guide a user to the right method instead of a generic failure.
+// Returns null when the lookup itself fails (network/RPC error) so callers can fall back to a
+// safe generic message instead of mistaking an outage for "no account exists".
+export async function getAccountMethods(email: string): Promise<AuthMethod[] | null> {
+  const { data, error } = await supabase.rpc("account_methods_for_email", { p_email: email });
+  if (error) return null;
+  return (data as AuthMethod[] | null) ?? [];
+}
+
+// The signed-in user's own methods (used to gate the "Set a password" affordance).
+// Returns null on lookup failure (the affordance then stays hidden).
+export async function getMyAccountMethods(): Promise<AuthMethod[] | null> {
+  const { data, error } = await supabase.rpc("current_account_methods");
+  if (error) return null;
+  return (data as AuthMethod[] | null) ?? [];
+}
+
+export async function updatePassword(
+  password: string
+): Promise<{ error: string | null }> {
+  const { error } = await supabase.auth.updateUser({ password });
+  return { error: error?.message ?? null };
+}
 
 export async function signIn(
   email: string,

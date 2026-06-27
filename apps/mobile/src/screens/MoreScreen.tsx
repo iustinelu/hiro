@@ -3,14 +3,14 @@ import { ScrollView, View, Share, Alert } from "react-native";
 import { MobileButton, MobileCard, MobileListRow, MobileInput, useTheme } from "@hiro/ui-primitives/mobile";
 import { ALL_THEME_IDS, THEME_LABELS } from "@hiro/ui-tokens";
 import { useThemeControl } from "../theme/ThemeProvider";
-import { signOut } from "../lib/authService";
+import { signOut, getMyAccountMethods, updatePassword } from "../lib/authService";
 import { supabase } from "../lib/supabase";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
 import { createInvite, getHouseholdInvites } from "../lib/inviteService";
 import { getDisplayName, updateDisplayName, updateTheme } from "../lib/profileService";
 import { JoinHouseholdForm } from "../components/JoinHouseholdForm";
 import type { ThemeId } from "@hiro/ui-tokens";
-import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
+import type { Household, HouseholdMemberWithProfile, HouseholdInvite, AuthMethod } from "@hiro/domain";
 
 export function MoreScreen() {
   const t = useTheme();
@@ -32,10 +32,19 @@ export function MoreScreen() {
   const [nameError, setNameError] = useState<string | null>(null);
   const [nameSaved, setNameSaved] = useState(false);
 
+  // HIR-71: add-password for Google-only accounts
+  const [accountMethods, setAccountMethods] = useState<AuthMethod[] | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [settingPassword, setSettingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSet, setPasswordSet] = useState(false);
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user?.email) setEmail(data.user.email);
     });
+    getMyAccountMethods().then(setAccountMethods);
     supabase.rpc("current_profile_id").then(({ data }) => {
       if (data) {
         const id = data as string;
@@ -113,12 +122,39 @@ export function MoreScreen() {
     if (profileId) void updateTheme(profileId, id);
   }
 
+  async function handleSetPassword() {
+    setPasswordError(null);
+    if (newPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setPasswordError("Passwords do not match.");
+      return;
+    }
+    setSettingPassword(true);
+    const { error } = await updatePassword(newPassword);
+    setSettingPassword(false);
+    if (error) {
+      setPasswordError(error);
+      return;
+    }
+    setPasswordSet(true);
+    setNewPassword("");
+    setConfirmNewPassword("");
+    // Refresh methods so the section hides now that a password exists.
+    setAccountMethods(await getMyAccountMethods());
+  }
+
   async function handleSignOut() {
     await signOut();
     // Session change triggers RootNavigator to switch to AuthScreen
   }
 
   const isOwner = household && profileId && household.ownerProfileId === profileId;
+  // Show "Set a password" only for Google-only accounts (no password yet).
+  const isGoogleOnly =
+    accountMethods !== null && accountMethods.includes("google") && !accountMethods.includes("email");
 
   return (
     <ScrollView
@@ -212,6 +248,37 @@ export function MoreScreen() {
             loadingLabel="Saving…"
             onPress={() => void handleSaveName()}
           />
+          {isGoogleOnly && (
+            <>
+              <MobileInput
+                label="Set a password"
+                placeholder="Min. 6 characters"
+                value={newPassword}
+                onChangeText={(text) => { setNewPassword(text); setPasswordError(null); }}
+                secureTextEntry
+                state={passwordError ? "error" : "default"}
+                helperText={passwordError ?? "Add a password so you can also sign in with email."}
+              />
+              <MobileInput
+                label="Confirm password"
+                placeholder="Re-enter password"
+                value={confirmNewPassword}
+                onChangeText={(text) => { setConfirmNewPassword(text); setPasswordError(null); }}
+                secureTextEntry
+                state={passwordError ? "error" : "default"}
+              />
+              <MobileButton
+                label="Set password"
+                variant="secondary"
+                loading={settingPassword}
+                loadingLabel="Setting…"
+                onPress={() => void handleSetPassword()}
+              />
+            </>
+          )}
+          {passwordSet && (
+            <MobileListRow title="Password set" meta="You can now sign in with email too" />
+          )}
           <MobileButton
             label="Sign out"
             variant="danger"
