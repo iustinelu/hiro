@@ -1,5 +1,5 @@
 import React from "react";
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import type { ModalSheetProps } from "../shared/types";
 import { MobileButton } from "./MobileButton";
 import { useTheme } from "./theme-context";
@@ -26,10 +26,13 @@ export function MobileModalSheet({
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
       {/* Lift the bottom-anchored sheet above the on-screen keyboard so focused
-          inputs stay visible (Android adjustResize otherwise hides them). */}
+          inputs stay visible. Use "padding" on both platforms: the Android
+          "height" behavior resizes the container and loops endlessly whenever
+          the keyboard changes size (e.g. QWERTY → numeric), causing flicker.
+          "padding" just insets the bottom, which is stable across that switch. */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior="padding"
       >
         <Pressable
           style={{
