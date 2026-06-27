@@ -2,33 +2,42 @@ import React from "react";
 import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MobileButton, useTheme } from "@hiro/ui-primitives/mobile";
-
-export type TourStep = "create" | "complete" | "celebrate" | "notify";
+import type { TourStep } from "./OnboardingTourProvider";
 
 interface OnboardingTourCardProps {
   step: TourStep;
   pointsEarned: number;
   streak: number;
-  notifLoading: boolean;
-  onAddChore: () => void;
-  onFinish: () => void;
-  onEnableNotifications: () => void;
+  notifLoading?: boolean;
+  /** create step CTA. */
+  onAddChore?: () => void;
+  /** reward-create step CTA. */
+  onCreateReward?: () => void;
+  /** Forward button for the celebrate and what's-next steps. */
+  onAdvance?: () => void;
+  /** "I'll redeem later" escape on the reward-redeem step. */
+  onSkipRedeem?: () => void;
+  onEnableNotifications?: () => void;
   /** Skip / dismiss the whole tour (also the "Not now" action on the notify step). */
   onSkip: () => void;
 }
 
+const TOTAL_STEPS = 5;
 const STEP_NUMBER: Record<TourStep, number | null> = {
   create: 1,
   complete: 2,
   celebrate: 3,
+  "reward-create": 4,
+  "reward-redeem": 5,
+  "whats-next": null,
   notify: null,
 };
 
 /**
- * Persistent bottom coaching card for the first-win tour. It sits over a fully
- * interactive Home (it does NOT block taps on the task list), and advances as
- * the user performs each real action. Reuses the app's theme + button language;
- * no new design primitives.
+ * Persistent bottom coaching card for the guided tour. It sits over a fully
+ * interactive screen (it does NOT block taps), and advances as the user performs
+ * each real action. Rendered by both Home (earn steps) and Rewards (spend steps);
+ * each host passes the callbacks for the steps it owns.
  */
 export function OnboardingTourCard({
   step,
@@ -36,7 +45,9 @@ export function OnboardingTourCard({
   streak,
   notifLoading,
   onAddChore,
-  onFinish,
+  onCreateReward,
+  onAdvance,
+  onSkipRedeem,
   onEnableNotifications,
   onSkip,
 }: OnboardingTourCardProps) {
@@ -78,7 +89,7 @@ export function OnboardingTourCard({
               textTransform: "uppercase",
             }}
           >
-            Step {stepNumber} of 3
+            Step {stepNumber} of {TOTAL_STEPS}
           </Text>
         )}
 
@@ -111,7 +122,25 @@ export function OnboardingTourCard({
 
         {step === "celebrate" && (
           <View style={{ marginTop: t.spacing.xs }}>
-            <MobileButton label="Finish" variant="primary" fullWidth onPress={onFinish} />
+            <MobileButton label="Next: rewards →" variant="primary" fullWidth onPress={onAdvance} />
+          </View>
+        )}
+
+        {step === "reward-create" && (
+          <View style={{ marginTop: t.spacing.xs }}>
+            <MobileButton label="Create a reward" variant="primary" fullWidth onPress={onCreateReward} />
+          </View>
+        )}
+
+        {step === "reward-redeem" && (
+          <View style={{ marginTop: t.spacing.xs }}>
+            <MobileButton label="I'll redeem later" variant="ghost" fullWidth onPress={onSkipRedeem} />
+          </View>
+        )}
+
+        {step === "whats-next" && (
+          <View style={{ marginTop: t.spacing.xs }}>
+            <MobileButton label="Got it →" variant="primary" fullWidth onPress={onAdvance} />
           </View>
         )}
 
@@ -152,12 +181,27 @@ function copyFor(step: TourStep, pointsEarned: number, streak: number): { title:
         body: "Tap “Done” on your chore above to bank the points.",
       };
     case "celebrate": {
-      const streakBit = streak > 0 ? ` Your streak is at ${streak} 🔥` : "";
+      const streakBit = streak > 0 ? ` Your streak is at ${streak} 🔥.` : "";
       return {
         title: "Nice - you're on the board! 🎉",
-        body: `You earned ${pointsEarned} point${pointsEarned === 1 ? "" : "s"}.${streakBit} That's the whole loop: do chores, score points, climb the leaderboard.`,
+        body: `You earned ${pointsEarned} point${pointsEarned === 1 ? "" : "s"}.${streakBit} That's the earn loop - now let's turn points into rewards.`,
       };
     }
+    case "reward-create":
+      return {
+        title: "Set up a reward 🎁",
+        body: "Create something worth working for - a treat, a night off, anything. We've set its cost to your current balance so you can claim it right after.",
+      };
+    case "reward-redeem":
+      return {
+        title: "Now treat yourself 🎉",
+        body: "Tap “Redeem” on the reward you just made to spend your points.",
+      };
+    case "whats-next":
+      return {
+        title: "One last thing 💰",
+        body: "Use Budget to track and split household expenses fairly - it's in the tab bar whenever you need it.",
+      };
     case "notify":
       return {
         title: "Stay on track 🔔",

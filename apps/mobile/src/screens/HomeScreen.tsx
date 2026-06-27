@@ -19,8 +19,12 @@ import { registerForPushNotifications } from "../lib/notificationService";
 import { TaskCreateModal } from "./TaskCreateModal";
 import { WeekLeaderboardCard } from "./home/WeekLeaderboardCard";
 import { PointsBurst, AllDoneCelebration } from "./celebrations";
-import { useOnboardingTour } from "../onboarding/OnboardingTourProvider";
-import { OnboardingTourCard, type TourStep } from "../onboarding/OnboardingTourCard";
+import { useOnboardingTour, type TourStep } from "../onboarding/OnboardingTourProvider";
+import { OnboardingTourCard } from "../onboarding/OnboardingTourCard";
+import { TourSpotlight } from "../onboarding/TourSpotlight";
+
+/** Steps whose coaching card lives on Home (the rest play out on Rewards). */
+const isHomeStep = (s: TourStep) => s === "create" || s === "complete" || s === "celebrate" || s === "notify";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -52,8 +56,7 @@ export function HomeScreen() {
   const [undoableTaskId, setUndoableTaskId] = useState<string | null>(null);
 
   /* ── Onboarding tour ─────────────────────────────────────────────────── */
-  const { tourActive, endTour } = useOnboardingTour();
-  const [tourStep, setTourStep] = useState<TourStep>("create");
+  const { tourActive, tourStep, setTourStep, endTour } = useOnboardingTour();
   const [notifLoading, setNotifLoading] = useState(false);
   // Counts at the moment the tour (re)starts. Advancing requires progress made
   // *during* the tour, so a Replay for an established user still walks the full
@@ -300,13 +303,15 @@ export function HomeScreen() {
                         <Text style={{ color: t.color.success, fontSize: 16, fontWeight: "800" }}>✓</Text>
                       )
                     ) : (
-                      <MobileButton
-                        label={completing === task.id ? "…" : "Done"}
-                        variant="primary"
-                        size="sm"
-                        disabled={completing === task.id}
-                        onPress={() => void handleComplete(task.id)}
-                      />
+                      <TourSpotlight active={tourActive && tourStep === "complete"}>
+                        <MobileButton
+                          label={completing === task.id ? "…" : "Done"}
+                          variant="primary"
+                          size="sm"
+                          disabled={completing === task.id}
+                          onPress={() => void handleComplete(task.id)}
+                        />
+                      </TourSpotlight>
                     )}
                   </View>
                 );
@@ -368,14 +373,14 @@ export function HomeScreen() {
         onCreateOneOff={handleCreateOneOff}
       />
 
-      {tourActive && !modalOpen && (
+      {tourActive && !modalOpen && isHomeStep(tourStep) && (
         <OnboardingTourCard
           step={tourStep}
           pointsEarned={totalPointsToday}
           streak={streak}
           notifLoading={notifLoading}
           onAddChore={() => setModalOpen(true)}
-          onFinish={() => setTourStep("notify")}
+          onAdvance={() => { setTourStep("reward-create"); navigation.navigate("rewards"); }}
           onEnableNotifications={() => void handleEnableNotifications()}
           onSkip={endTour}
         />

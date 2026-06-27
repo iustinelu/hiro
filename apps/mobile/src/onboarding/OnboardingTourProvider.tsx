@@ -2,9 +2,28 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { supabase } from "../lib/supabase";
 import { getOnboardingCompleted, markOnboardingCompleted } from "../lib/profileService";
 
+/**
+ * Ordered steps of the guided first-run tour. The first three play out on Home
+ * (the earn loop), the reward steps on the Rewards tab (the spend loop), then a
+ * "what's next" card points at Budget before the notifications ask. Steps are
+ * advanced by real user actions on each screen — nothing is simulated.
+ */
+export type TourStep =
+  | "create"
+  | "complete"
+  | "celebrate"
+  | "reward-create"
+  | "reward-redeem"
+  | "whats-next"
+  | "notify";
+
 interface OnboardingTourContextValue {
-  /** Whether the interactive first-win tour should be shown over Home. */
+  /** Whether the interactive first-win tour is running. */
   tourActive: boolean;
+  /** Current step. Shared across Home and Rewards so the tour can span tabs. */
+  tourStep: TourStep;
+  /** Move to a specific step (screens call this as the user completes actions). */
+  setTourStep: (step: TourStep) => void;
   /** Re-run the tour on demand (e.g. "Replay tour" from More). */
   startTour: () => void;
   /** Finish or skip the tour; persists the per-profile completion flag. */
@@ -25,6 +44,7 @@ const OnboardingTourContext = createContext<OnboardingTourContextValue | null>(n
  */
 export function OnboardingTourProvider({ children }: { children: React.ReactNode }) {
   const [tourActive, setTourActive] = useState(false);
+  const [tourStep, setTourStep] = useState<TourStep>("create");
   const [profileId, setProfileId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -41,7 +61,10 @@ export function OnboardingTourProvider({ children }: { children: React.ReactNode
     };
   }, []);
 
-  const startTour = useCallback(() => setTourActive(true), []);
+  const startTour = useCallback(() => {
+    setTourStep("create");
+    setTourActive(true);
+  }, []);
 
   const endTour = useCallback(() => {
     setTourActive(false);
@@ -49,7 +72,7 @@ export function OnboardingTourProvider({ children }: { children: React.ReactNode
   }, [profileId]);
 
   return (
-    <OnboardingTourContext.Provider value={{ tourActive, startTour, endTour }}>
+    <OnboardingTourContext.Provider value={{ tourActive, tourStep, setTourStep, startTour, endTour }}>
       {children}
     </OnboardingTourContext.Provider>
   );

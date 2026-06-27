@@ -6,9 +6,12 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onSave: (title: string, pointCost: number) => Promise<void>;
+  /** Pre-fills the point cost when opened (the onboarding tour sets this to the
+   * user's balance so the new reward is immediately claimable). Defaults to 10. */
+  initialPointCost?: number;
 }
 
-export function RewardCreateModal({ open, onClose, onSave }: Props) {
+export function RewardCreateModal({ open, onClose, onSave, initialPointCost }: Props) {
   const t = useTheme();
   const [title, setTitle] = useState("");
   const [pointCost, setPointCost] = useState("10");
@@ -18,10 +21,10 @@ export function RewardCreateModal({ open, onClose, onSave }: Props) {
   useEffect(() => {
     if (open) {
       setTitle("");
-      setPointCost("10");
+      setPointCost(String(initialPointCost ?? 10));
       setError(null);
     }
-  }, [open]);
+  }, [open, initialPointCost]);
 
   async function handleSave() {
     const trimmed = title.trim();
