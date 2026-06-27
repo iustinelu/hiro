@@ -138,16 +138,15 @@ If the app shows a **blank/black screen**, it's almost always a missing `.env` i
 ### Reaching gated screens (auth + onboarding)
 Home/Tasks/etc. are behind auth **and** onboarding (a user is "onboarded" only with a household membership **and** a non-empty display name - see `RootNavigator.tsx`). To land on Home:
 
-1. Use an existing onboarded test account. `mobile@test.com` is a purpose-built mobile QA account (display "Jj", in a household with sample tasks).
-2. Its password can be (re)set via Supabase admin (no email round-trip needed):
+1. Use the canonical QA account: **`apple@test.com` / `Pass4Apple!`** (pre-seeded, onboarded - "Alex Dogfood" / "The Dogfood House").
+2. If you need a different account, (re)set a password via Supabase admin (no email round-trip), using the Supabase MCP `execute_sql` on project `pfokfopwjrahclmseper`:
    ```sql
    update auth.users
    set encrypted_password = crypt('<password>', gen_salt('bf')),
        email_confirmed_at = coalesce(email_confirmed_at, now())
-   where email = 'mobile@test.com';
+   where email = '<account>';
    ```
-   (Project `pfokfopwjrahclmseper`; do this via the Supabase MCP `execute_sql`. Don't commit the password.)
-3. Sign in through the UI; the session persists in SecureStore, so later `launch` calls re-land on Home directly.
+3. Sign in through the UI; the session persists in SecureStore, so later `launch` calls re-land on Home directly. (SecureStore is per-package-id, so a freshly-installed new package id starts logged out.)
 
 ### Driving the UI from the shell
 `adb shell input tap/text` works, but **fixed coordinates break when the keyboard opens** (the layout shifts). The reliable pattern is to read live element bounds:
