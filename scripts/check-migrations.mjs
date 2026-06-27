@@ -17,9 +17,18 @@ import { join, extname } from "node:path";
 //
 // 2. RPC calls to undefined functions. Every `.rpc("name", ...)` in app source must
 //    resolve to a function defined (and not dropped) in the migrations.
+//
+// 3. Error-code drift across the SQL↔TS boundary. SQL `raise exception 'CODE'` strings are the
+//    contract the client matches against via `ServiceErrorCode` (packages/domain/src/errors.ts).
+//    A typo or rename on either side silently breaks error handling. Rule: the set of client-facing
+//    raised codes and the `ServiceErrorCode` enum must be identical (modulo INTERNAL_ONLY_CODES).
 // ─────────────────────────────────────────────────────────────────────────────
 
 const MIGRATIONS_DIR = "supabase/migrations";
+const ERROR_ENUM_FILE = "packages/domain/src/errors.ts";
+// Codes raised in SQL that are deliberately NOT mapped on the client (internal preconditions the
+// user never sees). Keep this list tiny and justified.
+const INTERNAL_ONLY_CODES = new Set(["NOT_AUTHENTICATED"]);
 const APP_DIRS = ["apps/web/src", "apps/mobile/src"];
 const SKIP_DIRS = new Set(["node_modules", ".next", "dist", "build", ".expo", ".turbo"]);
 
@@ -174,7 +183,57 @@ if (missing.length > 0) {
   ]);
 }
 
+// ── Rule 3: SQL error codes and the ServiceErrorCode enum must agree ───────────
+// Extract the enum's string values from errors.ts as text (this .mjs can't import the .ts).
+const enumSource = readFileSync(ERROR_ENUM_FILE, "utf8");
+const enumBlockMatch = enumSource.match(/ServiceErrorCode\s*=\s*\{([\s\S]*?)\}\s*as\s+const/);
+if (!enumBlockMatch) {
+  fail([`Could not locate the \`ServiceErrorCode = { ... } as const\` block in ${ERROR_ENUM_FILE}.`]);
+}
+const enumCodes = new Set();
+for (const m of enumBlockMatch[1].matchAll(/:\s*"([A-Z0-9_]+)"/g)) {
+  enumCodes.add(m[1]);
+}
+
+// Collect every `raise exception 'CODE'` literal across all migrations.
+const raisedCodes = new Set();
+for (const file of migrationFiles) {
+  const sql = readFileSync(join(MIGRATIONS_DIR, file), "utf8");
+  for (const m of sql.matchAll(/raise\s+exception\s+'([A-Z0-9_]+)'/gi)) {
+    raisedCodes.add(m[1].toUpperCase());
+  }
+}
+
+// 3a. Every enum code must actually be raised in SQL (else a client mapping is dead / misspelled).
+const enumWithoutRaise = [...enumCodes].filter((c) => !raisedCodes.has(c)).sort();
+// 3b. Every raised, client-facing code must be in the enum (else the client can't map a real error).
+const raisedWithoutEnum = [...raisedCodes]
+  .filter((c) => !enumCodes.has(c) && !INTERNAL_ONLY_CODES.has(c))
+  .sort();
+
+if (enumWithoutRaise.length > 0 || raisedWithoutEnum.length > 0) {
+  const lines = ["ServiceErrorCode ↔ SQL `raise exception` mismatch:"];
+  if (raisedWithoutEnum.length > 0) {
+    lines.push(
+      "",
+      "  Raised in SQL but missing from ServiceErrorCode (client cannot map these):",
+      ...raisedWithoutEnum.map((c) => `    - ${c}`),
+      `  Fix: add them to ${ERROR_ENUM_FILE}, or add to INTERNAL_ONLY_CODES if never client-facing.`
+    );
+  }
+  if (enumWithoutRaise.length > 0) {
+    lines.push(
+      "",
+      "  In ServiceErrorCode but never raised in any migration (dead / typo'd mapping):",
+      ...enumWithoutRaise.map((c) => `    - ${c}`),
+      "  Fix: correct the code, or remove it from the enum if the SQL no longer raises it."
+    );
+  }
+  fail(lines);
+}
+
 console.log(
   `Migration check passed: ${liveSignatures.size} functions, no overloads; ` +
-    `${sourceFiles.length} source files scanned, all RPC calls resolve.`
+    `${sourceFiles.length} source files scanned, all RPC calls resolve; ` +
+    `${enumCodes.size} error codes match SQL.`
 );

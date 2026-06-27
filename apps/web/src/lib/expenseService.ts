@@ -1,6 +1,7 @@
 "use client";
 
 import type { Expense, MonthlyBreakdown } from "@hiro/domain";
+import { ServiceErrorCode, matchServiceError } from "@hiro/domain";
 import { getSupabaseBrowserClient } from "./supabase/client";
 
 /* ─── createExpense ─────────────────────────────────────────────────────── */
@@ -24,11 +25,18 @@ export async function createExpense(
   });
 
   if (error) {
-    if (error.message.includes("NOT_HOUSEHOLD_MEMBER")) return { expenseId: null, error: "You are not a member of this household." };
-    if (error.message.includes("PAYER_NOT_HOUSEHOLD_MEMBER")) return { expenseId: null, error: "Payer is not a household member." };
-    if (error.message.includes("PARTICIPANT_NOT_HOUSEHOLD_MEMBER")) return { expenseId: null, error: "One or more participants are not household members." };
-    if (error.message.includes("NO_PARTICIPANTS")) return { expenseId: null, error: "At least one participant is required." };
-    return { expenseId: null, error: error.message };
+    switch (matchServiceError(error.message)) {
+      case ServiceErrorCode.NOT_HOUSEHOLD_MEMBER:
+        return { expenseId: null, error: "You are not a member of this household." };
+      case ServiceErrorCode.PAYER_NOT_HOUSEHOLD_MEMBER:
+        return { expenseId: null, error: "Payer is not a household member." };
+      case ServiceErrorCode.PARTICIPANT_NOT_HOUSEHOLD_MEMBER:
+        return { expenseId: null, error: "One or more participants are not household members." };
+      case ServiceErrorCode.NO_PARTICIPANTS:
+        return { expenseId: null, error: "At least one participant is required." };
+      default:
+        return { expenseId: null, error: error.message };
+    }
   }
 
   const result = data as { expense_id: string };

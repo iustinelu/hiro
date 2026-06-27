@@ -1,6 +1,7 @@
 "use client";
 
 import type { Household, HouseholdMemberWithProfile, CurrencyCode } from "@hiro/domain";
+import { ServiceErrorCode, matchServiceError } from "@hiro/domain";
 import { getSupabaseBrowserClient } from "./supabase/client";
 
 export async function createHousehold(
@@ -13,7 +14,7 @@ export async function createHousehold(
     p_currency: currency,
   });
   if (error) {
-    if (error.message.includes("HOUSEHOLD_ALREADY_EXISTS")) {
+    if (matchServiceError(error.message) === ServiceErrorCode.HOUSEHOLD_ALREADY_EXISTS) {
       return { householdId: null, error: null, alreadyExists: true };
     }
     return { householdId: null, error: error.message, alreadyExists: false };

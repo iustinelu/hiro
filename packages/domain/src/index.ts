@@ -1,3 +1,6 @@
+export { ServiceErrorCode, matchServiceError } from "./errors";
+export { splitEvenly, computeStreak, pointsShortfall, canAfford, isWithinUndoWindow } from "./calc";
+
 export type Uuid = string;
 export type CurrencyCode = "EUR" | "GBP" | "RON" | "USD";
 
