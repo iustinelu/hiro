@@ -14,6 +14,13 @@ source of truth; this runbook installs them.
 > - **Resend API key:** a restricted **send-only** key is held by the founder; it is the SMTP password in Step 3. It is NOT in the repo. (Send-only means the domain must be added via the Resend dashboard, not the API.)
 > - **Region:** choose **eu-west-1** when adding the domain in Resend (EU users; Supabase project is eu-central-1).
 
+> **STATUS (2026-06-27):**
+> - ✅ Domain `gethiro.xyz` **Verified** in Resend (eu-west-1); DKIM/SPF/MX/DMARC live at Namecheap.
+> - ✅ Logo hosted (`.../public-assets/icon-192.png`) and baked into the 3 templates in `email-templates/` (no more `__LOGO_URL__`).
+> - ✅ Custom SMTP enabled in Supabase (host/port/user/password set).
+> - ⚠️ **REMAINING:** (1) set SMTP **Sender email = `no-reply@gethiro.xyz`** (was a gmail address - Resend will reject non-domain senders); (2) install the 3 branded templates + subjects in Authentication → Email Templates (paste, or via Management API `PATCH /v1/projects/{ref}/config/auth` fields `mailer_templates_confirmation_content`/`mailer_subjects_confirmation`, `mailer_templates_recovery_content`/`mailer_subjects_recovery`, `mailer_templates_invite_content`/`mailer_subjects_invite`); (3) a test-send to confirm delivery.
+> - None of this blocks the v0.1.3 code fixes.
+
 > **Why this matters:** Supabase's default mailer is rate-limited (it will start dropping real
 > signup/reset emails at volume) and sends generic, unbranded mail. Pointing Auth at Resend via
 > custom SMTP fixes both.
