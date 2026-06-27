@@ -8,11 +8,9 @@ import { supabase } from "../lib/supabase";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
 import { createInvite, getHouseholdInvites } from "../lib/inviteService";
 import { getDisplayName, updateDisplayName, updateTheme } from "../lib/profileService";
+import { JoinHouseholdForm } from "../components/JoinHouseholdForm";
 import type { ThemeId } from "@hiro/ui-tokens";
 import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
-
-// Web origin for invite links — update when deployed
-const WEB_ORIGIN = "http://localhost:3000";
 
 export function MoreScreen() {
   const t = useTheme();
@@ -73,19 +71,23 @@ export function MoreScreen() {
       return;
     }
     if (token) {
-      const link = `${WEB_ORIGIN}/invite/${token}`;
       setInviteEmail("");
       // Refresh invite list
       const { invites: inv } = await getHouseholdInvites(household.id);
       setInvites(inv);
-      // Show native share sheet
+      // Mobile-only: share the invite *code*, not a web link (there is no web app).
+      // The invitee installs Hiro and pastes this code into "Join a household".
+      // TODO: drop in the public App Store / Google Play URLs once the apps are
+      // out of TestFlight / Play-internal.
+      const message =
+        `Join my household "${household.name}" on Hiro!\n\n` +
+        `1. Get Hiro from the App Store or Google Play\n` +
+        `2. Sign up, then tap "Join a household" and enter this code:\n\n` +
+        `${token}`;
       try {
-        await Share.share({
-          message: `Join my household on Hiro: ${link}`,
-          url: link,
-        });
+        await Share.share({ message });
       } catch {
-        Alert.alert("Invite link", link);
+        Alert.alert("Invite code", token);
       }
     }
   }
@@ -172,6 +174,13 @@ export function MoreScreen() {
           </View>
         </MobileCard>
       )}
+
+      <MobileCard
+        title="Join a household"
+        description="Got an invite code? Enter it to join (or switch) households."
+      >
+        <JoinHouseholdForm onJoined={loadHousehold} />
+      </MobileCard>
 
       <MobileCard title="Appearance" description="Pick your theme">
         <View style={{ gap: t.spacing.sm }}>
