@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { notFound } from "next/navigation";
 import {
   WebButton,
   WebCard,
@@ -31,6 +32,9 @@ export default function DesignSystemGalleryPage() {
   const [tabValue, setTabValue] = useState("active");
   const [a11ySegmentValue, setA11ySegmentValue] = useState("contrast_review");
   const [a11yReadabilityEnabled, setA11yReadabilityEnabled] = useState(true);
+
+  // Dev-only component gallery — 404 in production now that web is publicly deployed.
+  if (process.env.NODE_ENV === "production") notFound();
 
   return (
     <main style={{ minHeight: "100vh", padding: tokens.spacing.xl, position: "relative" }}>

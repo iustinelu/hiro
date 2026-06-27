@@ -25,7 +25,7 @@ Full program + rationale: `~/.claude/plans/` v0.1.3 plan. Source-of-truth state 
 | E-A | infra | `E-A-mobile-qa-harness-setup.md` | Enabler | - | ⏳ spawn in own session |
 | E-B | HIR-68 | (agent, output `ia-decision.md`) | Enabler | - | ⏳ running |
 | E-C | readiness | (agent, output `readiness-addendum.md`) | Enabler | - | ⏳ running |
-| 01 | (config) | `01-invite-url-env.md` | G1 | founder: prod web origin | ⏳ |
+| 01 | (blocker) | `01-invite-url-env.md` | G1 | founder: confirm code-based invites | ⏳ redesigned (no web) |
 | 02 | HIR-65 | `02-web-tab-lag.md` | G1 | - | ⏸️ **deferred (web-only, mobile-first)** |
 | 03 | (invites) | `03-invite-expiry-cron.md` | G1 | - | ⏳ |
 | 04 | (polish) | `04-budget-focus-refetch.md` | G1 | E-A (mobile QA) | ⏳ |
@@ -42,7 +42,7 @@ Full program + rationale: `~/.claude/plans/` v0.1.3 plan. Source-of-truth state 
 **Concurrency:** Group 1 can all run at once. Run 05 before 06 (shared auth files). Group 3 after enablers (08 strictly after the IA decision). Merge B2(02) and F2(08) early to minimize rebases. **Cap concurrent emulator-using agents at ~2** (each runs Metro + an emulator).
 
 ## Founder-owned config side track (run in parallel; unblocks agents)
-Vercel prod env + domain (unblocks 01 origin + redirect URLs) -> Supabase Site/Redirect URLs -> Google consent publish (unblocks 06) -> APNs/FCM keys (unblocks 09) -> Resend key+domain (unblocks 10) -> store listing + **privacy policy URL (P0: Google Play rejects uploads without one)**.
+**No Vercel/web (mobile-only).** Supabase mobile redirect URL (`hiro://auth/callback`) -> Google consent publish (unblocks 06) -> APNs/FCM keys (unblocks 09) -> Resend key+domain (unblocks 10) -> store listing + **privacy policy URL (P0: Google Play rejects uploads without one; can host it anywhere static, not Vercel)**.
 
 ## Deferred web-only findings (from E-C audit; mobile-first = not this wave)
 Logged for later, not built now: PWA manifest 307-redirects to sign-in (`middleware.ts` matcher) so PWA won't install; duplicate desktop wordmark + floating title (`tabs-layout.module.css` hides `.mobileTabs` but not `.mobileHeader`); unguarded `/design-system` + `/dev/error-test` routes in prod. Full list: `docs/v0.1.3/readiness-addendum.md`.

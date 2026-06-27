@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Easing, ScrollView, Text, View } from "react-native";
+import { Animated, Easing, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   MobileButton,
@@ -8,6 +8,7 @@ import {
   useTheme,
 } from "@hiro/ui-primitives/mobile";
 import type { Reward, RewardRedemptionWithDetails } from "@hiro/domain";
+import { ServiceErrorCode, pointsShortfall } from "@hiro/domain";
 import { supabase } from "../lib/supabase";
 import { getMyHousehold } from "../lib/householdService";
 import {
@@ -91,6 +92,7 @@ export function RewardsScreen() {
   const [redemptions, setRedemptions] = useState<RewardRedemptionWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [confirming, setConfirming] = useState<string | null>(null);
   const [redeeming, setRedeeming] = useState<string | null>(null);
@@ -137,6 +139,13 @@ export function RewardsScreen() {
       }
     }, [profileId, householdId, loadData])
   );
+
+  const handleRefresh = useCallback(async () => {
+    if (!profileId || !householdId) return;
+    setRefreshing(true);
+    await loadData(profileId, householdId);
+    setRefreshing(false);
+  }, [profileId, householdId, loadData]);
 
   /* ── Realtime subscription ───────────────────────────────────────── */
 
@@ -190,8 +199,8 @@ export function RewardsScreen() {
     setConfirming(null);
 
     if (result.error) {
-      if (result.error === "INSUFFICIENT_POINTS") {
-        setRedeemError(`Need ${reward.pointCost - balance} more pts to redeem "${reward.title}"`);
+      if (result.error === ServiceErrorCode.INSUFFICIENT_POINTS) {
+        setRedeemError(`Need ${pointsShortfall(balance, reward.pointCost)} more pts to redeem "${reward.title}"`);
       } else {
         setRedeemError(result.error);
       }
@@ -226,6 +235,9 @@ export function RewardsScreen() {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: t.spacing.lg, gap: t.spacing.md }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={() => void handleRefresh()} />
+        }
       >
         {/* Balance KPI */}
         <MobileKpiTile

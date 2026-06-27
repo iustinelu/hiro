@@ -1,3 +1,6 @@
+export { ServiceErrorCode, matchServiceError } from "./errors";
+export { splitEvenly, computeStreak, pointsShortfall, canAfford, isWithinUndoWindow } from "./calc";
+
 export type Uuid = string;
 export type CurrencyCode = "EUR" | "GBP" | "RON" | "USD";
 
@@ -124,6 +127,72 @@ export interface LeaderboardEntry {
   profileId: Uuid;
   displayName: string | null;
   pointsThisWeek: number;
+}
+
+// ─── One-off / Ad-hoc Task Domain ─────────────────────────────────────────────
+
+// 'backlog' = a claimable chore posted for anyone (HIR-67);
+// 'log'     = "I just did this", self-logged as already done (HIR-70).
+export type OneOffTaskKind = "backlog" | "log";
+
+// Lifecycle: open -> claimed -> completed -> (contested) -> settled | reverted.
+// Points are pending while 'completed'/'contested'; they finalize into the
+// points ledger only on 'settled', and are voided on 'reverted'.
+export type OneOffTaskStatus =
+  | "open"
+  | "claimed"
+  | "completed"
+  | "contested"
+  | "settled"
+  | "reverted";
+
+export interface OneOffTask {
+  id: Uuid;
+  householdId: Uuid;
+  name: string;
+  description: string | null;
+  points: number;
+  createdByProfileId: Uuid;
+  kind: OneOffTaskKind;
+  status: OneOffTaskStatus;
+  claimedByProfileId: Uuid | null;
+  claimedAt: string | null;
+  completedByProfileId: Uuid | null;
+  completedAt: string | null;
+  // Deadline of the contest/settle window (null until completed).
+  settleAt: string | null;
+  contestedByProfileId: Uuid | null;
+  contestedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ─── Household Activity Feed Domain ───────────────────────────────────────────
+
+export type HouseholdActivityKind =
+  | "task_completed"
+  | "one_off_posted"
+  | "one_off_logged"
+  | "one_off_claimed"
+  | "one_off_completed"
+  | "one_off_contested"
+  | "one_off_contest_withdrawn"
+  | "one_off_settled"
+  | "one_off_reverted"
+  | "reward_redeemed"
+  | "member_joined"
+  | "member_left";
+
+export interface HouseholdActivity {
+  id: Uuid;
+  householdId: Uuid;
+  actorProfileId: Uuid;
+  actorDisplayName: string | null;
+  kind: HouseholdActivityKind;
+  pointsDelta: number | null;
+  refId: Uuid | null;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
 }
 
 // ─── Progress Domain ────────────────────────────────────────────────────────

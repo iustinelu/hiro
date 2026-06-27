@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, View, Text, RefreshControl } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   MobileButton,
   MobileEmptyState,
@@ -69,11 +70,14 @@ export function BudgetScreen() {
     setMembers(memRes.members);
   }, [householdId, month.year, month.month]);
 
-  useEffect(() => {
-    if (!householdId) return;
-    setLoading(true);
-    void fetchData().finally(() => setLoading(false));
-  }, [fetchData, householdId]);
+  /* Refetch on focus + when the selected month changes (tab screens stay
+   * mounted, so a plain mount effect would never refresh on revisit). */
+  useFocusEffect(
+    useCallback(() => {
+      if (!householdId) return;
+      void fetchData().finally(() => setLoading(false));
+    }, [householdId, fetchData])
+  );
 
   const handleRetry = () => {
     setLoading(true);

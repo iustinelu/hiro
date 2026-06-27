@@ -16,7 +16,8 @@
       "env": {
         "EXPO_PUBLIC_APP_ENV": "production",
         "EXPO_PUBLIC_SUPABASE_URL": "https://pfokfopwjrahclmseper.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_nxVa3C3rzwfVbs-Dudv0Zw_9lEy0CKr"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_nxVa3C3rzwfVbs-Dudv0Zw_9lEy0CKr",
+        "EXPO_PUBLIC_WEB_ORIGIN": "https://hiro.example.com"
       }
     },
     "production": {
@@ -27,7 +28,8 @@
       "env": {
         "EXPO_PUBLIC_APP_ENV": "production",
         "EXPO_PUBLIC_SUPABASE_URL": "https://pfokfopwjrahclmseper.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_nxVa3C3rzwfVbs-Dudv0Zw_9lEy0CKr"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_nxVa3C3rzwfVbs-Dudv0Zw_9lEy0CKr",
+        "EXPO_PUBLIC_WEB_ORIGIN": "https://hiro.example.com"
       }
     }
   },
