@@ -1,7 +1,10 @@
 # supabase Ownership
 
-- SQL migrations and RLS policies only.
+- SQL migrations and RLS policies (`migrations/`).
 - Migrations are the single source of truth for schema.
+- Deno edge functions (`functions/`) for logic that cannot live in SQL — e.g.
+  calling external APIs. See `functions/README.md`. Schema/RLS still belong in
+  migrations, never in a function.
 
 ## Precision Mandate
 

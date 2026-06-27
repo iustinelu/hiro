@@ -26,6 +26,11 @@ import { supabaseInitError } from "./lib/supabase";
 import { RootNavigator } from "./navigation/RootNavigator";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MobileThemeProvider } from "./theme/ThemeProvider";
+import { configureNotificationHandler } from "./lib/notificationService";
+
+// Set foreground notification behaviour once, before React mounts, so pushes that
+// arrive while the app is open are surfaced rather than swallowed.
+configureNotificationHandler();
 
 function ThemedRoot() {
   const t = useTheme();

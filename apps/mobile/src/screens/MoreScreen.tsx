@@ -8,6 +8,14 @@ import { supabase } from "../lib/supabase";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
 import { createInvite, getHouseholdInvites } from "../lib/inviteService";
 import { getDisplayName, updateDisplayName, updateTheme } from "../lib/profileService";
+import {
+  getNotificationStatus,
+  isDeviceRegistered,
+  registerForPushNotifications,
+  unregisterDevice,
+  openNotificationSettings,
+  type NotificationStatus,
+} from "../lib/notificationService";
 import type { ThemeId } from "@hiro/ui-tokens";
 import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
 
@@ -34,6 +42,11 @@ export function MoreScreen() {
   const [nameError, setNameError] = useState<string | null>(null);
   const [nameSaved, setNameSaved] = useState(false);
 
+  // Notifications state
+  const [notifStatus, setNotifStatus] = useState<NotificationStatus>("undetermined");
+  const [notifRegistered, setNotifRegistered] = useState(false);
+  const [notifBusy, setNotifBusy] = useState(false);
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user?.email) setEmail(data.user.email);
@@ -49,7 +62,31 @@ export function MoreScreen() {
     });
 
     loadHousehold();
+    void loadNotificationState();
   }, []);
+
+  async function loadNotificationState() {
+    const [status, registered] = await Promise.all([
+      getNotificationStatus(),
+      isDeviceRegistered(),
+    ]);
+    setNotifStatus(status);
+    setNotifRegistered(registered);
+  }
+
+  async function handleEnableNotifications() {
+    setNotifBusy(true);
+    await registerForPushNotifications();
+    await loadNotificationState();
+    setNotifBusy(false);
+  }
+
+  async function handleDisableNotifications() {
+    setNotifBusy(true);
+    await unregisterDevice();
+    await loadNotificationState();
+    setNotifBusy(false);
+  }
 
   async function loadHousehold() {
     const { household: h } = await getMyHousehold();
@@ -183,6 +220,43 @@ export function MoreScreen() {
               onPress={() => handleSelectTheme(id)}
             />
           ))}
+        </View>
+      </MobileCard>
+
+      <MobileCard title="Notifications" description="Get nudged when chores get done">
+        <View style={{ gap: t.spacing.md }}>
+          {notifStatus === "denied" ? (
+            <>
+              <MobileListRow title="Push notifications" meta="Blocked" />
+              <MobileButton
+                label="Open settings"
+                variant="secondary"
+                onPress={() => void openNotificationSettings()}
+              />
+            </>
+          ) : notifRegistered ? (
+            <>
+              <MobileListRow title="Push notifications" meta="On" />
+              <MobileButton
+                label="Turn off"
+                variant="secondary"
+                loading={notifBusy}
+                loadingLabel="Updating…"
+                onPress={() => void handleDisableNotifications()}
+              />
+            </>
+          ) : (
+            <>
+              <MobileListRow title="Push notifications" meta="Off" />
+              <MobileButton
+                label="Turn on"
+                variant="primary"
+                loading={notifBusy}
+                loadingLabel="Updating…"
+                onPress={() => void handleEnableNotifications()}
+              />
+            </>
+          )}
         </View>
       </MobileCard>
 

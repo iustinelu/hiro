@@ -12,6 +12,7 @@ import { MobileInput, MobileButton, useTheme } from "@hiro/ui-primitives/mobile"
 import { tokens } from "@hiro/ui-tokens";
 import { createHousehold, getMyHousehold } from "../lib/householdService";
 import { getDisplayName, updateDisplayName } from "../lib/profileService";
+import { registerForPushNotifications } from "../lib/notificationService";
 import { supabase } from "../lib/supabase";
 
 interface HouseholdOnboardingScreenProps {
@@ -60,11 +61,18 @@ export function HouseholdOnboardingScreen({ onCompleted }: HouseholdOnboardingSc
     };
   }, []);
 
+  // End of onboarding: contextually ask for notification permission (brief 09).
+  // Fire-and-forget — the OS prompt must never block or gate completion.
+  function completeOnboarding() {
+    void registerForPushNotifications();
+    onCompleted();
+  }
+
   function handleNameDone() {
     if (needsHousehold) {
       setStep("household");
     } else {
-      onCompleted();
+      completeOnboarding();
     }
   }
 
@@ -113,7 +121,7 @@ export function HouseholdOnboardingScreen({ onCompleted }: HouseholdOnboardingSc
             </View>
           )}
           {step === "name" && <NameStep onDone={handleNameDone} />}
-          {step === "household" && <HouseholdStep onCreated={onCompleted} />}
+          {step === "household" && <HouseholdStep onCreated={completeOnboarding} />}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
