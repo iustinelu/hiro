@@ -9,7 +9,6 @@ const requiredFiles = [
   ".github/ISSUE_TEMPLATE/implementation.md",
   ".github/PULL_REQUEST_TEMPLATE.md",
   ".npmrc",
-  "scripts/check-pr-governance.mjs",
   "scripts/prepare-pr-body.mjs",
   "scripts/create-pr.mjs",
   "scripts/check-expo-root-artifacts.mjs",
