@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import useSWR from "swr";
 import { AnimatePresence } from "framer-motion";
 import type { RecurringTask, LeaderboardEntry, TaskCadence, CadenceMeta } from "@hiro/domain";
 import { WebButton } from "@hiro/ui-primitives/web";
@@ -13,12 +14,48 @@ import {
   uncompleteTask,
   createTask,
 } from "../../../lib/taskService";
+import { cacheKeys, revalidateHousehold } from "../../../lib/cacheKeys";
+import { DashboardSkeleton } from "../DashboardSkeleton";
 import { TaskCreateModal } from "../tasks/TaskCreateModal";
 import { HomeTaskList } from "./HomeTaskList";
 import { HomeLeaderboard } from "./HomeLeaderboard";
 import PointsBurst from "./PointsBurst";
 import AllDoneCelebration from "./AllDoneCelebration";
 import styles from "./home.module.css";
+
+/* ─── Data ──────────────────────────────────────────────────────────────── */
+
+interface HomeData {
+  tasks: RecurringTask[];
+  completedIds: Set<string>;
+  leaderboard: LeaderboardEntry[];
+  streak: number;
+}
+
+const EMPTY_TASKS: RecurringTask[] = [];
+const EMPTY_LEADERBOARD: LeaderboardEntry[] = [];
+const EMPTY_SET: Set<string> = new Set();
+const EMPTY_HOME: HomeData = {
+  tasks: EMPTY_TASKS,
+  completedIds: EMPTY_SET,
+  leaderboard: EMPTY_LEADERBOARD,
+  streak: 0,
+};
+
+async function fetchHomeData(householdId: string, profileId: string): Promise<HomeData> {
+  const [tasksRes, completionsRes, lbRes, streakRes] = await Promise.all([
+    getHouseholdTasks(householdId),
+    getTodayCompletions(profileId),
+    getWeeklyLeaderboard(householdId),
+    getStreak(profileId),
+  ]);
+  return {
+    tasks: tasksRes.tasks,
+    completedIds: new Set(completionsRes.completedTaskIds),
+    leaderboard: lbRes.entries,
+    streak: streakRes.streak,
+  };
+}
 
 /* ─── Helpers ───────────────────────────────────────────────────────────── */
 
@@ -44,80 +81,97 @@ function isDueToday(task: RecurringTask): boolean {
   return false;
 }
 
+function withId(set: Set<string>, id: string): Set<string> {
+  const next = new Set(set);
+  next.add(id);
+  return next;
+}
+
+function withoutId(set: Set<string>, id: string): Set<string> {
+  const next = new Set(set);
+  next.delete(id);
+  return next;
+}
+
 interface CompletionResult { pointsEarned: number; taskName: string; }
 interface Props { householdId: string; profileId: string; }
 
 /* ─── Component ─────────────────────────────────────────────────────────── */
 
 export default function HomeDashboard({ householdId, profileId }: Props) {
-  const [tasks, setTasks] = useState<RecurringTask[]>([]);
-  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [streak, setStreak] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, mutate } = useSWR(
+    cacheKeys.home(householdId, profileId),
+    () => fetchHomeData(householdId, profileId),
+  );
+
+  const tasks = data?.tasks ?? EMPTY_TASKS;
+  const completedIds = data?.completedIds ?? EMPTY_SET;
+  const leaderboard = data?.leaderboard ?? EMPTY_LEADERBOARD;
+  const streak = data?.streak ?? 0;
+
+  // Local UI-only state (animations, modal) — server data lives in SWR.
   const [completing, setCompleting] = useState<string | null>(null);
   const [lastCompletion, setLastCompletion] = useState<CompletionResult | null>(null);
   const [combo, setCombo] = useState(0);
   const [showAllDone, setShowAllDone] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  /* ── Data fetching ──────────────────────────────────────────────────── */
-
-  const fetchData = useCallback(async () => {
-    const [tasksRes, completionsRes, lbRes, streakRes] = await Promise.all([
-      getHouseholdTasks(householdId),
-      getTodayCompletions(profileId),
-      getWeeklyLeaderboard(householdId),
-      getStreak(profileId),
-    ]);
-    setTasks(tasksRes.tasks);
-    setCompletedIds(new Set(completionsRes.completedTaskIds));
-    setLeaderboard(lbRes.entries);
-    setStreak(streakRes.streak);
-    setLoading(false);
-  }, [householdId, profileId]);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
-
   /* ── Complete a task ────────────────────────────────────────────────── */
 
   const handleComplete = useCallback(async (taskId: string) => {
     if (completing) return;
     setCompleting(taskId);
-    const result = await completeTask(taskId);
-    if (!result.error) {
-      setCompletedIds((prev) => new Set(prev).add(taskId));
-      setCombo((prev) => prev + 1);
-      setLastCompletion({ pointsEarned: result.pointsEarned, taskName: result.taskName });
-      const [lbRes, streakRes] = await Promise.all([
-        getWeeklyLeaderboard(householdId),
-        getStreak(profileId),
-      ]);
-      setLeaderboard(lbRes.entries);
-      setStreak(streakRes.streak);
+    setCombo((prev) => prev + 1);
+    try {
+      await mutate(
+        async () => {
+          const result = await completeTask(taskId);
+          if (result.error) throw new Error(result.error);
+          setLastCompletion({ pointsEarned: result.pointsEarned, taskName: result.taskName });
+          return fetchHomeData(householdId, profileId);
+        },
+        {
+          optimisticData: (current) => {
+            const base = current ?? EMPTY_HOME;
+            return { ...base, completedIds: withId(base.completedIds, taskId) };
+          },
+          rollbackOnError: true,
+          revalidate: false,
+        },
+      );
+      void revalidateHousehold(householdId);
+    } catch {
+      setCombo((prev) => Math.max(0, prev - 1));
+    } finally {
+      setCompleting(null);
     }
-    setCompleting(null);
-  }, [completing, householdId, profileId]);
+  }, [completing, householdId, profileId, mutate]);
 
   /* ── Undo a completion ───────────────────────────────────────────────── */
 
   const handleUndo = useCallback(async (taskId: string) => {
-    const result = await uncompleteTask(taskId, profileId);
-    if (!result.error) {
-      setCompletedIds((prev) => {
-        const next = new Set(prev);
-        next.delete(taskId);
-        return next;
-      });
+    try {
+      await mutate(
+        async () => {
+          const result = await uncompleteTask(taskId, profileId);
+          if (result.error) throw new Error(result.error);
+          return fetchHomeData(householdId, profileId);
+        },
+        {
+          optimisticData: (current) => {
+            const base = current ?? EMPTY_HOME;
+            return { ...base, completedIds: withoutId(base.completedIds, taskId) };
+          },
+          rollbackOnError: true,
+          revalidate: false,
+        },
+      );
       setCombo((prev) => Math.max(0, prev - 1));
-      const [lbRes, streakRes] = await Promise.all([
-        getWeeklyLeaderboard(householdId),
-        getStreak(profileId),
-      ]);
-      setLeaderboard(lbRes.entries);
-      setStreak(streakRes.streak);
+      void revalidateHousehold(householdId);
+    } catch {
+      // rolled back automatically
     }
-  }, [profileId, householdId]);
+  }, [householdId, profileId, mutate]);
 
   /* ── Create a task ──────────────────────────────────────────────────── */
 
@@ -126,8 +180,9 @@ export default function HomeDashboard({ householdId, profileId }: Props) {
   ) => {
     const result = await createTask(householdId, name, points, cadence, cadenceMeta);
     if (result.error) throw new Error(result.error);
-    await fetchData();
-  }, [householdId, fetchData]);
+    await mutate();
+    void revalidateHousehold(householdId);
+  }, [householdId, mutate]);
 
   /* ── Derived data ───────────────────────────────────────────────────── */
 
@@ -144,9 +199,9 @@ export default function HomeDashboard({ householdId, profileId }: Props) {
     if (allDone) setShowAllDone(true);
   }, [allDone]);
 
-  /* ── Loading ────────────────────────────────────────────────────────── */
+  /* ── Loading (first visit only — cached visits paint instantly) ──────── */
 
-  if (loading) return <div className={styles.loading}>Loading your dashboard...</div>;
+  if (isLoading && !data) return <DashboardSkeleton />;
 
   /* ── Empty state ────────────────────────────────────────────────────── */
 
@@ -179,7 +234,7 @@ export default function HomeDashboard({ householdId, profileId }: Props) {
         <h1 className={styles.greeting}>{getGreeting()}</h1>
         {streak > 0 && (
           <span className={styles.streak} title={`${streak}-day streak`}>
-            <span className={styles.streakFlame}>{"\uD83D\uDD25"}</span>
+            <span className={styles.streakFlame}>{"🔥"}</span>
             <span className={styles.streakCount}>{streak}</span>
           </span>
         )}

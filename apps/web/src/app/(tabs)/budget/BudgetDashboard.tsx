@@ -1,10 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import { WebButton } from "@hiro/ui-primitives/web";
 import type { Expense, HouseholdMemberWithProfile, MonthlyBreakdown, CurrencyCode } from "@hiro/domain";
 import { getMonthExpenses, getMonthlyBreakdown, createExpense, deleteExpense } from "../../../lib/expenseService";
 import { getHouseholdMembers, getMyHousehold } from "../../../lib/householdService";
+import { cacheKeys, revalidateHousehold } from "../../../lib/cacheKeys";
+import { DashboardSkeleton } from "../DashboardSkeleton";
 import { MonthSummary } from "./MonthSummary";
 import { ExpenseList } from "./ExpenseList";
 import { ExpenseAddModal } from "./ExpenseAddModal";
@@ -15,38 +18,49 @@ interface Props {
   profileId: string;
 }
 
+interface BudgetData {
+  expenses: Expense[];
+  breakdown: MonthlyBreakdown | null;
+  members: HouseholdMemberWithProfile[];
+  currency: CurrencyCode;
+}
+
+const EMPTY_EXPENSES: Expense[] = [];
+const EMPTY_MEMBERS: HouseholdMemberWithProfile[] = [];
+
 function currentMonth() {
   const now = new Date();
   return { year: now.getFullYear(), month: now.getMonth() + 1 };
 }
 
+async function fetchBudgetData(householdId: string, year: number, month: number): Promise<BudgetData> {
+  const [expRes, bdRes, memRes, hhRes] = await Promise.all([
+    getMonthExpenses(householdId, year, month),
+    getMonthlyBreakdown(householdId, year, month),
+    getHouseholdMembers(householdId),
+    getMyHousehold(),
+  ]);
+  return {
+    expenses: expRes.expenses,
+    breakdown: bdRes.breakdown,
+    members: memRes.members,
+    currency: (hhRes.household?.currency as CurrencyCode) ?? "EUR",
+  };
+}
+
 export function BudgetDashboard({ householdId, profileId }: Props) {
   const [month, setMonth] = useState(currentMonth);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [breakdown, setBreakdown] = useState<MonthlyBreakdown | null>(null);
-  const [members, setMembers] = useState<HouseholdMemberWithProfile[]>([]);
-  const [currency, setCurrency] = useState<CurrencyCode>("EUR");
-  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    const [expRes, bdRes, memRes, hhRes] = await Promise.all([
-      getMonthExpenses(householdId, month.year, month.month),
-      getMonthlyBreakdown(householdId, month.year, month.month),
-      getHouseholdMembers(householdId),
-      getMyHousehold(),
-    ]);
-    setExpenses(expRes.expenses);
-    setBreakdown(bdRes.breakdown);
-    setMembers(memRes.members);
-    if (hhRes.household?.currency) setCurrency(hhRes.household.currency as CurrencyCode);
-    setLoading(false);
-  }, [householdId, month.year, month.month]);
+  const { data, isLoading, mutate } = useSWR(
+    cacheKeys.budget(householdId, month.year, month.month),
+    () => fetchBudgetData(householdId, month.year, month.month),
+  );
 
-  useEffect(() => {
-    void fetchData();
-  }, [fetchData]);
+  const expenses = data?.expenses ?? EMPTY_EXPENSES;
+  const breakdown = data?.breakdown ?? null;
+  const members = data?.members ?? EMPTY_MEMBERS;
+  const currency = data?.currency ?? "EUR";
 
   const handlePrevMonth = () => {
     setMonth((prev) => {
@@ -71,12 +85,14 @@ export function BudgetDashboard({ householdId, profileId }: Props) {
   ) => {
     await createExpense(householdId, title, amount, date, payerProfileId, participantIds);
     setModalOpen(false);
-    await fetchData();
+    await mutate();
+    void revalidateHousehold(householdId);
   };
 
   const handleDelete = async (id: string) => {
     await deleteExpense(id);
-    await fetchData();
+    await mutate();
+    void revalidateHousehold(householdId);
   };
 
   const monthLabel = new Date(month.year, month.month - 1).toLocaleDateString("en-US", {
@@ -84,8 +100,8 @@ export function BudgetDashboard({ householdId, profileId }: Props) {
     year: "numeric",
   });
 
-  if (loading) {
-    return <div className={styles.loading}>Loading expenses...</div>;
+  if (isLoading && !data) {
+    return <DashboardSkeleton />;
   }
 
   return (
