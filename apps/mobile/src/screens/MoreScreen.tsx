@@ -11,6 +11,7 @@ import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
 import { getActiveJoinLink, getOrCreateJoinLink, rotateJoinLink, setJoinLinkActive } from "../lib/joinLinkService";
 import { getDisplayName, updateDisplayName, updateTheme } from "../lib/profileService";
 import { JoinHouseholdForm } from "../components/JoinHouseholdForm";
+import { NotificationsCard } from "../components/NotificationsCard";
 import type { ThemeId } from "@hiro/ui-tokens";
 import type { Household, HouseholdMemberWithProfile } from "@hiro/domain";
 
@@ -305,6 +306,8 @@ export function MoreScreen() {
           ))}
         </View>
       </MobileCard>
+
+      <NotificationsCard />
 
       <MobileCard title="Account" description={email ?? "Loading…"}>
         <View style={{ gap: t.spacing.md }}>

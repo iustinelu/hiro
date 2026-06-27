@@ -3,7 +3,8 @@
     "name": "Hiro",
     "icon": "./assets/icon.png",
     "plugins": [
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-notifications"
     ],
     "slug": "hiro",
     "version": "0.1.2",
