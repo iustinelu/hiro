@@ -47,8 +47,10 @@ Everything else below is about **publishing** the consent screen and **consolida
 
 ## 1. Google Cloud Console
 
-Open <https://console.cloud.google.com/> and select the **canonical Hiro project** (see §3 on
-ownership — likely `hiro-500619`, the project that owns the EAS Play service account).
+Open <https://console.cloud.google.com/> and select the project that owns the **"Hiro Web"** OAuth
+client (`850936640695-…`).
+Note: this is currently a **different** account/project from `hiro-500619` (the rest of the stack);
+that split is harmless for go-live and its cleanup is tracked separately in §3 / HIR-74.
 
 ### 1a. Verify the OAuth client redirect URI
 
@@ -109,24 +111,25 @@ Open the Hiro project (`pfokfopwjrahclmseper`) at <https://supabase.com/dashboar
 
 ---
 
-## 3. Account / project consolidation (HIR-72)
+## 3. Account / project consolidation (tracked as HIR-74)
 
-The risk this ticket guards against: the OAuth client or consent screen was created under a
-**personal or test Google account** instead of the canonical Hiro Google identity.
-That makes ownership fragile and can create duplicate clients.
+**Known state:** the OAuth client in use is **"Hiro Web"** (`850936640695-…`), and it currently
+lives in a **different Google account / GCP project** than the rest of the stack.
+The rest of Hiro points at the `hiro-500619` project (its Play publisher service account is
+`eas-play-publisher@hiro-500619`).
+This split is **harmless for function** (Google sign-in works regardless of which account owns the
+client) but makes ownership fragile, so consolidation is tracked separately as **HIR-74**.
 
-Do this once:
+This is **not a blocker for go-live** — publishing the consent screen (§1b) is what unblocks
+non-test users, and it can be done on the client wherever it currently lives.
+Consolidation (HIR-74) is the follow-up cleanup:
 
-1. Confirm the OAuth client **and** consent screen in §1 live in the **single canonical Hiro GCP
-   project**.
-   The rest of the stack points at `hiro-500619` (the Play publisher service account is
-   `eas-play-publisher@hiro-500619`), so that is the expected home — **founder to confirm**.
+1. Decide the canonical home — `hiro-500619` is the natural choice since everything else lives there.
 2. Make sure the canonical Hiro Google account is an **Owner** of that project.
-3. If a **duplicate** OAuth client exists under a different account/project, delete it so there is
-   exactly one client, and make sure the Client ID/secret in Supabase (§2a) belong to the surviving
-   one.
+3. Recreate / move the OAuth client there, update the Client ID + secret in Supabase (§2a) to the
+   surviving client, then delete the old one so exactly one client exists.
 
-> _Founder: confirm the canonical project/account here once verified:_ `__________________`
+> _Founder: confirm the canonical project/account here once HIR-74 is done:_ `__________________`
 
 ---
 
