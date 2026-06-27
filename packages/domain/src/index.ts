@@ -21,6 +21,9 @@ export interface Profile {
   // package imports (enforced by scripts/check-boundaries.mjs); the UI layer validates the
   // value against its theme id list before applying.
   theme: string | null;
+  // Whether the interactive first-win onboarding tour has been completed/dismissed.
+  // Gates the gamified tour only (not the household gate); see HIR-69.
+  onboardingCompleted: boolean;
   createdAt: string;
   updatedAt: string;
 }

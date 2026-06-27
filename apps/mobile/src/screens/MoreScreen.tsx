@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, View, Share, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { MobileButton, MobileCard, MobileListRow, MobileInput, useTheme } from "@hiro/ui-primitives/mobile";
 import { ALL_THEME_IDS, THEME_LABELS } from "@hiro/ui-tokens";
 import { useThemeControl } from "../theme/ThemeProvider";
@@ -9,11 +10,14 @@ import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
 import { createInvite, getHouseholdInvites } from "../lib/inviteService";
 import { getDisplayName, updateDisplayName, updateTheme } from "../lib/profileService";
 import { JoinHouseholdForm } from "../components/JoinHouseholdForm";
+import { useOnboardingTour } from "../onboarding/OnboardingTourProvider";
 import type { ThemeId } from "@hiro/ui-tokens";
 import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
 
 export function MoreScreen() {
   const t = useTheme();
+  const navigation = useNavigation();
+  const { startTour } = useOnboardingTour();
   const { themeId, setThemeId } = useThemeControl();
   const [email, setEmail] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
@@ -118,6 +122,11 @@ export function MoreScreen() {
     // Session change triggers RootNavigator to switch to AuthScreen
   }
 
+  function handleReplayTour() {
+    startTour();
+    navigation.navigate("home" as never);
+  }
+
   const isOwner = household && profileId && household.ownerProfileId === profileId;
 
   return (
@@ -180,6 +189,14 @@ export function MoreScreen() {
         description="Got an invite code? Enter it to join (or switch) households."
       >
         <JoinHouseholdForm onJoined={loadHousehold} />
+      </MobileCard>
+
+      <MobileCard title="Getting started" description="New to Hiro?">
+        <MobileListRow
+          title="Replay tour"
+          subtitle="Walk through the basics again"
+          onPress={handleReplayTour}
+        />
       </MobileCard>
 
       <MobileCard title="Appearance" description="Pick your theme">

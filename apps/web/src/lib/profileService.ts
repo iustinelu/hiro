@@ -25,3 +25,30 @@ export async function updateDisplayName(
   if (error) return { error: error.message };
   return { error: null };
 }
+
+// Mirrors the mobile profileService (kept 1:1 per the platform-parity contract)
+// so the web interactive tour can be built on the same flag in a later wave.
+export async function getOnboardingCompleted(
+  profileId: string
+): Promise<{ onboardingCompleted: boolean; error: string | null }> {
+  const supabase = getSupabaseBrowserClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("onboarding_completed")
+    .eq("id", profileId)
+    .single();
+  if (error) return { onboardingCompleted: true, error: error.message };
+  return { onboardingCompleted: (data.onboarding_completed as boolean | null) ?? true, error: null };
+}
+
+export async function markOnboardingCompleted(
+  profileId: string
+): Promise<{ error: string | null }> {
+  const supabase = getSupabaseBrowserClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ onboarding_completed: true })
+    .eq("id", profileId);
+  if (error) return { error: error.message };
+  return { error: null };
+}
