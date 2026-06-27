@@ -1,4 +1,5 @@
 import type { RecurringTask, TaskCadence, CadenceMeta, LeaderboardEntry } from "@hiro/domain";
+import { ServiceErrorCode, matchServiceError, computeStreak, isWithinUndoWindow } from "@hiro/domain";
 import { supabase } from "./supabase";
 
 export async function createTask(
@@ -126,10 +127,16 @@ export async function completeTask(
   const { data, error } = await supabase.rpc("complete_task", { p_task_id: taskId });
 
   if (error) {
-    if (error.message.includes("TASK_NOT_FOUND")) return { pointsEarned: 0, taskName: "", error: "Task not found." };
-    if (error.message.includes("TASK_ARCHIVED")) return { pointsEarned: 0, taskName: "", error: "Task is archived." };
-    if (error.message.includes("NOT_HOUSEHOLD_MEMBER")) return { pointsEarned: 0, taskName: "", error: "You are not a member of this household." };
-    return { pointsEarned: 0, taskName: "", error: error.message };
+    switch (matchServiceError(error.message)) {
+      case ServiceErrorCode.TASK_NOT_FOUND:
+        return { pointsEarned: 0, taskName: "", error: "Task not found." };
+      case ServiceErrorCode.TASK_ARCHIVED:
+        return { pointsEarned: 0, taskName: "", error: "Task is archived." };
+      case ServiceErrorCode.NOT_HOUSEHOLD_MEMBER:
+        return { pointsEarned: 0, taskName: "", error: "You are not a member of this household." };
+      default:
+        return { pointsEarned: 0, taskName: "", error: error.message };
+    }
   }
 
   const result = data as { points_earned: number; task_name: string };
@@ -147,7 +154,7 @@ export async function uncompleteTask(
   // Find the most recent completion of this task by this user today
   const { data, error: fetchError } = await supabase
     .from("task_completions")
-    .select("id")
+    .select("id, completed_at")
     .eq("task_id", taskId)
     .eq("completed_by_profile_id", profileId)
     .gte("completed_at", todayStart)
@@ -158,6 +165,13 @@ export async function uncompleteTask(
 
   if (fetchError) return { error: fetchError.message };
   if (!data) return { error: "No completion found to undo." };
+
+  // The RLS policy `task_completions_delete_own_recent` only permits deletes within 5 minutes; past
+  // that the delete affects 0 rows and silently "succeeds". Mirror the window client-side so we
+  // surface a clear message instead of a false success.
+  if (!isWithinUndoWindow(new Date(data.completed_at as string), now)) {
+    return { error: "This task can no longer be undone." };
+  }
 
   const { error: deleteError } = await supabase
     .from("task_completions")
@@ -237,41 +251,8 @@ export async function getStreak(
   if (error) return { streak: 0, error: error.message };
   if (!data || data.length === 0) return { streak: 0, error: null };
 
-  const dates = new Set<string>();
-  for (const row of data) {
-    const d = new Date(row.completed_at as string);
-    dates.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
-  }
-
-  const sortedDates = Array.from(dates)
-    .map((key) => {
-      const [y, m, d] = key.split("-").map(Number);
-      return new Date(y, m, d);
-    })
-    .sort((a, b) => b.getTime() - a.getTime());
-
-  const today = new Date();
-  const todayKey = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const yesterdayKey = new Date(todayKey.getTime() - 86400000);
-
-  let streak = 0;
-  let expected = todayKey;
-
-  // Grace period: if today has no completions, start from yesterday
-  if (sortedDates.length > 0 && sortedDates[0].getTime() < todayKey.getTime()) {
-    expected = yesterdayKey;
-  }
-
-  for (const date of sortedDates) {
-    if (date.getTime() === expected.getTime()) {
-      streak++;
-      expected = new Date(expected.getTime() - 86400000);
-    } else if (date.getTime() < expected.getTime()) {
-      break;
-    }
-  }
-
-  return { streak, error: null };
+  const dates = data.map((row) => new Date(row.completed_at as string));
+  return { streak: computeStreak(dates, new Date()), error: null };
 }
 
 // ─── Cadence helpers (shared by Home + Tasks screens) ───────────────────────

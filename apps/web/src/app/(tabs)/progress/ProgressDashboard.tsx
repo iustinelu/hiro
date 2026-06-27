@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 import type { PersonalStats, DailyPoints, LeaderboardEntry, TaskStats } from "@hiro/domain";
 import { getPersonalStats, getWeeklyPointsTrend, getTaskStats } from "../../../lib/progressService";
 import { getWeeklyLeaderboard } from "../../../lib/taskService";
+import { cacheKeys } from "../../../lib/cacheKeys";
+import { DashboardSkeleton } from "../DashboardSkeleton";
 import { HomeLeaderboard } from "../home/HomeLeaderboard";
 import { StatsGrid } from "./StatsGrid";
 import { WeeklyChart } from "./WeeklyChart";
@@ -15,40 +17,42 @@ interface Props {
   profileId: string;
 }
 
+interface ProgressData {
+  stats: PersonalStats | null;
+  trend: DailyPoints[];
+  leaderboard: LeaderboardEntry[];
+  taskStats: TaskStats[];
+}
+
+async function fetchProgressData(householdId: string, profileId: string): Promise<ProgressData> {
+  const [statsRes, trendRes, leaderboardRes, taskStatsRes] = await Promise.all([
+    getPersonalStats(profileId, householdId),
+    getWeeklyPointsTrend(householdId, profileId),
+    getWeeklyLeaderboard(householdId),
+    getTaskStats(householdId),
+  ]);
+  return {
+    stats: statsRes.stats,
+    trend: trendRes.trend,
+    leaderboard: leaderboardRes.entries,
+    taskStats: taskStatsRes.taskStats,
+  };
+}
+
 export function ProgressDashboard({ householdId, profileId }: Props) {
-  const [stats, setStats] = useState<PersonalStats | null>(null);
-  const [trend, setTrend] = useState<DailyPoints[]>([]);
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [taskStats, setTaskStats] = useState<TaskStats[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useSWR(
+    cacheKeys.progress(householdId, profileId),
+    () => fetchProgressData(householdId, profileId),
+  );
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchAll() {
-      const [statsRes, trendRes, leaderboardRes, taskStatsRes] = await Promise.all([
-        getPersonalStats(profileId, householdId),
-        getWeeklyPointsTrend(householdId, profileId),
-        getWeeklyLeaderboard(householdId),
-        getTaskStats(householdId),
-      ]);
-
-      if (cancelled) return;
-
-      setStats(statsRes.stats);
-      setTrend(trendRes.trend);
-      setLeaderboard(leaderboardRes.entries);
-      setTaskStats(taskStatsRes.taskStats);
-      setLoading(false);
-    }
-
-    fetchAll();
-    return () => { cancelled = true; };
-  }, [householdId, profileId]);
-
-  if (loading) {
-    return <p className={styles.loading}>Loading your progress...</p>;
+  if (isLoading && !data) {
+    return <DashboardSkeleton />;
   }
+
+  const stats = data?.stats ?? null;
+  const trend = data?.trend ?? [];
+  const leaderboard = data?.leaderboard ?? [];
+  const taskStats = data?.taskStats ?? [];
 
   const isEmpty =
     !stats ||

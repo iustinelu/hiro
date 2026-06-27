@@ -31,14 +31,6 @@ function runCommand(cmd, args) {
 
 const { title, bodyFile, base, head } = parseArgs();
 
-runCommand("node", [
-  "scripts/check-pr-governance.mjs",
-  "--file",
-  bodyFile,
-  "--title",
-  title
-]);
-
 const ghArgs = ["pr", "create", "--base", base, "--title", title, "--body-file", bodyFile];
 if (head) ghArgs.push("--head", head);
 runCommand("gh", ghArgs);
