@@ -151,7 +151,7 @@ export function MoreScreen() {
               helperText={inviteError ?? undefined}
             />
             <MobileButton
-              label="Create invite link"
+              label="Create invite code"
               variant="primary"
               loading={inviting}
               loadingLabel="Creating…"
