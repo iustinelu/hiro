@@ -44,6 +44,7 @@ export function MoreScreen() {
 
   // Notifications state
   const [notifStatus, setNotifStatus] = useState<NotificationStatus>("undetermined");
+  const [notifCanAskAgain, setNotifCanAskAgain] = useState(true);
   const [notifRegistered, setNotifRegistered] = useState(false);
   const [notifBusy, setNotifBusy] = useState(false);
 
@@ -66,11 +67,12 @@ export function MoreScreen() {
   }, []);
 
   async function loadNotificationState() {
-    const [status, registered] = await Promise.all([
+    const [perm, registered] = await Promise.all([
       getNotificationStatus(),
       isDeviceRegistered(),
     ]);
-    setNotifStatus(status);
+    setNotifStatus(perm.status);
+    setNotifCanAskAgain(perm.canAskAgain);
     setNotifRegistered(registered);
   }
 
@@ -303,7 +305,7 @@ export function MoreScreen() {
 
       <MobileCard title="Notifications" description="Get nudged when chores get done">
         <View style={{ gap: t.spacing.md }}>
-          {notifStatus === "denied" ? (
+          {notifStatus === "denied" && !notifCanAskAgain ? (
             <>
               <MobileListRow title="Push notifications" meta="Blocked" />
               <MobileButton

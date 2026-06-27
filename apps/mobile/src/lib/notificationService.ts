@@ -10,6 +10,13 @@ import { supabase } from "./supabase";
 
 export type NotificationStatus = "granted" | "denied" | "undetermined";
 
+/**
+ * Permission state. `canAskAgain` matters on Android 13+: a not-yet-requested
+ * POST_NOTIFICATIONS permission reports `denied` (not `undetermined`) but is still
+ * promptable, so "blocked" must mean `denied && !canAskAgain` — never just `denied`.
+ */
+export type NotificationPermission = { status: NotificationStatus; canAskAgain: boolean };
+
 const ANDROID_CHANNEL_ID = "default";
 
 /**
@@ -47,13 +54,13 @@ async function getDeviceToken(): Promise<string | null> {
   return resp.data ?? null;
 }
 
-/** Current OS permission state, without prompting. */
-export async function getNotificationStatus(): Promise<NotificationStatus> {
+/** Current OS permission state (incl. whether we can still prompt), without prompting. */
+export async function getNotificationStatus(): Promise<NotificationPermission> {
   try {
-    const { status } = await Notifications.getPermissionsAsync();
-    return status as NotificationStatus;
+    const { status, canAskAgain } = await Notifications.getPermissionsAsync();
+    return { status: status as NotificationStatus, canAskAgain };
   } catch {
-    return "undetermined";
+    return { status: "undetermined", canAskAgain: true };
   }
 }
 
