@@ -8,6 +8,12 @@ This is a one-time configuration applied in the Resend and Supabase dashboards. 
 required. The branded templates live in [`email-templates/`](email-templates/) - that folder is the
 source of truth; this runbook installs them.
 
+> **Provided values (2026-06-27):**
+> - **Sending domain:** `gethiro.xyz` (registered at Namecheap, BasicDNS nameservers - add records under the **Advanced DNS** tab).
+> - **Sender:** `no-reply@gethiro.xyz`, sender name `Hiro`.
+> - **Resend API key:** a restricted **send-only** key is held by the founder; it is the SMTP password in Step 3. It is NOT in the repo. (Send-only means the domain must be added via the Resend dashboard, not the API.)
+> - **Region:** choose **eu-west-1** when adding the domain in Resend (EU users; Supabase project is eu-central-1).
+
 > **Why this matters:** Supabase's default mailer is rate-limited (it will start dropping real
 > signup/reset emails at volume) and sends generic, unbranded mail. Pointing Auth at Resend via
 > custom SMTP fixes both.
@@ -63,7 +69,7 @@ dashboard versions) → **Enable Custom SMTP**, then fill in:
 | Port | `465` (SSL) - or `587` for STARTTLS |
 | Username | `resend` |
 | Password | *your Resend API key from Step 1.4* |
-| Sender email | an address on your **verified** domain, e.g. `no-reply@hiro.app` |
+| Sender email | `no-reply@gethiro.xyz` (on the **verified** domain) |
 | Sender name | `Hiro` |
 
 Save. (Optional: review **Rate Limits** on the same Auth screen - with custom SMTP you can raise
