@@ -62,7 +62,7 @@ export function HomeScreen() {
   // *during* the tour, so a Replay for an established user still walks the full
   // create → complete → celebrate flow instead of jumping to the end.
   const tourBaseline = useRef({ tasks: 0, completions: 0 });
-  const prevTourActive = useRef(false);
+  const prevTourStep = useRef<TourStep | null>(null);
 
   /* ── Bootstrap profile + household ───────────────────────────────────── */
   useEffect(() => {
@@ -120,14 +120,15 @@ export function HomeScreen() {
     return () => clearTimeout(timer);
   }, [undoableTaskId]);
 
-  /* ── Tour: snapshot baseline + reset to step 1 on each (re)start ───────── */
+  /* Snapshot baseline only on the transition INTO "create" (not every render),
+   * so a real new task still advances the step and Replay re-captures cleanly. */
   useEffect(() => {
-    if (tourActive && !prevTourActive.current) {
+    if (!tourActive) { prevTourStep.current = null; return; }
+    if (tourStep === "create" && prevTourStep.current !== "create") {
       tourBaseline.current = { tasks: tasks.length, completions: completedIds.size };
-      setTourStep("create");
     }
-    prevTourActive.current = tourActive;
-  }, [tourActive, tasks.length, completedIds.size]);
+    prevTourStep.current = tourStep;
+  }, [tourActive, tourStep, tasks.length, completedIds.size]);
 
   /* ── Tour: auto-advance as the user performs each real action ──────────── */
   useEffect(() => {

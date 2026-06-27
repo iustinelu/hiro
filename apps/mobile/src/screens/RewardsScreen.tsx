@@ -46,11 +46,13 @@ function RedeemBurst({ points, title, onComplete }: RedeemBurstProps) {
 
   useEffect(() => {
     progress.setValue(0);
-    Animated.sequence([
+    const anim = Animated.sequence([
       Animated.spring(progress, { toValue: 1, useNativeDriver: true, friction: 6, tension: 80 }),
       Animated.delay(500),
       Animated.timing(progress, { toValue: 2, duration: 250, useNativeDriver: true, easing: Easing.in(Easing.ease) }),
-    ]).start(() => onComplete());
+    ]);
+    anim.start(({ finished }) => { if (finished) onComplete(); });
+    return () => anim.stop();
   }, [progress, onComplete, points, title]);
 
   const translateY = progress.interpolate({ inputRange: [0, 1, 2], outputRange: [20, -30, -50] });
@@ -252,6 +254,10 @@ export function RewardsScreen() {
     await loadData(profileId, householdId);
   }, [profileId, householdId, loadData]);
 
+  // Stable so RedeemBurst's effect doesn't re-fire (restarting the animation)
+  // on the several re-renders that follow a redeem.
+  const handleBurstComplete = useCallback(() => setBurst(null), []);
+
   /* ── Render ─────────────────────────────────────────────────────── */
 
   if (loading) {
@@ -357,7 +363,7 @@ export function RewardsScreen() {
         <RedeemBurst
           points={burst.points}
           title={burst.title}
-          onComplete={() => setBurst(null)}
+          onComplete={handleBurstComplete}
         />
       )}
 

@@ -13,6 +13,7 @@ export function TourSpotlight({ active, children }: { active: boolean; children:
 
   useEffect(() => {
     if (!active) return;
+    pulse.setValue(0); // start each activation from the baseline, not mid-pulse
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, { toValue: 1, duration: 900, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),

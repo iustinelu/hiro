@@ -18,13 +18,17 @@ export function RewardCreateModal({ open, onClose, onSave, initialPointCost }: P
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Seed the form only when the sheet opens. `initialPointCost` is intentionally
+  // NOT a dep: re-seeding mid-edit (e.g. a realtime balance change) would wipe
+  // what the user has typed. The value is read fresh at each open.
   useEffect(() => {
     if (open) {
       setTitle("");
       setPointCost(String(initialPointCost ?? 10));
       setError(null);
     }
-  }, [open, initialPointCost]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   async function handleSave() {
     const trimmed = title.trim();
