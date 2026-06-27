@@ -68,8 +68,10 @@ export function InviteCard({ household }: { household: Household }) {
     const message =
       `Join my household "${household.name}" on Hiro!\n\n` +
       `Invite code: ${linkCode}\n` +
-      `Already have the app? Open: ${joinDeepLink(linkCode)}\n` +
-      `Get Hiro: [TODO: store URL]`;
+      `Already have the app? Open: ${joinDeepLink(linkCode)}\n\n` +
+      `Get Hiro:\n` +
+      `iPhone: https://apps.apple.com/app/id6784593514\n` +
+      `Android: https://play.google.com/store/apps/details?id=com.behiro.app`;
     try {
       await Share.share({ message });
     } catch {
