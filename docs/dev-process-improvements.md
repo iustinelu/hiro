@@ -48,3 +48,24 @@ beats a heavyweight framework. Append an entry below each session.
 - Lightweight Playwright smoke for the web signup → create-household flow.
 - A `check:rpc-params` that verifies `.rpc()` argument keys match the function's parameter names.
 - Auto-run `/review` (agent code review) on every PR diff before founder QA.
+
+## 2026-06-27 — v0.1.3 release session
+
+- **Agent code review caught 4 real bugs before merge** — ran a `code-reviewer` subagent over the
+  full branch diff; it found a redeem-celebration animation restarting on re-render (unstable
+  `onComplete` dep, no cleanup), a tour baseline that went stale on mid-flow Replay, a modal that
+  wiped user input on a realtime balance change, and a spotlight ring snapping from mid-pulse. All
+  fixed pre-merge — the "auto-run /review" idea above, now proven worth doing every release.
+  Caveat: the reviewer's *suggested* fix for the baseline bug was itself wrong (it would have
+  blocked forward advancement), so review output still needs a sanity pass, not blind application.
+- **Single-Metro-on-8081 discipline** — a stale Metro from another worktree on 8081 serves the wrong
+  JS bundle, so every on-device fix "looks missing." Always `fuser -k 8081/tcp` then start Metro
+  from the active worktree before QA. Cost ~an hour of confusion before it was spotted.
+- **KeyboardAvoidingView `behavior="height"` loops on Android** — it resizes its container, and any
+  keyboard *size* change (e.g. QWERTY→numeric) retriggers the measure → endless flicker. Use
+  `behavior="padding"` for bottom-sheet modals; it insets instead of resizing and is stable.
+- **Cross-tab tour state** — a guided tour spanning tabs needs its step in shared context (the
+  provider), not local screen state; each screen renders the coaching card only for the steps it
+  owns and advances on real data deltas snapshotted on step-entry (not per-render).
+- **Emulator harness still down** (node_modules SDK-54 skew → red-screen on launch); real-device QA
+  on the Pixel is the only reliable surface. Worth fixing the harness as a separate task.
