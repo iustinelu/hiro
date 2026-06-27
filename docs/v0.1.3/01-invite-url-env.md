@@ -1,28 +1,31 @@
-# 01 - Mobile invite URL must be env-driven (config blocker)
+# 01 - Invites must work without a web app (mobile-only redesign)
 
-**Ticket:** (config blocker, no Linear #) - file one if you like: "Mobile invite links hardcoded to localhost"
-**Branch:** `chore/mobile-invite-url-env`  **Worktree:** `../hiro-invite-url-env`
-**Platforms:** mobile (+ web audit)  **Size:** S  **Group:** 1 (parallel-safe)
+**Ticket:** (blocker) - "Mobile-only invite flow (no web landing page)"
+**Branch:** `feat/mobile-only-invites`  **Worktree:** `../hiro-mobile-invites`
+**Platforms:** mobile + Supabase  **Size:** M  **Group:** 1
+**SUPERSEDES** the earlier "env the web origin" version - we dropped web/Vercel (see memory `project_mobile_first_focus`), so there is **no hosted page** for `/invite/[token]` to open.
 
 ## Problem
-`apps/mobile/src/screens/MoreScreen.tsx:15` hardcodes:
-```ts
-const WEB_ORIGIN = "http://localhost:3000";
-```
-Invite links generated on mobile point at `localhost:3000`, so a real invited friend gets a dead link. This blocks the core "invite someone to your household" flow in production.
+`apps/mobile/src/screens/MoreScreen.tsx:15` builds invite links against `http://localhost:3000`, and the accept flow assumes the web app hosts `/invite/[token]`. With no web deploy, those links go nowhere. We need invites that work with **only the mobile app**.
+
+## Recommended approach (confirm with founder before building)
+**Join-code in-app:** surface the existing invite token as a short, shareable **join code**, and add an "Enter a code to join a household" path inside the app.
+- Sharer: More -> create invite -> native Share sheet shares a message with (a) the join code and (b) a store/download link (placeholder until store URLs exist).
+- Invitee: installs Hiro, signs up, and enters the code in onboarding (ties into brief 07 "Join a household" path) or in More.
+- Reuse the existing invite token + `accept_invite` RPC; just expose/accept it as a code instead of a URL. No web needed.
+- (If the founder prefers real tappable links later, that needs universal/app links + a tiny static landing host - out of scope for now.)
 
 ## Do
-1. Replace the constant with an env-driven origin: read `process.env.EXPO_PUBLIC_WEB_ORIGIN` with a dev fallback (`http://localhost:3000`). Mobile env typing lives in `apps/mobile/src/types/env.d.ts` - add the new var there.
-2. Add `EXPO_PUBLIC_WEB_ORIGIN` to `apps/mobile/eas.json` for **both** the `preview` and `production` build profiles. Use the production web origin once the founder confirms it (leave a clearly-marked TODO + the agreed value; default to the Vercel URL if known).
-3. Add it to the local `apps/mobile/.env` so dev still works.
-4. **Audit the web side** for any equivalent hardcoded origin in invite generation (`apps/web/src/lib/inviteService.ts`, the More page, `apps/web/src/app/invite/[token]/`). Web should use a relative path or `window.location.origin`; fix if it hardcodes anything.
+1. Remove the hardcoded `WEB_ORIGIN`/localhost from `MoreScreen.tsx` and any web-page assumption in `apps/mobile/src/lib/inviteService.ts`.
+2. Build the share-a-code flow + the enter-a-code-to-join flow in the app (mobile). Reuse `accept_invite` (and the join-while-in-a-household guard - see the data-loss confirmation note in `ia-decision.md`).
+3. Keep the share message friendly; leave a clearly-marked TODO for the store download URL.
+4. Web: no work (parked).
 
 ## Acceptance
-- No hardcoded `localhost` origin remains in invite-link generation on either platform.
-- Mobile reads the origin from env; `eas.json` carries it for preview + production.
+- A real friend can join a household using only the mobile app (share code -> install -> enter code -> joined). No dependency on any web page.
 
 ## Founder QA Quick Cycle
-- **Commands:** `npm run check` (green); `npm run dev:mobile` (with `.env` containing `EXPO_PUBLIC_WEB_ORIGIN`).
-- **Route:** Mobile -> More -> create an invite -> open the native Share sheet.
-- **Look for:** the invite URL uses the configured web origin, not `localhost:3000`.
-- **Pass/fail:** Pass = link points at the real web origin and opens the invite accept page. Fail = still localhost, or env not read.
+- **Commands:** `npm run check` (green); mobile via E-A emulator harness.
+- **Route:** Account A: More -> create invite -> Share (note the code). Account B (fresh): sign up -> enter code -> joins A's household.
+- **Look for:** no localhost/web link anywhere; code-based join works; join-while-in-household shows the data-loss confirmation.
+- **Pass/fail:** Pass = code-based join works app-only on the emulator. Fail = relies on a web page, or join fails.
