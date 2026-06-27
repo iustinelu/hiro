@@ -9,6 +9,12 @@ Proof it works: ![Home screen rendering the theme](assets/mobile-qa-home-proof.p
 
 ---
 
+## Prerequisites & limits (read first)
+- **Node:** use the repo's Node (v22 via nvm - the default in a normal shell). Don't run the helper under a stripped `PATH` (the system `/usr/bin/node` is ancient v12 and will fail to parse the script).
+- **Source the env for builds:** the `.mjs` helper self-contains its env, but `npx expo run:android` / raw `adb` / `emulator` need `source scripts/android-env.sh` first.
+- **One QA session at a time.** There is a single emulator (`hiro_pixel`) and a single Metro on port 8081. **Do not run parallel mobile-QA agents** - they will collide on the device and the port. Serialize: one agent boots, QAs, and (optionally) leaves the emulator up for the next.
+- **Rebuild only on native changes.** The `com.behiro.app` debug APK is already installed and persists on the AVD. A JS/TS change needs only a Metro restart. Adding/removing a native module (`expo-*` / `react-native-*`) or changing `app.json` native config needs `npx expo run:android` again (~3-4 min) - and possibly `expo prebuild --clean`.
+
 ## TL;DR for a feature agent
 
 ```bash
