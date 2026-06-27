@@ -71,6 +71,8 @@ export interface ModalSheetProps {
   description?: string;
   children?: ReactNode;
   primaryActionLabel?: string;
+  primaryActionVariant?: ButtonVariant;
+  primaryActionDisabled?: boolean;
   secondaryActionLabel?: string;
   onPrimaryAction?: () => void;
   onSecondaryAction?: () => void;

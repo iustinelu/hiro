@@ -11,6 +11,8 @@ export function MobileModalSheet({
   description,
   children,
   primaryActionLabel,
+  primaryActionVariant = "primary",
+  primaryActionDisabled,
   secondaryActionLabel,
   onPrimaryAction,
   onSecondaryAction,
@@ -71,7 +73,12 @@ export function MobileModalSheet({
               <MobileButton label={secondaryActionLabel} variant="secondary" onPress={onSecondaryAction} />
             ) : null}
             {primaryActionLabel ? (
-              <MobileButton label={primaryActionLabel} variant="primary" onPress={onPrimaryAction} />
+              <MobileButton
+                label={primaryActionLabel}
+                variant={primaryActionVariant}
+                disabled={primaryActionDisabled}
+                onPress={onPrimaryAction}
+              />
             ) : null}
           </View>
         </Pressable>
