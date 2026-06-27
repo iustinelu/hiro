@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { WebButton, WebCard, WebListRow, WebInput } from "@hiro/ui-primitives/web";
-import { signOut } from "../../../lib/authService";
+import { signOut, getMyAccountMethods, updatePassword } from "../../../lib/authService";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/client";
 import {
   getMyHousehold,
@@ -14,7 +14,7 @@ import { createInvite, getHouseholdInvites } from "../../../lib/inviteService";
 import { getDisplayName, updateDisplayName } from "../../../lib/profileService";
 import { tokens } from "@hiro/ui-tokens";
 import { cssColor, cssRadius, cssFontFamily } from "@hiro/ui-primitives/web";
-import type { Household, HouseholdMemberWithProfile, HouseholdInvite } from "@hiro/domain";
+import type { Household, HouseholdMemberWithProfile, HouseholdInvite, AuthMethod } from "@hiro/domain";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 export default function MorePage() {
@@ -42,11 +42,20 @@ export default function MorePage() {
   const [nameError, setNameError] = useState<string | null>(null);
   const [nameSaved, setNameSaved] = useState(false);
 
+  // HIR-71: add-password for Google-only accounts
+  const [accountMethods, setAccountMethods] = useState<AuthMethod[] | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [settingPassword, setSettingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSet, setPasswordSet] = useState(false);
+
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
     supabase.auth.getUser().then(({ data }) => {
       if (data.user?.email) setEmail(data.user.email);
     });
+    getMyAccountMethods().then(setAccountMethods);
     supabase.rpc("current_profile_id").then(({ data }) => {
       if (data) {
         const id = data as string;
@@ -128,12 +137,39 @@ export default function MorePage() {
     }
   }
 
+  async function handleSetPassword() {
+    setPasswordError(null);
+    if (newPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setPasswordError("Passwords do not match.");
+      return;
+    }
+    setSettingPassword(true);
+    const { error } = await updatePassword(newPassword);
+    setSettingPassword(false);
+    if (error) {
+      setPasswordError(error);
+      return;
+    }
+    setPasswordSet(true);
+    setNewPassword("");
+    setConfirmNewPassword("");
+    // Refresh methods so the section hides now that a password exists.
+    setAccountMethods(await getMyAccountMethods());
+  }
+
   async function handleSignOut() {
     await signOut();
     router.push("/auth/sign-in");
   }
 
   const isOwner = household && profileId && household.ownerProfileId === profileId;
+  // Show "Set a password" only for Google-only accounts (no password yet).
+  const isGoogleOnly =
+    accountMethods !== null && accountMethods.includes("google") && !accountMethods.includes("email");
 
   return (
     <div style={{ padding: tokens.spacing.lg, display: "grid", gap: tokens.spacing.md }}>
@@ -251,6 +287,37 @@ export default function MorePage() {
             loadingLabel="Saving…"
             onPress={() => void handleSaveName()}
           />
+          {isGoogleOnly && (
+            <>
+              <WebInput
+                label="Set a password"
+                placeholder="Min. 6 characters"
+                value={newPassword}
+                onChangeText={(text) => { setNewPassword(text); setPasswordError(null); }}
+                secureTextEntry
+                state={passwordError ? "error" : "default"}
+                helperText={passwordError ?? "Add a password so you can also sign in with email."}
+              />
+              <WebInput
+                label="Confirm password"
+                placeholder="Re-enter password"
+                value={confirmNewPassword}
+                onChangeText={(text) => { setConfirmNewPassword(text); setPasswordError(null); }}
+                secureTextEntry
+                state={passwordError ? "error" : "default"}
+              />
+              <WebButton
+                label="Set password"
+                variant="secondary"
+                loading={settingPassword}
+                loadingLabel="Setting…"
+                onPress={() => void handleSetPassword()}
+              />
+            </>
+          )}
+          {passwordSet && (
+            <WebListRow title="Password set" meta="You can now sign in with email too" />
+          )}
           <WebButton
             label="Sign out"
             variant="danger"

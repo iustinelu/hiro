@@ -232,3 +232,7 @@ export type AppShellSectionId = AppShellSection["id"];
 
 export const appSections = ["Home", "Tasks", "Progress", "Budget", "Rewards", "More"] as const;
 export type AppSection = (typeof appSections)[number];
+
+// ─── Auth method guidance (HIR-71) ──────────────────────────────────────────
+
+export * from "./auth";
