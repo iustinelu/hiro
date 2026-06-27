@@ -3,7 +3,14 @@ import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-na
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MobileInput, MobileButton, useTheme } from "@hiro/ui-primitives/mobile";
 import { tokens, brand } from "@hiro/ui-tokens";
-import { signIn, signUp, sendPasswordResetEmail, signInWithGoogle } from "../../lib/authService";
+import { resolveSignInFailure, resolveSignUpCollision } from "@hiro/domain";
+import {
+  signIn,
+  signUp,
+  signInWithGoogle,
+  getAccountMethods,
+} from "../../lib/authService";
+import { ForgotPasswordView } from "./ForgotPasswordView";
 
 type AuthView = "sign-in" | "sign-up" | "forgot-password";
 
@@ -12,6 +19,27 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const GoogleG = () => (
   <Text style={{ fontSize: 15, fontWeight: "700", color: brand.googleBlue, lineHeight: 18 }}>G</Text>
 );
+
+// HIR-71: friendly, non-error guidance banner (e.g. "this email uses Google"); points at the
+// Continue with Google button rendered just below it.
+const NoticeBanner = ({ message }: { message: string }) => {
+  const t = useTheme();
+  return (
+    <View
+      style={{
+        backgroundColor: t.color.bg,
+        borderWidth: 1,
+        borderColor: t.color.accent,
+        borderRadius: t.radius.md,
+        padding: tokens.spacing.md,
+      }}
+    >
+      <Text style={{ fontFamily: t.typography.fontFamily, fontSize: tokens.typography.bodySmallSize, color: t.color.ink }}>
+        {message}
+      </Text>
+    </View>
+  );
+};
 
 const OrDivider = () => {
   const t = useTheme();
@@ -31,18 +59,41 @@ function SignInView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function handleSignIn() {
     setError(null);
+    setNotice(null);
     setLoading(true);
     const { error: authError } = await signIn(email, password);
+    if (authError) {
+      if (/rate.?limit|too many|exceeded/i.test(authError)) {
+        setError("Too many sign-in attempts. Please wait a few minutes and try again.");
+        setLoading(false);
+        return;
+      }
+      // The email may belong to a Google-only account. Ask the backend which method it uses
+      // and guide the user there instead of a generic failure. If the lookup itself fails
+      // (null), fall back to a safe generic message rather than "no account found".
+      const methods = await getAccountMethods(email);
+      if (methods === null) {
+        setError("Incorrect email or password. Try again, or reset your password.");
+      } else {
+        const guidance = resolveSignInFailure(methods);
+        if (guidance.highlightGoogle) {
+          setNotice(guidance.message);
+        } else {
+          setError(guidance.message);
+        }
+      }
+    }
     setLoading(false);
-    if (authError) setError(authError);
     // On success, onAuthStateChange in RootNavigator will update state
   }
 
   async function handleGoogleSignIn() {
     setError(null);
+    setNotice(null);
     setGoogleLoading(true);
     const { error: authError } = await signInWithGoogle();
     setGoogleLoading(false);
@@ -62,6 +113,8 @@ function SignInView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
       >
         Sign in
       </Text>
+
+      {notice && <NoticeBanner message={notice} />}
 
       <MobileButton
         label="Continue with Google"
@@ -127,9 +180,11 @@ function SignUpView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function handleGoogleSignIn() {
     setError(null);
+    setNotice(null);
     setGoogleLoading(true);
     const { error: authError } = await signInWithGoogle();
     setGoogleLoading(false);
@@ -138,6 +193,7 @@ function SignUpView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
 
   async function handleSignUp() {
     setError(null);
+    setNotice(null);
     if (!EMAIL_RE.test(email)) {
       setError("Enter a valid email address.");
       return;
@@ -151,6 +207,16 @@ function SignUpView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
       return;
     }
     setLoading(true);
+    // Pre-check for an existing account. Supabase returns an obfuscated fake-success for an
+    // already-registered email; the backend lookup lets us route the user to their method.
+    // If the lookup fails (null), proceed - Supabase's own guard still applies.
+    const methods = await getAccountMethods(email);
+    const collision = methods ? resolveSignUpCollision(methods) : null;
+    if (collision) {
+      setNotice(collision.message);
+      setLoading(false);
+      return;
+    }
     const { error: authError } = await signUp(email, password);
     setLoading(false);
     if (authError) setError(authError);
@@ -170,6 +236,8 @@ function SignUpView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
       >
         Create account
       </Text>
+
+      {notice && <NoticeBanner message={notice} />}
 
       <MobileButton
         label="Continue with Google"
@@ -227,108 +295,6 @@ function SignUpView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
   );
 }
 
-function ForgotPasswordView({ onSwitch }: { onSwitch: (view: AuthView) => void }) {
-  const t = useTheme();
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
-
-  async function handleReset() {
-    setError(null);
-    setLoading(true);
-    const { error: authError } = await sendPasswordResetEmail(email);
-    setLoading(false);
-    if (authError) {
-      setError(authError);
-      return;
-    }
-    setSent(true);
-  }
-
-  if (sent) {
-    return (
-      <View style={{ gap: tokens.spacing.md }}>
-        <Text
-          style={{
-            fontFamily: t.typography.fontFamily,
-            fontSize: tokens.typography.titleSize,
-            fontWeight: "700",
-            color: t.color.ink,
-          }}
-        >
-          Check your email
-        </Text>
-        <Text
-          style={{
-            fontFamily: t.typography.fontFamily,
-            fontSize: tokens.typography.bodySize,
-            color: t.color.inkMuted,
-          }}
-        >
-          We sent a password reset link to {email}.
-        </Text>
-        <MobileButton
-          label="Back to sign in"
-          variant="ghost"
-          size="sm"
-          onPress={() => onSwitch("sign-in")}
-        />
-      </View>
-    );
-  }
-
-  return (
-    <View style={{ gap: tokens.spacing.md }}>
-      <Text
-        style={{
-          fontFamily: t.typography.fontFamily,
-          fontSize: tokens.typography.titleSize,
-          fontWeight: "700",
-          color: t.color.ink,
-          marginBottom: tokens.spacing.sm,
-        }}
-      >
-        Forgot password
-      </Text>
-      <Text
-        style={{
-          fontFamily: t.typography.fontFamily,
-          fontSize: tokens.typography.bodySize,
-          color: t.color.inkMuted,
-        }}
-      >
-        Enter your email and we&apos;ll send you a reset link.
-      </Text>
-
-      <MobileInput
-        label="Email"
-        placeholder="you@example.com"
-        value={email}
-        onChangeText={setEmail}
-        state={error ? "error" : "default"}
-        helperText={error ?? undefined}
-      />
-
-      <MobileButton
-        label="Send reset link"
-        variant="primary"
-        fullWidth
-        loading={loading}
-        loadingLabel="Sending…"
-        onPress={() => void handleReset()}
-      />
-
-      <MobileButton
-        label="Back to sign in"
-        variant="ghost"
-        size="sm"
-        onPress={() => onSwitch("sign-in")}
-      />
-    </View>
-  );
-}
-
 export function AuthScreen() {
   const t = useTheme();
   const insets = useSafeAreaInsets();
@@ -373,7 +339,7 @@ export function AuthScreen() {
         >
           {view === "sign-in" && <SignInView onSwitch={setView} />}
           {view === "sign-up" && <SignUpView onSwitch={setView} />}
-          {view === "forgot-password" && <ForgotPasswordView onSwitch={setView} />}
+          {view === "forgot-password" && <ForgotPasswordView onBack={() => setView("sign-in")} />}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

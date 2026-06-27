@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import type { RecurringTask, LeaderboardEntry, TaskCadence, CadenceMeta } from "@hiro/domain";
 import { MobileButton, MobileCard, useTheme } from "@hiro/ui-primitives/mobile";
 import { supabase } from "../lib/supabase";
@@ -14,6 +15,7 @@ import {
   isDueToday,
 } from "../lib/taskService";
 import { requestNotificationPermission } from "../lib/notificationService";
+import { getBacklogTasks, type BacklogTask } from "../lib/oneOffService";
 import { TaskCreateModal } from "./TaskCreateModal";
 import { PointsBurst, AllDoneCelebration } from "./celebrations";
 import { useOnboardingTour } from "../onboarding/OnboardingTourProvider";
@@ -30,12 +32,14 @@ interface CompletionResult { pointsEarned: number; taskName: string; }
 
 export function HomeScreen() {
   const t = useTheme();
+  const navigation = useNavigation<{ navigate: (name: string, params?: Record<string, unknown>) => void }>();
   const [profileId, setProfileId] = useState<string | null>(null);
   const [householdId, setHouseholdId] = useState<string | null>(null);
   const [bootstrapped, setBootstrapped] = useState(false);
 
   const [tasks, setTasks] = useState<RecurringTask[]>([]);
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
+  const [upForGrabs, setUpForGrabs] = useState<BacklogTask[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [streak, setStreak] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -80,16 +84,18 @@ export function HomeScreen() {
   /* ── Data fetching ───────────────────────────────────────────────────── */
   const fetchData = useCallback(async () => {
     if (!householdId || !profileId) return;
-    const [tasksRes, completionsRes, lbRes, streakRes] = await Promise.all([
+    const [tasksRes, completionsRes, lbRes, streakRes, backlogRes] = await Promise.all([
       getHouseholdTasks(householdId),
       getTodayCompletions(profileId),
       getWeeklyLeaderboard(householdId),
       getStreak(profileId),
+      getBacklogTasks(householdId),
     ]);
     setTasks(tasksRes.tasks);
     setCompletedIds(new Set(completionsRes.completedTaskIds));
     setLeaderboard(lbRes.entries);
     setStreak(streakRes.streak);
+    setUpForGrabs(backlogRes.tasks.filter((task) => task.status === "open").slice(0, 3));
     setLoading(false);
   }, [householdId, profileId]);
 
@@ -290,6 +296,30 @@ export function HomeScreen() {
             <MobileButton label="+ Add task" variant="ghost" size="sm" onPress={() => setModalOpen(true)} />
           </View>
         </MobileCard>
+
+        {/* Up for grabs — claimable backlog chores */}
+        {upForGrabs.length > 0 && (
+          <MobileCard title="Up for grabs" description="Claimable one-off chores">
+            <View style={{ gap: t.spacing.sm }}>
+              {upForGrabs.map((item) => (
+                <View key={item.id} style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: t.spacing.sm }}>
+                  <Text numberOfLines={1} style={{ flex: 1, color: t.color.ink, fontFamily: t.typography.fontFamily, fontSize: t.typography.bodySize }}>
+                    {item.name}
+                  </Text>
+                  <Text style={{ color: t.color.inkMuted, fontFamily: t.typography.fontFamilyMono, fontSize: t.typography.labelSize }}>{item.points} pts</Text>
+                </View>
+              ))}
+              <View style={{ marginTop: t.spacing.xs }}>
+                <MobileButton
+                  label="See all in Backlog"
+                  variant="ghost"
+                  size="sm"
+                  onPress={() => navigation.navigate("tasks", { focusBacklog: true })}
+                />
+              </View>
+            </View>
+          </MobileCard>
+        )}
 
         {/* This Week leaderboard */}
         <MobileCard title="This Week">

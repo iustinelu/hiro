@@ -28,3 +28,12 @@ Agents working in this directory must:
 ## RLS Policy Template
 
 Every household-scoped table must have explicit `USING` and `WITH CHECK` clauses. Default-deny is enforced by Postgres when RLS is enabled and no permissive policy matches — do not add explicit deny policies unless testing edge cases.
+
+## SECURITY DEFINER auth-method helpers (HIR-71)
+
+`20260627000000_account_methods_lookup.sql` adds two `SECURITY DEFINER` functions that read the `auth` schema so the auth UI can route a user to the sign-in method their account actually uses (instead of a generic "sign-in failed" dead-end):
+
+- `account_methods_for_email(p_email text) -> text[]` — granted to `anon, authenticated`. Returns the method(s) for an email: `{email}`, `{google}`, `{email,google}`, or `{}` if no account. Password is detected via `auth.users.encrypted_password`; Google via `auth.identities`.
+- `current_account_methods() -> text[]` — granted to `authenticated` only. Same array for the logged-in user (`auth.uid()`), used to gate the "Set a password" affordance.
+
+**Enumeration tradeoff:** `account_methods_for_email` is intentionally callable by `anon`, which lets an unauthenticated caller learn whether an email is registered and with which provider. This is an accepted, low-risk tradeoff for a friends-and-family product and can be rate-limited later. Because Supabase grants EXECUTE on `public` functions to `anon`+`authenticated` by default, `current_account_methods` must explicitly `revoke ... from public, anon` (revoking from `PUBLIC` alone is insufficient). A denial test (`set local role anon`) confirms `anon` cannot call `current_account_methods`.

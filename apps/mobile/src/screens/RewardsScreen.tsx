@@ -7,6 +7,7 @@ import {
   useTheme,
 } from "@hiro/ui-primitives/mobile";
 import type { Reward, RewardRedemptionWithDetails } from "@hiro/domain";
+import { ServiceErrorCode, pointsShortfall } from "@hiro/domain";
 import { supabase } from "../lib/supabase";
 import { getMyHousehold } from "../lib/householdService";
 import {
@@ -190,8 +191,8 @@ export function RewardsScreen() {
     setConfirming(null);
 
     if (result.error) {
-      if (result.error === "INSUFFICIENT_POINTS") {
-        setRedeemError(`Need ${reward.pointCost - balance} more pts to redeem "${reward.title}"`);
+      if (result.error === ServiceErrorCode.INSUFFICIENT_POINTS) {
+        setRedeemError(`Need ${pointsShortfall(balance, reward.pointCost)} more pts to redeem "${reward.title}"`);
       } else {
         setRedeemError(result.error);
       }
