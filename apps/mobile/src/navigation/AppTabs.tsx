@@ -63,16 +63,6 @@ export function AppTabs() {
             },
             headerTitleAlign: "left",
             headerTintColor: t.color.ink,
-            headerRight: () => (
-              <View
-                style={{
-                  marginRight: tokens.spacing.md,
-                  minWidth: 120
-                }}
-              >
-                <MobileButton label="Action" variant="secondary" size="sm" />
-              </View>
-            ),
             tabBarHideOnKeyboard: true,
             tabBarStyle: {
               backgroundColor: t.color.bgElevated,

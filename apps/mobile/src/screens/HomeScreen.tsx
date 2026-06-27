@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import type { RecurringTask, LeaderboardEntry, TaskCadence, CadenceMeta } from "@hiro/domain";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import type { RecurringTask, LeaderboardEntry, TaskCadence, CadenceMeta, OneOffTaskKind } from "@hiro/domain";
 import { MobileButton, MobileCard, useTheme } from "@hiro/ui-primitives/mobile";
 import { supabase } from "../lib/supabase";
 import {
@@ -14,9 +14,10 @@ import {
   createTask,
   isDueToday,
 } from "../lib/taskService";
-import { getBacklogTasks, type BacklogTask } from "../lib/oneOffService";
+import { createOneOffTask, getBacklogTasks, type BacklogTask } from "../lib/oneOffService";
 import { registerForPushNotifications } from "../lib/notificationService";
 import { TaskCreateModal } from "./TaskCreateModal";
+import { WeekLeaderboardCard } from "./home/WeekLeaderboardCard";
 import { PointsBurst, AllDoneCelebration } from "./celebrations";
 import { useOnboardingTour } from "../onboarding/OnboardingTourProvider";
 import { OnboardingTourCard, type TourStep } from "../onboarding/OnboardingTourCard";
@@ -99,7 +100,15 @@ export function HomeScreen() {
     setLoading(false);
   }, [householdId, profileId]);
 
-  useEffect(() => { if (householdId && profileId) void fetchData(); }, [fetchData, householdId, profileId]);
+  /* Refetch on focus — tab screens stay mounted, so a task archived from the
+   * Tasks tab must drop off Home's "Today's Tasks" on revisit. The mount case is
+   * still covered: the callback identity changes once householdId/profileId
+   * resolve, re-running the focus effect. Silent refresh (loading already false). */
+  useFocusEffect(
+    useCallback(() => {
+      if (householdId && profileId) void fetchData();
+    }, [householdId, profileId, fetchData])
+  );
 
   /* ── Auto-dismiss undo after 5 seconds ───────────────────────────────── */
   useEffect(() => {
@@ -183,6 +192,16 @@ export function HomeScreen() {
   ) => {
     if (!householdId) return;
     const result = await createTask(householdId, name, points, cadence, cadenceMeta);
+    if (result.error) throw new Error(result.error);
+    await fetchData();
+  }, [householdId, fetchData]);
+
+  /* ── Create a one-off task (parity with the Tasks tab) ───────────────────── */
+  const handleCreateOneOff = useCallback(async (
+    name: string, points: number, kind: OneOffTaskKind, description: string | null
+  ) => {
+    if (!householdId) return;
+    const result = await createOneOffTask(householdId, name, points, kind, description);
     if (result.error) throw new Error(result.error);
     await fetchData();
   }, [householdId, fetchData]);
@@ -324,29 +343,7 @@ export function HomeScreen() {
         )}
 
         {/* This Week leaderboard */}
-        <MobileCard title="This Week">
-          {leaderboard.length === 0 ? (
-            <Text style={mutedText(t)}>No points scored yet this week.</Text>
-          ) : (
-            <View style={{ gap: t.spacing.sm }}>
-              {leaderboard.map((entry, i) => {
-                const isMe = entry.profileId === profileId;
-                return (
-                  <View key={entry.profileId} style={{ flexDirection: "row", alignItems: "center", gap: t.spacing.sm }}>
-                    <Text style={{ color: t.color.inkSoft, fontFamily: t.typography.fontFamilyMono, fontSize: t.typography.bodySmallSize, width: 22 }}>{i + 1}.</Text>
-                    <Text
-                      numberOfLines={1}
-                      style={{ flex: 1, color: isMe ? t.color.accent : t.color.ink, fontFamily: t.typography.fontFamily, fontWeight: isMe ? "800" : "600", fontSize: t.typography.bodySize }}
-                    >
-                      {entry.displayName ?? "Member"}
-                    </Text>
-                    <Text style={{ color: t.color.inkMuted, fontFamily: t.typography.fontFamilyMono, fontSize: t.typography.bodySmallSize }}>{entry.pointsThisWeek} pts</Text>
-                  </View>
-                );
-              })}
-            </View>
-          )}
-        </MobileCard>
+        <WeekLeaderboardCard leaderboard={leaderboard} profileId={profileId} />
       </ScrollView>
 
       {lastCompletion && (
@@ -368,6 +365,7 @@ export function HomeScreen() {
         onClose={() => setModalOpen(false)}
         onSave={handleCreate}
         onUpdate={async () => {}}
+        onCreateOneOff={handleCreateOneOff}
       />
 
       {tourActive && !modalOpen && (

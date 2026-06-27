@@ -64,6 +64,7 @@ export function RewardCreateModal({ open, onClose, onSave }: Props) {
           label="Point Cost"
           placeholder="10"
           value={pointCost}
+          keyboardType="number-pad"
           onChangeText={(v) => setPointCost(v.replace(/\D/g, ""))}
           state={error && (!parseInt(pointCost, 10) || parseInt(pointCost, 10) < 1) ? "error" : "default"}
           helperText={error && (!parseInt(pointCost, 10) || parseInt(pointCost, 10) < 1) ? error : undefined}
