@@ -1,5 +1,3 @@
-import * as Notifications from "expo-notifications";
-
 /**
  * Requests OS notification permission. Invoked contextually at the end of the
  * interactive onboarding tour ("Want reminders when chores are due?"), never
@@ -15,6 +13,10 @@ import * as Notifications from "expo-notifications";
  */
 export async function requestNotificationPermission(): Promise<boolean> {
   try {
+    // Imported lazily so a build that lacks the native module (e.g. Expo Go, or
+    // a not-yet-rebuilt dev client) can't crash the app at module load - the
+    // import throws here and is caught, degrading to "not granted".
+    const Notifications = await import("expo-notifications");
     const existing = await Notifications.getPermissionsAsync();
     if (existing.granted) return true;
     // Don't re-ask once the user has explicitly denied and the OS won't show the
