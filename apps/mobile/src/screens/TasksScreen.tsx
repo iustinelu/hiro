@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import type { RecurringTask, TaskCadence, CadenceMeta } from "@hiro/domain";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import type { RecurringTask, TaskCadence, CadenceMeta, OneOffTaskKind } from "@hiro/domain";
 import { MobileButton, MobileCard, MobileSegmentedControl, useTheme } from "@hiro/ui-primitives/mobile";
 import { supabase } from "../lib/supabase";
 import {
@@ -12,15 +13,30 @@ import {
   isDueToday,
   cadenceLabel,
 } from "../lib/taskService";
+import {
+  createOneOffTask,
+  getBacklogTasks,
+  claimOneOffTask,
+  completeOneOffTask,
+  settleDueOneOffTasks,
+  type BacklogTask,
+} from "../lib/oneOffService";
 import { TaskCreateModal } from "./TaskCreateModal";
+import { BacklogView } from "./tasks/BacklogView";
+import { PointsBurst } from "./celebrations";
 
 const SEGMENTS = [
   { label: "Today", value: "today" },
+  { label: "Backlog", value: "backlog" },
   { label: "All Tasks", value: "all" },
 ];
 
+interface CompletionResult { pointsEarned: number; taskName: string; }
+
 export function TasksScreen() {
   const t = useTheme();
+  const navigation = useNavigation<{ setParams: (p: Record<string, unknown>) => void }>();
+  const route = useRoute<{ key: string; name: string; params?: { focusBacklog?: boolean } }>();
   const [profileId, setProfileId] = useState<string | null>(null);
   const [householdId, setHouseholdId] = useState<string | null>(null);
   const [bootstrapped, setBootstrapped] = useState(false);
@@ -28,10 +44,13 @@ export function TasksScreen() {
   const [tab, setTab] = useState("today");
   const [tasks, setTasks] = useState<RecurringTask[]>([]);
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
+  const [backlog, setBacklog] = useState<BacklogTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<RecurringTask | null>(null);
   const [showCompleted, setShowCompleted] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [lastCompletion, setLastCompletion] = useState<CompletionResult | null>(null);
 
   /* ── Bootstrap ───────────────────────────────────────────────────────── */
   useEffect(() => {
@@ -57,16 +76,36 @@ export function TasksScreen() {
   /* ── Fetch ───────────────────────────────────────────────────────────── */
   const fetchData = useCallback(async () => {
     if (!householdId || !profileId) return;
-    const [tasksRes, completionsRes] = await Promise.all([
+    // Settle any due one-off tasks before reading (lazy settlement, idempotent).
+    await settleDueOneOffTasks(householdId);
+    const [tasksRes, completionsRes, backlogRes] = await Promise.all([
       getHouseholdTasks(householdId),
       getTodayCompletions(profileId),
+      getBacklogTasks(householdId),
     ]);
     setTasks(tasksRes.tasks);
     setCompletedIds(new Set(completionsRes.completedTaskIds));
+    setBacklog(backlogRes.tasks);
     setLoading(false);
   }, [householdId, profileId]);
 
-  useEffect(() => { if (householdId && profileId) void fetchData(); }, [fetchData, householdId, profileId]);
+  /* Refetch on focus — tab screens stay mounted, and a backlog item claimed
+   * elsewhere (or a settle that just elapsed) must show on revisit. */
+  useFocusEffect(
+    useCallback(() => {
+      if (!bootstrapped) return;
+      if (!householdId || !profileId) { setLoading(false); return; }
+      void fetchData();
+    }, [bootstrapped, householdId, profileId, fetchData])
+  );
+
+  /* Deep-link from Home's "Up for grabs" strip preselects the Backlog segment. */
+  useEffect(() => {
+    if (route.params?.focusBacklog) {
+      setTab("backlog");
+      navigation.setParams({ focusBacklog: undefined });
+    }
+  }, [route.params?.focusBacklog, navigation]);
 
   /* ── Actions ─────────────────────────────────────────────────────────── */
   const handleCreate = useCallback(async (
@@ -91,6 +130,34 @@ export function TasksScreen() {
     const result = await archiveTask(taskId);
     if (!result.error) setTasks((prev) => prev.filter((task) => task.id !== taskId));
   }, []);
+
+  const handleCreateOneOff = useCallback(async (
+    name: string, points: number, kind: OneOffTaskKind, _description: string | null
+  ) => {
+    if (!householdId) return;
+    const result = await createOneOffTask(householdId, name, points, kind, _description);
+    if (result.error) throw new Error(result.error);
+    await fetchData();
+  }, [householdId, fetchData]);
+
+  const handleClaim = useCallback(async (taskId: string) => {
+    if (busyId) return;
+    setBusyId(taskId);
+    const result = await claimOneOffTask(taskId);
+    if (!result.error) await fetchData();
+    setBusyId(null);
+  }, [busyId, fetchData]);
+
+  const handleCompleteBacklog = useCallback(async (taskId: string) => {
+    if (busyId) return;
+    setBusyId(taskId);
+    const result = await completeOneOffTask(taskId);
+    if (!result.error) {
+      setLastCompletion({ pointsEarned: result.pointsEarned, taskName: result.taskName });
+      await fetchData();
+    }
+    setBusyId(null);
+  }, [busyId, fetchData]);
 
   function openCreate() { setEditingTask(null); setModalOpen(true); }
   function openEdit(task: RecurringTask) { setEditingTask(task); setModalOpen(true); }
@@ -133,10 +200,27 @@ export function TasksScreen() {
             showCompleted={showCompleted}
             onToggleCompleted={() => setShowCompleted((p) => !p)}
           />
+        ) : tab === "backlog" ? (
+          <BacklogView
+            items={backlog}
+            profileId={profileId}
+            busyId={busyId}
+            onClaim={handleClaim}
+            onComplete={handleCompleteBacklog}
+          />
         ) : (
           <AllTasksView tasks={tasks} onEdit={openEdit} onArchive={handleArchive} />
         )}
       </ScrollView>
+
+      {lastCompletion && (
+        <PointsBurst
+          points={lastCompletion.pointsEarned}
+          taskName={lastCompletion.taskName}
+          combo={1}
+          onComplete={() => setLastCompletion(null)}
+        />
+      )}
 
       <TaskCreateModal
         open={modalOpen}
@@ -144,6 +228,7 @@ export function TasksScreen() {
         onClose={closeModal}
         onSave={handleCreate}
         onUpdate={handleUpdate}
+        onCreateOneOff={handleCreateOneOff}
       />
     </View>
   );
