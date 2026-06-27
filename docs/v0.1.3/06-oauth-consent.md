@@ -9,8 +9,8 @@ OAuth **code already works**: web Google sign-in (PR #27) and mobile PKCE (PR #3
 ## Do (code/docs)
 1. **Audit redirect URIs** in code against the real deployed origins:
    - Mobile scheme `hiro://auth/callback` (app.json `scheme: "hiro"`).
-   - Web callback route `apps/web/src/app/auth/callback/` against the production Vercel origin.
-   - Confirm the Supabase client redirect config matches on both platforms.
+   - Web callback is moot (web/Vercel dropped, mobile-only) - focus on the mobile `hiro://` scheme.
+   - Confirm the Supabase client redirect config matches for mobile.
 2. **Write the founder runbook** `docs/v0.1.3/oauth-go-live.md` with exact, click-by-click steps:
    - Google Cloud Console: publish the OAuth consent screen to **Production** (and what scopes/justification are needed); add authorized redirect URIs + JavaScript origins.
    - Supabase: Site URL + Redirect URLs to add (prod web origin, `hiro://auth/callback`).

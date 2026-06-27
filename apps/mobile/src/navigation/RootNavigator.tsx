@@ -5,6 +5,7 @@ import { ALL_THEME_IDS, type ThemeId } from "@hiro/ui-tokens";
 import { supabase } from "../lib/supabase";
 import { useThemeControl } from "../theme/ThemeProvider";
 import { getTheme } from "../lib/profileService";
+import { useJoinDeepLink } from "../lib/useJoinDeepLink";
 import { AuthScreen } from "../screens/auth/AuthScreen";
 import { AppShellScreen } from "../screens/AppShell";
 import { HouseholdOnboardingScreen } from "../screens/HouseholdOnboardingScreen";
@@ -84,6 +85,20 @@ export function RootNavigator() {
 
     return () => listener.subscription.unsubscribe();
   }, [setThemeId]);
+
+  // Handle incoming `/join/:code` invite links (universal link or hiro:// scheme).
+  // Only act once the user is authed or in onboarding; a link that arrives earlier
+  // is stashed and replayed after sign-in. Joining re-runs the onboarding check so
+  // a brand-new user who joins via a link lands straight in the app.
+  useJoinDeepLink({
+    enabled: authState === "authed" || authState === "needs-onboarding",
+    onJoined: () => {
+      setAuthState("loading");
+      checkOnboarded().then((onboarded) => {
+        setAuthState(onboarded ? "authed" : "needs-onboarding");
+      });
+    },
+  });
 
   if (authState === "loading") {
     return (

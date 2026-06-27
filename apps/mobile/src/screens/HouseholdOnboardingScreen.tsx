@@ -14,6 +14,7 @@ import { createHousehold, getMyHousehold } from "../lib/householdService";
 import { getDisplayName, updateDisplayName } from "../lib/profileService";
 import { registerForPushNotifications } from "../lib/notificationService";
 import { supabase } from "../lib/supabase";
+import { JoinHouseholdForm } from "../components/JoinHouseholdForm";
 
 interface HouseholdOnboardingScreenProps {
   /** Called once every outstanding onboarding requirement is satisfied. */
@@ -202,6 +203,7 @@ function NameStep({ onDone }: { onDone: () => void }) {
 
 function HouseholdStep({ onCreated }: { onCreated: () => void }) {
   const t = useTheme();
+  const [mode, setMode] = useState<"create" | "join">("create");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -217,6 +219,12 @@ function HouseholdStep({ onCreated }: { onCreated: () => void }) {
     onCreated();
   }
 
+  const title = mode === "create" ? "Create your household" : "Join a household";
+  const subtitle =
+    mode === "create"
+      ? "Give your household a name to get started."
+      : "Paste the invite code someone shared with you.";
+
   return (
     <>
       <Text
@@ -228,7 +236,7 @@ function HouseholdStep({ onCreated }: { onCreated: () => void }) {
           marginBottom: tokens.spacing.sm,
         }}
       >
-        Create your household
+        {title}
       </Text>
       <Text
         style={{
@@ -237,26 +245,48 @@ function HouseholdStep({ onCreated }: { onCreated: () => void }) {
           color: t.color.inkMuted,
         }}
       >
-        Give your household a name to get started.
+        {subtitle}
       </Text>
 
-      <MobileInput
-        label="Household name"
-        placeholder="e.g. The Smiths"
-        value={name}
-        onChangeText={setName}
-        state={error ? "error" : "default"}
-        helperText={error ?? undefined}
-      />
+      {mode === "create" ? (
+        <>
+          <MobileInput
+            label="Household name"
+            placeholder="e.g. The Smiths"
+            value={name}
+            onChangeText={setName}
+            state={error ? "error" : "default"}
+            helperText={error ?? undefined}
+          />
 
-      <MobileButton
-        label="Create household"
-        variant="primary"
-        fullWidth
-        loading={loading}
-        loadingLabel="Creating…"
-        onPress={() => void handleCreate()}
-      />
+          <MobileButton
+            label="Create household"
+            variant="primary"
+            fullWidth
+            loading={loading}
+            loadingLabel="Creating…"
+            onPress={() => void handleCreate()}
+          />
+
+          <MobileButton
+            label="Have an invite code? Join a household"
+            variant="ghost"
+            fullWidth
+            onPress={() => { setError(null); setMode("join"); }}
+          />
+        </>
+      ) : (
+        <>
+          <JoinHouseholdForm onJoined={onCreated} />
+
+          <MobileButton
+            label="Create one instead"
+            variant="ghost"
+            fullWidth
+            onPress={() => setMode("create")}
+          />
+        </>
+      )}
     </>
   );
 }
