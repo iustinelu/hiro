@@ -9,42 +9,62 @@ Proof it works: ![Home screen rendering the theme](assets/mobile-qa-home-proof.p
 
 ---
 
-## Prerequisites & limits (read first)
+## Parallel QA: the slot pool
+
+The harness runs a **pool of independent emulators**, so multiple agents can QA at the same time without coordinating. Each *slot* is one emulator with its own AVD, adb serial, and **Metro port**:
+
+| Slot | AVD | Serial | Metro port |
+|---|---|---|---|
+| 1 | `hiro_pixel` | `emulator-5554` | 8081 |
+| 2 | `hiro_pixel_2` | `emulator-5556` | 8082 |
+| 3 | `hiro_pixel_3` | `emulator-5558` | 8083 |
+| 4 | `hiro_pixel_4` | `emulator-5560` | 8084 |
+
+An agent **claims the next free slot with `acquire`** (atomic lease - no two agents get the same one) and **`release`s** it when done. `acquire` **self-provisions on demand**: if a slot's AVD doesn't exist yet, it creates it, boots it, installs the app, and points it at its Metro - so agents never need to be told which slot to use, and the pool grows itself up to `HIRO_QA_MAX_SLOTS` (default **4**; raise it if the box has headroom - each emulator is ~2-4 GB RAM + ~1.9 GB disk).
+
+> Per-slot routing works because each app is pointed at `10.0.2.2:<its Metro port>` via RN's `debug_http_host` preference (a plain `adb reverse` does **not** isolate RN emulators - they dial the host directly). The helper sets this automatically on `acquire`/`launch`.
+
+## Prerequisites (read first)
 - **Node:** use the repo's Node (v22 via nvm - the default in a normal shell). Don't run the helper under a stripped `PATH` (the system `/usr/bin/node` is ancient v12 and will fail to parse the script).
 - **Source the env for builds:** the `.mjs` helper self-contains its env, but `npx expo run:android` / raw `adb` / `emulator` need `source scripts/android-env.sh` first.
-- **One QA session at a time.** There is a single emulator (`hiro_pixel`) and a single Metro on port 8081. **Do not run parallel mobile-QA agents** - they will collide on the device and the port. Serialize: one agent boots, QAs, and (optionally) leaves the emulator up for the next.
-- **Rebuild only on native changes.** The `com.behiro.app` debug APK is already installed and persists on the AVD. A JS/TS change needs only a Metro restart. Adding/removing a native module (`expo-*` / `react-native-*`) or changing `app.json` native config needs `npx expo run:android` again (~3-4 min) - and possibly `expo prebuild --clean`.
+- **Rebuild only on native changes.** The `com.behiro.app` debug APK is already installed on every slot's AVD and persists. A JS/TS change needs only a Metro restart. Adding/removing a native module (`expo-*` / `react-native-*`) or changing `app.json` native config needs `npx expo run:android` again (~3-4 min) - and possibly `expo prebuild --clean`. (After a native rebuild, reinstall the new APK on other slots with `adb -s <serial> install -r <apk>`, or just `kill` them so the next `acquire` reinstalls.)
+- **If Metro complains about a missing dep** (`"<pkg>" is added as a dependency ... but it doesn't seem to be installed`), run `npm install` from the repo root first.
 
-## TL;DR for a feature agent
+## TL;DR for a feature agent (parallel-safe)
 
 ```bash
-source scripts/android-env.sh                 # JAVA_HOME / ANDROID_HOME / PATH (user-local, no sudo)
-node scripts/mobile-emulator.mjs boot         # headless AVD, waits for boot, sets adb reverse 8081
-npm run dev:mobile                            # Metro from THIS checkout (loads .env). One Metro at a time.
-node scripts/mobile-emulator.mjs launch       # opens com.hiro.app (already installed)
+source scripts/android-env.sh                          # JAVA_HOME / ANDROID_HOME / PATH (user-local, no sudo)
+eval "$(node scripts/mobile-emulator.mjs acquire)"     # claim+boot next free slot; exports HIRO_QA_SLOT / _SERIAL / _METRO_PORT
+npx expo start --port "$HIRO_QA_METRO_PORT"            # Metro from THIS worktree on the slot's port (loads .env)
+node scripts/mobile-emulator.mjs launch --slot "$HIRO_QA_SLOT"
 # ... drive the flow (see "Driving the UI") ...
-node scripts/mobile-emulator.mjs screenshot my-check   # -> /tmp/hiro-mobile-qa/my-check.png
+node scripts/mobile-emulator.mjs screenshot my-check --slot "$HIRO_QA_SLOT"   # -> /tmp/hiro-mobile-qa/my-check.png
+node scripts/mobile-emulator.mjs release --slot "$HIRO_QA_SLOT"               # give the slot back
 ```
 
-The Hiro debug APK is **built once** and reused across branches; switching branches only needs a Metro restart (JS is served live), not a rebuild.
+`node scripts/mobile-emulator.mjs list` shows every slot (free / busy / booted) at a glance. The debug APK is **built once** and reused across branches/slots; switching branches only needs a Metro restart (JS is served live), not a rebuild.
 
 ---
 
 ## Helper script: `scripts/mobile-emulator.mjs`
 
-Self-contained (sets its own `JAVA_HOME`/`ANDROID_HOME`/`PATH`, so it works without any shell config):
+Self-contained (sets its own `JAVA_HOME`/`ANDROID_HOME`/`PATH`). Every per-slot command takes `--slot N` (default 1).
 
 | Command | What it does |
 |---|---|
-| `boot` | Starts `hiro_pixel` headless (detached), waits for `sys.boot_completed`, sets `adb reverse tcp:8081`. No-op if already booted. |
-| `status` | Prints whether an emulator is online + booted (exit 1 if not). |
-| `reverse` | (Re)sets `adb reverse tcp:8081 tcp:8081` so the on-device app reaches Metro on `localhost`. |
-| `launch` | Launches the installed app (`com.hiro.app`). |
-| `screenshot <name>` | Writes `/tmp/hiro-mobile-qa/<name>.png`. |
-| `logcat` | Tails RN/JS + native-crash logcat (Ctrl-C to stop). Use this to debug a blank screen. |
-| `kill` | Shuts the emulator down. |
+| `acquire` | Claims the next free slot (atomic lease), boots it, installs the app, points it at its Metro, prints `HIRO_QA_*` env on stdout. Self-provisions a new slot if needed (up to `HIRO_QA_MAX_SLOTS`). |
+| `release --slot N` | Drops the lease (emulator left warm; add `--kill` to shut it down). |
+| `list` | Table of all slots: AVD exists, booted, Metro port, lease holder + age. |
+| `boot --slot N` | Boots a slot without claiming a lease. No-op if already booted. |
+| `provision --slot N` | Create AVD + boot + install app + point at Metro (no lease). |
+| `launch --slot N` | Force-stops, re-points at the slot's Metro, then launches `com.behiro.app`. |
+| `screenshot <name> --slot N` | Writes `/tmp/hiro-mobile-qa/<name>.png` from that slot. |
+| `status --slot N` | Whether that slot is online + booted (exit 1 if not). |
+| `point --slot N` | Re-assert the `debug_http_host` pref → the slot's Metro. |
+| `logcat --slot N` | Tails RN/JS + native-crash logcat (Ctrl-C to stop). Use to debug a blank screen. |
+| `kill --slot N` / `kill-all` | Shut one / all emulators down. |
 
-`scripts/android-env.sh` exports the same env for interactive `expo run:android` / `adb` / `emulator` use (`source scripts/android-env.sh`). **No `~/.zshrc` changes were made** - everything is explicit and repo-local.
+Leases live in `/tmp/hiro-mobile-qa/slots/` and auto-expire after 3 h (a crashed agent's slot becomes reclaimable). `scripts/android-env.sh` exports the same env for interactive `expo run:android` / `adb` / `emulator` use. **No `~/.zshrc` changes were made** - everything is explicit and repo-local.
 
 ---
 
@@ -98,11 +118,11 @@ avdmanager create avd -n hiro_pixel -k "system-images;android-34;google_apis;x86
 
 ## App-delivery path (the decision)
 
-**Chosen: a local debug build via `expo run:android`, JS served by Metro, reused across branches.**
+**Chosen: a local debug build via `expo run:android`, JS served per-slot by its own Metro, the APK reused across branches and slots.**
 
-- `apps/mobile/android/` is committed (prebuild already run), so `cd apps/mobile && npx expo run:android` compiles the native project to a debug APK, installs it, and loads JS from Metro. Build the APK **once**; feature branches only restart Metro.
-- This debug build is a **real dev build with the app's native code baked in** - NOT Expo Go. That matters for **F3 (push notifications)**: `expo-notifications` native config cannot run under Expo Go, but it runs fine in this build. (`expo-dev-client` is not currently a dependency; the plain debug build still hosts native modules and connects to Metro, which is all the harness needs. If F3 wants the dev-client launcher UI specifically, add `expo-dev-client` then - separate change.)
-- **Metro reaches the device via `adb reverse tcp:8081`** (set by `boot`). Run **one Metro at a time** on port 8081; to QA a different worktree, stop the old Metro and start it from the new checkout.
+- `cd apps/mobile && npx expo run:android` compiles the native project (`apps/mobile/android/`, a local prebuild artifact) to a debug APK and installs it. The APK is built **once** and reused; `acquire` installs that prebuilt APK onto each new slot's AVD - no per-slot rebuild. Feature branches only restart Metro.
+- This debug build is a **real dev build with the app's native code baked in** - NOT Expo Go. That matters for **F3 (push notifications)**: `expo-notifications` native config cannot run under Expo Go, but it runs fine in this build. (`expo-dev-client` is not currently a dependency; the plain debug build still hosts native modules and connects to Metro, which is all the harness needs.)
+- **Each slot's app reaches its own Metro** by pointing RN's `debug_http_host` at `10.0.2.2:<slot Metro port>` (the helper sets this on `acquire`/`launch`). `adb reverse` is **not** used - RN debug apps on an emulator dial the host directly, so reverse can't isolate them.
 
 ### Package id: `com.behiro.app`
 `apps/mobile/android/` is **gitignored** - it's a local `expo prebuild` artifact, not committed. The id source of truth is `app.json` (`android.package` and `ios.bundleIdentifier`), both **`com.behiro.app`** - the same id used in the Apple App Store and Google Play. The harness targets `com.behiro.app`.
@@ -117,29 +137,32 @@ cd apps/mobile && npx expo prebuild --clean -p android
 
 ## Per-branch QA recipe
 
-For QAing a feature branch in an isolated worktree (the standard per-item dispatch flow):
+For QAing a feature branch in an isolated worktree (the standard per-item dispatch flow). Multiple agents can run this **at the same time** - each claims its own slot:
 
 ```bash
+H=/home/iustin/dev/hiro    # the harness script + env live in the main checkout; work from anywhere
+
 # 1. Worktree + its gitignored env (see project memory: worktree_env_files)
 git worktree add ../hiro-<branch> <branch>
-cp /home/iustin/dev/hiro/apps/mobile/.env ../hiro-<branch>/apps/mobile/.env
+cp $H/apps/mobile/.env ../hiro-<branch>/apps/mobile/.env
 
-# 2. Boot the emulator (shared across worktrees - the APK is already installed)
-cd /home/iustin/dev/hiro            # script lives in main checkout; works from anywhere
-node scripts/mobile-emulator.mjs boot
+# 2. Claim a slot (auto-boots + self-provisions if needed). Exports HIRO_QA_SLOT / _SERIAL / _METRO_PORT.
+source $H/scripts/android-env.sh
+eval "$(node $H/scripts/mobile-emulator.mjs acquire --owner <branch>)"
 
-# 3. Metro from the WORKTREE (one Metro at a time on 8081; restart so EXPO_PUBLIC_* reload)
-cd ../hiro-<branch> && npm run dev:mobile
-#   (if Metro was already running for another checkout, stop it first - stale env otherwise)
+# 3. Metro from the WORKTREE on the slot's port (restart so EXPO_PUBLIC_* reload)
+cd ../hiro-<branch> && npx expo start --port "$HIRO_QA_METRO_PORT"
 
-# 4. Launch + reload + drive + screenshot
-node /home/iustin/dev/hiro/scripts/mobile-emulator.mjs launch
-#   reload JS: press 'r' in the Metro terminal, or `adb shell input text "RR"` is NOT reliable -
-#   prefer Metro's `r`. The app picks up the worktree's bundle.
-node /home/iustin/dev/hiro/scripts/mobile-emulator.mjs screenshot <branch>-<flow>
+# 4. Launch + drive + screenshot (all targeting this slot)
+node $H/scripts/mobile-emulator.mjs launch --slot "$HIRO_QA_SLOT"
+#   reload JS after a change: press 'r' in the Metro terminal.
+node $H/scripts/mobile-emulator.mjs screenshot <branch>-<flow> --slot "$HIRO_QA_SLOT"
+
+# 5. Done - hand the slot back
+node $H/scripts/mobile-emulator.mjs release --slot "$HIRO_QA_SLOT"
 ```
 
-If the app shows a **blank/black screen**, it's almost always a missing `.env` in the worktree (env validation throws at module load before render). Run `node scripts/mobile-emulator.mjs logcat` and look for `validateRuntimeEnv` / `SES_UNCAUGHT_EXCEPTION`. Fix: copy `.env`, restart Metro (step 1/3).
+If the app shows a **blank/black screen**, it's almost always a missing `.env` in the worktree (env validation throws at module load before render). Run `node $H/scripts/mobile-emulator.mjs logcat --slot "$HIRO_QA_SLOT"` and look for `validateRuntimeEnv` / `SES_UNCAUGHT_EXCEPTION`. Fix: copy `.env`, restart Metro (steps 1 & 3).
 
 ### Reaching gated screens (auth + onboarding)
 Home/Tasks/etc. are behind auth **and** onboarding (a user is "onboarded" only with a household membership **and** a non-empty display name - see `RootNavigator.tsx`). To land on Home:
