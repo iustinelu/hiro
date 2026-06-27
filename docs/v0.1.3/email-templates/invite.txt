@@ -1,0 +1,11 @@
+You're invited to Hiro
+
+Someone has invited you to join their household on Hiro - the calm way to
+share tasks, chores, and budgets at home.
+
+Accept the invitation to get started:
+{{ .ConfirmationURL }}
+
+If you weren't expecting this invitation, you can safely ignore this email.
+
+Hiro - shared household tasks. This is an automated transactional message.
