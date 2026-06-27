@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import type { RecurringTask, TaskCadence, CadenceMeta } from "@hiro/domain";
+import type { RecurringTask, TaskCadence, CadenceMeta, OneOffTaskKind } from "@hiro/domain";
 import {
   MobileModalSheet,
   MobileInput,
@@ -23,25 +23,36 @@ const DAY_FULL: Record<string, string> = {
   thu: "thursday", fri: "friday", sat: "saturday", sun: "sunday",
 };
 
+type TaskType = "recurring" | "oneoff";
+
 interface Props {
   open: boolean;
   editingTask: RecurringTask | null;
   onClose: () => void;
   onSave: (name: string, points: number, cadence: TaskCadence, cadenceMeta: CadenceMeta, description: string | null) => Promise<void>;
   onUpdate: (taskId: string, updates: { name?: string; points?: number; cadence?: TaskCadence; cadenceMeta?: CadenceMeta; description?: string | null }) => Promise<void>;
+  // When provided, the modal offers a Recurring / One-off toggle. One-off tasks
+  // are either posted to the claimable backlog or logged as already-done.
+  onCreateOneOff?: (name: string, points: number, kind: OneOffTaskKind, description: string | null) => Promise<void>;
 }
 
-export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate }: Props) {
+export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate, onCreateOneOff }: Props) {
   const t = useTheme();
   const [name, setName] = useState("");
   const [points, setPoints] = useState("5");
   const [cadence, setCadence] = useState<TaskCadence>("daily");
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [description, setDescription] = useState("");
+  const [taskType, setTaskType] = useState<TaskType>("recurring");
+  const [oneOffKind, setOneOffKind] = useState<OneOffTaskKind>("backlog");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isEdit = editingTask !== null;
+  // Editing is recurring-only; the type toggle only appears when creating and a
+  // one-off handler is wired in.
+  const canChooseType = !isEdit && !!onCreateOneOff;
+  const isOneOff = canChooseType && taskType === "oneoff";
 
   useEffect(() => {
     if (editingTask) {
@@ -60,6 +71,7 @@ export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate }
     } else {
       setName(""); setPoints("5"); setCadence("daily");
       setSelectedDays([]); setDescription("");
+      setTaskType("recurring"); setOneOffKind("backlog");
     }
     setError(null);
   }, [editingTask, open]);
@@ -85,7 +97,7 @@ export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate }
     if (!trimmed) { setError("Task name is required."); return; }
     const pts = parseInt(points, 10);
     if (!pts || pts < 1) { setError("Points must be at least 1."); return; }
-    if ((cadence === "weekly" || cadence === "custom") && selectedDays.length === 0) {
+    if (!isOneOff && (cadence === "weekly" || cadence === "custom") && selectedDays.length === 0) {
       setError("Select at least one day."); return;
     }
 
@@ -93,11 +105,12 @@ export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate }
     setError(null);
 
     try {
-      const meta = buildCadenceMeta();
-      if (isEdit && editingTask) {
-        await onUpdate(editingTask.id, { name: trimmed, points: pts, cadence, cadenceMeta: meta, description: description.trim() || null });
+      if (isOneOff && onCreateOneOff) {
+        await onCreateOneOff(trimmed, pts, oneOffKind, description.trim() || null);
+      } else if (isEdit && editingTask) {
+        await onUpdate(editingTask.id, { name: trimmed, points: pts, cadence, cadenceMeta: buildCadenceMeta(), description: description.trim() || null });
       } else {
-        await onSave(trimmed, pts, cadence, meta, description.trim() || null);
+        await onSave(trimmed, pts, cadence, buildCadenceMeta(), description.trim() || null);
       }
       onClose();
     } catch {
@@ -107,7 +120,7 @@ export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate }
     }
   }
 
-  const showDays = cadence === "weekly" || cadence === "custom";
+  const showDays = !isOneOff && (cadence === "weekly" || cadence === "custom");
 
   return (
     <MobileModalSheet
@@ -120,6 +133,24 @@ export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate }
       onClose={onClose}
     >
       <View style={{ gap: t.spacing.md }}>
+        {canChooseType && (
+          <View style={{ gap: t.spacing.sm }}>
+            <Text style={fieldLabelStyle(t)}>Type</Text>
+            <View style={{ flexDirection: "row", gap: t.spacing.sm, flexWrap: "wrap" }}>
+              <MobileInteractiveChip
+                label="Recurring"
+                active={taskType === "recurring"}
+                onPress={() => setTaskType("recurring")}
+              />
+              <MobileInteractiveChip
+                label="One-off"
+                active={taskType === "oneoff"}
+                onPress={() => setTaskType("oneoff")}
+              />
+            </View>
+          </View>
+        )}
+
         <MobileInput
           label="Task Name"
           placeholder="e.g. Vacuum living room"
@@ -136,19 +167,42 @@ export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate }
           state={error && (!parseInt(points, 10) || parseInt(points, 10) < 1) ? "error" : "default"}
         />
 
-        <View style={{ gap: t.spacing.sm }}>
-          <Text style={fieldLabelStyle(t)}>Cadence</Text>
-          <View style={{ flexDirection: "row", gap: t.spacing.sm, flexWrap: "wrap" }}>
-            {(["daily", "weekly", "custom"] as const).map((c) => (
+        {isOneOff ? (
+          <View style={{ gap: t.spacing.sm }}>
+            <Text style={fieldLabelStyle(t)}>This task is…</Text>
+            <View style={{ flexDirection: "row", gap: t.spacing.sm, flexWrap: "wrap" }}>
               <MobileInteractiveChip
-                key={c}
-                label={c === "daily" ? "Daily" : c === "weekly" ? "Weekly" : "Custom"}
-                active={cadence === c}
-                onPress={() => { setCadence(c); setSelectedDays([]); }}
+                label="Up for grabs"
+                active={oneOffKind === "backlog"}
+                onPress={() => setOneOffKind("backlog")}
               />
-            ))}
+              <MobileInteractiveChip
+                label="I just did this"
+                active={oneOffKind === "log"}
+                onPress={() => setOneOffKind("log")}
+              />
+            </View>
+            <Text style={hintStyle(t)}>
+              {oneOffKind === "backlog"
+                ? "Posted to the Backlog for anyone to claim."
+                : "Logged as already done — points apply after a 24h contest window."}
+            </Text>
           </View>
-        </View>
+        ) : (
+          <View style={{ gap: t.spacing.sm }}>
+            <Text style={fieldLabelStyle(t)}>Cadence</Text>
+            <View style={{ flexDirection: "row", gap: t.spacing.sm, flexWrap: "wrap" }}>
+              {(["daily", "weekly", "custom"] as const).map((c) => (
+                <MobileInteractiveChip
+                  key={c}
+                  label={c === "daily" ? "Daily" : c === "weekly" ? "Weekly" : "Custom"}
+                  active={cadence === c}
+                  onPress={() => { setCadence(c); setSelectedDays([]); }}
+                />
+              ))}
+            </View>
+          </View>
+        )}
 
         {showDays && (
           <View style={{ gap: t.spacing.sm }}>
@@ -199,5 +253,13 @@ function fieldLabelStyle(t: ReturnType<typeof useTheme>) {
     fontSize: t.typography.labelSize,
     fontWeight: "700" as const,
     textTransform: "uppercase" as const,
+  };
+}
+
+function hintStyle(t: ReturnType<typeof useTheme>) {
+  return {
+    color: t.color.inkSoft,
+    fontFamily: t.typography.fontFamily,
+    fontSize: t.typography.bodySmallSize,
   };
 }
