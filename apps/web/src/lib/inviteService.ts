@@ -1,6 +1,7 @@
 "use client";
 
 import type { HouseholdInvite, InviteDetails } from "@hiro/domain";
+import { ServiceErrorCode, matchServiceError } from "@hiro/domain";
 import { getSupabaseBrowserClient } from "./supabase/client";
 
 export async function createInvite(
@@ -13,16 +14,16 @@ export async function createInvite(
     p_email: email,
   });
   if (error) {
-    if (error.message.includes("NOT_HOUSEHOLD_OWNER")) {
-      return { token: null, error: "Only the household owner can invite members." };
+    switch (matchServiceError(error.message)) {
+      case ServiceErrorCode.NOT_HOUSEHOLD_OWNER:
+        return { token: null, error: "Only the household owner can invite members." };
+      case ServiceErrorCode.CANNOT_INVITE_SELF:
+        return { token: null, error: "You cannot invite yourself." };
+      case ServiceErrorCode.INVITE_ALREADY_PENDING:
+        return { token: null, error: "An invite is already pending for this email." };
+      default:
+        return { token: null, error: error.message };
     }
-    if (error.message.includes("CANNOT_INVITE_SELF")) {
-      return { token: null, error: "You cannot invite yourself." };
-    }
-    if (error.message.includes("INVITE_ALREADY_PENDING")) {
-      return { token: null, error: "An invite is already pending for this email." };
-    }
-    return { token: null, error: error.message };
   }
   return { token: data as string, error: null };
 }
@@ -58,22 +59,20 @@ export async function acceptInvite(
     p_token: token,
   });
   if (error) {
-    if (error.message.includes("INVITE_NOT_FOUND")) {
-      return { householdId: null, error: "Invite not found." };
+    switch (matchServiceError(error.message)) {
+      case ServiceErrorCode.INVITE_NOT_FOUND:
+        return { householdId: null, error: "Invite not found." };
+      case ServiceErrorCode.INVITE_ALREADY_ACCEPTED:
+        return { householdId: null, error: "This invite has already been used." };
+      case ServiceErrorCode.INVITE_EXPIRED:
+        return { householdId: null, error: "This invite has expired. Ask the household owner to send a new one." };
+      case ServiceErrorCode.ALREADY_A_MEMBER:
+        return { householdId: null, error: "You're already a member of this household." };
+      case ServiceErrorCode.ALREADY_IN_HOUSEHOLD:
+        return { householdId: null, error: "You're already in another household. You need to leave it before joining a new one." };
+      default:
+        return { householdId: null, error: error.message };
     }
-    if (error.message.includes("INVITE_ALREADY_ACCEPTED")) {
-      return { householdId: null, error: "This invite has already been used." };
-    }
-    if (error.message.includes("INVITE_EXPIRED")) {
-      return { householdId: null, error: "This invite has expired. Ask the household owner to send a new one." };
-    }
-    if (error.message.includes("ALREADY_A_MEMBER")) {
-      return { householdId: null, error: "You're already a member of this household." };
-    }
-    if (error.message.includes("ALREADY_IN_HOUSEHOLD")) {
-      return { householdId: null, error: "You're already in another household. You need to leave it before joining a new one." };
-    }
-    return { householdId: null, error: error.message };
   }
   return { householdId: data as string, error: null };
 }
@@ -89,19 +88,24 @@ export async function acceptInviteAndLeave(token: string): Promise<{
     p_token: token,
   });
   if (error) {
-    if (error.message.includes("INVITE_NOT_FOUND")) {
-      return { householdId: null, oldHouseholdDeleted: false, oldHouseholdName: null, error: "Invite not found." };
+    const fail = (msg: string) => ({
+      householdId: null,
+      oldHouseholdDeleted: false,
+      oldHouseholdName: null,
+      error: msg,
+    });
+    switch (matchServiceError(error.message)) {
+      case ServiceErrorCode.INVITE_NOT_FOUND:
+        return fail("Invite not found.");
+      case ServiceErrorCode.INVITE_ALREADY_ACCEPTED:
+        return fail("This invite has already been used.");
+      case ServiceErrorCode.INVITE_EXPIRED:
+        return fail("This invite has expired. Ask the household owner to send a new one.");
+      case ServiceErrorCode.ALREADY_A_MEMBER:
+        return fail("You're already a member of this household.");
+      default:
+        return fail(error.message);
     }
-    if (error.message.includes("INVITE_ALREADY_ACCEPTED")) {
-      return { householdId: null, oldHouseholdDeleted: false, oldHouseholdName: null, error: "This invite has already been used." };
-    }
-    if (error.message.includes("INVITE_EXPIRED")) {
-      return { householdId: null, oldHouseholdDeleted: false, oldHouseholdName: null, error: "This invite has expired. Ask the household owner to send a new one." };
-    }
-    if (error.message.includes("ALREADY_A_MEMBER")) {
-      return { householdId: null, oldHouseholdDeleted: false, oldHouseholdName: null, error: "You're already a member of this household." };
-    }
-    return { householdId: null, oldHouseholdDeleted: false, oldHouseholdName: null, error: error.message };
   }
   const result = data as { household_id: string; old_household_deleted: boolean; old_household_name: string | null };
   return {

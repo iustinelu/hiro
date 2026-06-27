@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Reward, RewardRedemptionWithDetails } from "@hiro/domain";
+import { ServiceErrorCode, pointsShortfall } from "@hiro/domain";
 import { WebButton } from "@hiro/ui-primitives/web";
 import {
   getHouseholdRewards,
@@ -145,8 +146,8 @@ export function RewardsDashboard({ householdId, profileId }: Props) {
     setConfirming(null);
 
     if (result.error) {
-      if (result.error === "INSUFFICIENT_POINTS") {
-        setRedeemError(`Need ${reward.pointCost - balance} more pts to redeem "${reward.title}"`);
+      if (result.error === ServiceErrorCode.INSUFFICIENT_POINTS) {
+        setRedeemError(`Need ${pointsShortfall(balance, reward.pointCost)} more pts to redeem "${reward.title}"`);
       } else {
         setRedeemError(result.error);
       }

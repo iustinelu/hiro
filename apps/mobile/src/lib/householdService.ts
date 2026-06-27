@@ -1,4 +1,5 @@
 import type { Household, HouseholdMemberWithProfile } from "@hiro/domain";
+import { ServiceErrorCode, matchServiceError } from "@hiro/domain";
 import { supabase } from "./supabase";
 
 export async function createHousehold(
@@ -8,7 +9,7 @@ export async function createHousehold(
     p_name: name,
   });
   if (error) {
-    if (error.message.includes("HOUSEHOLD_ALREADY_EXISTS")) {
+    if (matchServiceError(error.message) === ServiceErrorCode.HOUSEHOLD_ALREADY_EXISTS) {
       return { householdId: null, error: null, alreadyExists: true };
     }
     return { householdId: null, error: error.message, alreadyExists: false };

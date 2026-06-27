@@ -1,4 +1,5 @@
 import type { Reward, RewardRedemptionWithDetails } from "@hiro/domain";
+import { ServiceErrorCode, matchServiceError } from "@hiro/domain";
 import { supabase } from "./supabase";
 
 export async function createReward(
@@ -75,11 +76,20 @@ export async function redeemReward(
   const { data, error } = await supabase.rpc("redeem_reward", { p_reward_id: rewardId });
 
   if (error) {
-    if (error.message.includes("REWARD_NOT_FOUND")) return { pointsSpent: 0, rewardTitle: "", remainingBalance: 0, error: "Reward not found." };
-    if (error.message.includes("REWARD_ARCHIVED")) return { pointsSpent: 0, rewardTitle: "", remainingBalance: 0, error: "Reward is no longer available." };
-    if (error.message.includes("INSUFFICIENT_POINTS")) return { pointsSpent: 0, rewardTitle: "", remainingBalance: 0, error: "INSUFFICIENT_POINTS" };
-    if (error.message.includes("NOT_HOUSEHOLD_MEMBER")) return { pointsSpent: 0, rewardTitle: "", remainingBalance: 0, error: "You are not a member of this household." };
-    return { pointsSpent: 0, rewardTitle: "", remainingBalance: 0, error: error.message };
+    const fail = (msg: string) => ({ pointsSpent: 0, rewardTitle: "", remainingBalance: 0, error: msg });
+    switch (matchServiceError(error.message)) {
+      case ServiceErrorCode.REWARD_NOT_FOUND:
+        return fail("Reward not found.");
+      case ServiceErrorCode.REWARD_ARCHIVED:
+        return fail("Reward is no longer available.");
+      // Surfaced as the code (not a sentence) so the UI can render a dynamic "need N more points" message.
+      case ServiceErrorCode.INSUFFICIENT_POINTS:
+        return fail(ServiceErrorCode.INSUFFICIENT_POINTS);
+      case ServiceErrorCode.NOT_HOUSEHOLD_MEMBER:
+        return fail("You are not a member of this household.");
+      default:
+        return fail(error.message);
+    }
   }
 
   const result = data as { points_spent: number; reward_title: string; remaining_balance: number };
