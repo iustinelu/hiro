@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import type { DailyPoints, HouseholdActivity, LeaderboardEntry, OneOffTask, PersonalStats, TaskStats } from "@hiro/domain";
-import { MobileEmptyStatePanel, MobileSegmentedControl, useTheme } from "@hiro/ui-primitives/mobile";
+import { MobileEmptyState, MobileErrorState, MobileSegmentedControl, useTheme } from "@hiro/ui-primitives/mobile";
 import { supabase } from "../lib/supabase";
 import { getPersonalStats, getWeeklyPointsTrend, getTaskStats } from "../lib/progressService";
 import { getWeeklyLeaderboard } from "../lib/taskService";
@@ -40,6 +40,7 @@ export function ProgressScreen() {
   const [oneOffsById, setOneOffsById] = useState<Map<string, OneOffTask>>(new Map());
   const [busyId, setBusyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   /* ── Bootstrap profile + household ─────────────────────────────────────── */
@@ -77,6 +78,12 @@ export function ProgressScreen() {
       getHouseholdActivity(householdId),
       getHouseholdOneOffs(householdId),
     ]);
+    if (statsRes.error || trendRes.error || leaderboardRes.error || taskStatsRes.error) {
+      setLoadError(true);
+      setLoading(false);
+      return;
+    }
+    setLoadError(false);
     setStats(statsRes.stats);
     setTrend(trendRes.trend);
     setLeaderboard(leaderboardRes.entries);
@@ -138,6 +145,18 @@ export function ProgressScreen() {
     );
   }
 
+  /* ── Error state ────────────────────────────────────────────────────────── */
+  if (loadError) {
+    return (
+      <View style={{ flex: 1, padding: t.spacing.lg, backgroundColor: t.color.bg }}>
+        <MobileErrorState
+          description="We couldn't load your progress. Check your connection and try again."
+          onRetry={() => { setLoading(true); void loadData(); }}
+        />
+      </View>
+    );
+  }
+
   /* ── Dashboard ──────────────────────────────────────────────────────────── */
   const trendsEmpty =
     !stats ||
@@ -161,10 +180,9 @@ export function ProgressScreen() {
 
       {view === "trends" ? (
         trendsEmpty ? (
-          <MobileEmptyStatePanel
+          <MobileEmptyState
             title="No progress yet"
             description="Complete your first task to see progress here."
-            icon="empty"
           />
         ) : (
           <>

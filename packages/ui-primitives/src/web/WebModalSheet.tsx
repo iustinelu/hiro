@@ -9,6 +9,8 @@ export function WebModalSheet({
   description,
   children,
   primaryActionLabel,
+  primaryActionVariant = "primary",
+  primaryActionDisabled,
   secondaryActionLabel,
   onPrimaryAction,
   onSecondaryAction,
@@ -76,7 +78,12 @@ export function WebModalSheet({
             <WebButton label={secondaryActionLabel} variant="secondary" onPress={onSecondaryAction} />
           ) : null}
           {primaryActionLabel ? (
-            <WebButton label={primaryActionLabel} variant="primary" onPress={onPrimaryAction} />
+            <WebButton
+              label={primaryActionLabel}
+              variant={primaryActionVariant}
+              disabled={primaryActionDisabled}
+              onPress={onPrimaryAction}
+            />
           ) : null}
         </div>
       </section>

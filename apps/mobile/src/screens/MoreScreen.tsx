@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, View, Share, Alert, Text } from "react-native";
 import * as Clipboard from "expo-clipboard";
-import { MobileButton, MobileCard, MobileListRow, MobileInput, MobileSwitchRow, useTheme } from "@hiro/ui-primitives/mobile";
+import { MobileButton, MobileCard, MobileListRow, MobileInput, MobileSwitchRow, MobileModalSheet, useTheme } from "@hiro/ui-primitives/mobile";
 import { ALL_THEME_IDS, THEME_LABELS } from "@hiro/ui-tokens";
 import { useThemeControl } from "../theme/ThemeProvider";
 import { signOut } from "../lib/authService";
+import { deleteAccount } from "../lib/accountService";
 import { supabase } from "../lib/supabase";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
 import { getActiveJoinLink, getOrCreateJoinLink, rotateJoinLink, setJoinLinkActive } from "../lib/joinLinkService";
 import { getDisplayName, updateDisplayName, updateTheme } from "../lib/profileService";
-import {
-  getNotificationStatus,
-  isDeviceRegistered,
-  registerForPushNotifications,
-  unregisterDevice,
-  openNotificationSettings,
-  type NotificationStatus,
-} from "../lib/notificationService";
 import { JoinHouseholdForm } from "../components/JoinHouseholdForm";
+import { NotificationsCard } from "../components/NotificationsCard";
 import type { ThemeId } from "@hiro/ui-tokens";
 import type { Household, HouseholdMemberWithProfile } from "@hiro/domain";
 
@@ -42,11 +36,11 @@ export function MoreScreen() {
   const [nameError, setNameError] = useState<string | null>(null);
   const [nameSaved, setNameSaved] = useState(false);
 
-  // Notifications state
-  const [notifStatus, setNotifStatus] = useState<NotificationStatus>("undetermined");
-  const [notifCanAskAgain, setNotifCanAskAgain] = useState(true);
-  const [notifRegistered, setNotifRegistered] = useState(false);
-  const [notifBusy, setNotifBusy] = useState(false);
+  // Delete-account state
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -63,32 +57,7 @@ export function MoreScreen() {
     });
 
     loadHousehold();
-    void loadNotificationState();
   }, []);
-
-  async function loadNotificationState() {
-    const [perm, registered] = await Promise.all([
-      getNotificationStatus(),
-      isDeviceRegistered(),
-    ]);
-    setNotifStatus(perm.status);
-    setNotifCanAskAgain(perm.canAskAgain);
-    setNotifRegistered(registered);
-  }
-
-  async function handleEnableNotifications() {
-    setNotifBusy(true);
-    await registerForPushNotifications();
-    await loadNotificationState();
-    setNotifBusy(false);
-  }
-
-  async function handleDisableNotifications() {
-    setNotifBusy(true);
-    await unregisterDevice();
-    await loadNotificationState();
-    setNotifBusy(false);
-  }
 
   async function loadHousehold() {
     const { household: h } = await getMyHousehold();
@@ -201,7 +170,42 @@ export function MoreScreen() {
     // Session change triggers RootNavigator to switch to AuthScreen
   }
 
+  function openDelete() {
+    setDeleteConfirm("");
+    setDeleteError(null);
+    setShowDelete(true);
+  }
+
+  function closeDelete() {
+    if (deleting) return;
+    setShowDelete(false);
+  }
+
+  async function handleDeleteAccount() {
+    setDeleting(true);
+    setDeleteError(null);
+    const { error } = await deleteAccount();
+    if (error) {
+      // Keep the sheet open and stay signed in so the user can retry.
+      setDeleteError(error);
+      setDeleting(false);
+      return;
+    }
+    // Account is gone server-side; sign out clears the local session and
+    // RootNavigator returns to the signed-out (AuthScreen) state.
+    await signOut();
+  }
+
   const isOwner = household && profileId && household.ownerProfileId === profileId;
+  const isSoleMember = !!household && members.length <= 1;
+  const deleteWarning = !household
+    ? "Your account and all your personal data will be permanently deleted. This cannot be undone."
+    : isSoleMember
+      ? `Your household "${household.name}" and all of its tasks, expenses, and rewards will be permanently deleted, along with your account. This cannot be undone.`
+      : isOwner
+        ? `You own "${household.name}". Ownership will transfer to another member, and your account and personal data will be permanently deleted. This cannot be undone.`
+        : `You'll be removed from "${household.name}", and your account and personal data will be permanently deleted. This cannot be undone.`;
+  const deleteConfirmed = deleteConfirm.trim().toUpperCase() === "DELETE";
 
   return (
     <ScrollView
@@ -303,42 +307,7 @@ export function MoreScreen() {
         </View>
       </MobileCard>
 
-      <MobileCard title="Notifications" description="Get nudged when chores get done">
-        <View style={{ gap: t.spacing.md }}>
-          {notifStatus === "denied" && !notifCanAskAgain ? (
-            <>
-              <MobileListRow title="Push notifications" meta="Blocked" />
-              <MobileButton
-                label="Open settings"
-                variant="secondary"
-                onPress={() => void openNotificationSettings()}
-              />
-            </>
-          ) : notifRegistered ? (
-            <>
-              <MobileListRow title="Push notifications" meta="On" />
-              <MobileButton
-                label="Turn off"
-                variant="secondary"
-                loading={notifBusy}
-                loadingLabel="Updating…"
-                onPress={() => void handleDisableNotifications()}
-              />
-            </>
-          ) : (
-            <>
-              <MobileListRow title="Push notifications" meta="Off" />
-              <MobileButton
-                label="Turn on"
-                variant="primary"
-                loading={notifBusy}
-                loadingLabel="Updating…"
-                onPress={() => void handleEnableNotifications()}
-              />
-            </>
-          )}
-        </View>
-      </MobileCard>
+      <NotificationsCard />
 
       <MobileCard title="Account" description={email ?? "Loading…"}>
         <View style={{ gap: t.spacing.md }}>
@@ -362,8 +331,35 @@ export function MoreScreen() {
             variant="danger"
             onPress={() => void handleSignOut()}
           />
+          <MobileButton
+            label="Delete account"
+            variant="ghost"
+            onPress={openDelete}
+          />
         </View>
       </MobileCard>
+
+      <MobileModalSheet
+        open={showDelete}
+        title="Delete account?"
+        description={deleteWarning}
+        primaryActionLabel={deleting ? "Deleting…" : "Delete my account"}
+        primaryActionVariant="danger"
+        primaryActionDisabled={!deleteConfirmed || deleting}
+        secondaryActionLabel="Cancel"
+        onPrimaryAction={() => void handleDeleteAccount()}
+        onSecondaryAction={closeDelete}
+        onClose={closeDelete}
+      >
+        <MobileInput
+          label='Type "DELETE" to confirm'
+          placeholder="DELETE"
+          value={deleteConfirm}
+          onChangeText={(text) => { setDeleteConfirm(text); setDeleteError(null); }}
+          state={deleteError ? "error" : "default"}
+          helperText={deleteError ?? undefined}
+        />
+      </MobileModalSheet>
     </ScrollView>
   );
 }
