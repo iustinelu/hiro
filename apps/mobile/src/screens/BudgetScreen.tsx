@@ -3,7 +3,8 @@ import { ScrollView, View, Text, RefreshControl } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   MobileButton,
-  MobileEmptyStatePanel,
+  MobileEmptyState,
+  MobileErrorState,
   useTheme,
 } from "@hiro/ui-primitives/mobile";
 import type { CurrencyCode, Expense, HouseholdMemberWithProfile, MonthlyBreakdown } from "@hiro/domain";
@@ -34,6 +35,8 @@ export function BudgetScreen() {
   const [breakdown, setBreakdown] = useState<MonthlyBreakdown | null>(null);
   const [members, setMembers] = useState<HouseholdMemberWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [writeError, setWriteError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -57,6 +60,11 @@ export function BudgetScreen() {
       getMonthlyBreakdown(householdId, month.year, month.month),
       getHouseholdMembers(householdId),
     ]);
+    if (expRes.error || bdRes.error || memRes.error) {
+      setLoadError(true);
+      return;
+    }
+    setLoadError(false);
     setExpenses(expRes.expenses);
     setBreakdown(bdRes.breakdown);
     setMembers(memRes.members);
@@ -70,6 +78,11 @@ export function BudgetScreen() {
       void fetchData().finally(() => setLoading(false));
     }, [householdId, fetchData])
   );
+
+  const handleRetry = () => {
+    setLoading(true);
+    void fetchData().finally(() => setLoading(false));
+  };
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -101,13 +114,17 @@ export function BudgetScreen() {
     participantIds: string[]
   ) => {
     if (!householdId) return;
-    await createExpense(householdId, title, amount, date, payerProfileId, participantIds);
-    setModalOpen(false);
+    const { error } = await createExpense(householdId, title, amount, date, payerProfileId, participantIds);
+    if (error) throw new Error(error);
     await fetchData();
   };
 
   const handleDelete = async (id: string) => {
-    await deleteExpense(id);
+    const { error } = await deleteExpense(id);
+    if (error) {
+      setWriteError("Couldn't delete that expense. Check your connection and try again.");
+      return;
+    }
     await fetchData();
   };
 
@@ -159,6 +176,32 @@ export function BudgetScreen() {
           />
         </View>
 
+        {/* Write-error banner (add/delete failures) */}
+        {writeError && (
+          <View
+            style={{
+              backgroundColor: t.color.feedbackErrorBg,
+              borderRadius: t.radius.lg,
+              borderWidth: 1,
+              borderColor: t.color.error,
+              padding: t.spacing.md,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={{ color: t.color.error, fontFamily: t.typography.fontFamily, fontSize: t.typography.bodySmallSize, flex: 1 }}>
+              {writeError}
+            </Text>
+            <MobileButton
+              label="Dismiss"
+              variant="ghost"
+              size="sm"
+              onPress={() => setWriteError(null)}
+            />
+          </View>
+        )}
+
         {loading ? (
           <Text
             style={{
@@ -171,12 +214,15 @@ export function BudgetScreen() {
           >
             Loading…
           </Text>
+        ) : loadError ? (
+          <MobileErrorState
+            description="We couldn't load this month's budget. Check your connection and try again."
+            onRetry={handleRetry}
+          />
         ) : breakdown === null ? (
-          <MobileEmptyStatePanel
+          <MobileEmptyState
             title="No expenses"
-            description="Add your first expense"
-            icon="empty"
-            subtitle="BUDGET"
+            description="Add your first expense to start tracking this month."
           />
         ) : (
           <>

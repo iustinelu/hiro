@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { MobileEmptyStatePanel, MobileButton, useTheme } from "@hiro/ui-primitives/mobile";
+import { MobileEmptyState, MobileButton, useTheme } from "@hiro/ui-primitives/mobile";
 import type { Reward } from "@hiro/domain";
 import { RewardCard } from "./RewardCard";
 
@@ -32,10 +32,9 @@ export function RewardCardGrid({
   if (rewards.length === 0) {
     return (
       <View style={{ gap: t.spacing.md }}>
-        <MobileEmptyStatePanel
+        <MobileEmptyState
           title="No rewards yet"
           description="Create something worth working toward."
-          icon="empty"
         />
         <MobileButton
           label="+ New Reward"

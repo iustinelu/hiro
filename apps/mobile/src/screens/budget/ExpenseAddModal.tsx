@@ -41,6 +41,7 @@ export function ExpenseAddModal({
   const [participantIds, setParticipantIds] = useState<string[]>([]);
   const t = useTheme();
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -50,6 +51,7 @@ export function ExpenseAddModal({
       setPayerProfileId(currentProfileId);
       setParticipantIds(members.map((m) => m.profileId));
       setSaving(false);
+      setError(null);
     }
   }, [open, currentProfileId, members]);
 
@@ -69,8 +71,15 @@ export function ExpenseAddModal({
   const handleSave = async () => {
     if (!isValid || saving) return;
     setSaving(true);
-    await onSave(title.trim(), parsedAmount, date, payerProfileId, participantIds);
-    setSaving(false);
+    setError(null);
+    try {
+      await onSave(title.trim(), parsedAmount, date, payerProfileId, participantIds);
+      onClose();
+    } catch {
+      setError("Couldn't save this expense. Check your connection and try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -88,6 +97,17 @@ export function ExpenseAddModal({
         style={{ maxHeight: 420 }}
         contentContainerStyle={{ gap: t.spacing.md }}
       >
+        {error && (
+          <Text
+            style={{
+              color: t.color.error,
+              fontFamily: t.typography.fontFamily,
+              fontSize: t.typography.bodySmallSize,
+            }}
+          >
+            {error}
+          </Text>
+        )}
         <MobileInput
           label="Title"
           placeholder="e.g. Groceries"

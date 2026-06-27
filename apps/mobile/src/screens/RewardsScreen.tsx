@@ -3,6 +3,7 @@ import { Animated, Easing, RefreshControl, ScrollView, Text, View } from "react-
 import { useFocusEffect } from "@react-navigation/native";
 import {
   MobileButton,
+  MobileErrorState,
   MobileKpiTile,
   useTheme,
 } from "@hiro/ui-primitives/mobile";
@@ -90,6 +91,7 @@ export function RewardsScreen() {
   const [balance, setBalance] = useState(0);
   const [redemptions, setRedemptions] = useState<RewardRedemptionWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [confirming, setConfirming] = useState<string | null>(null);
@@ -116,6 +118,12 @@ export function RewardsScreen() {
       getPointBalance(pid, hid),
       getRedemptionHistory(hid),
     ]);
+    if (rewardsRes.error || balanceRes.error || feedRes.error) {
+      setLoadError(true);
+      setLoading(false);
+      return;
+    }
+    setLoadError(false);
     setRewards(rewardsRes.rewards);
     setBalance(balanceRes.balance);
     setRedemptions(feedRes.redemptions);
@@ -271,21 +279,35 @@ export function RewardsScreen() {
           onPress={() => setModalOpen(true)}
         />
 
-        {/* Reward grid */}
-        <RewardCardGrid
-          rewards={rewards}
-          balance={balance}
-          confirming={confirming}
-          redeeming={redeeming}
-          onConfirm={handleConfirmRedeem}
-          onRedeem={(r) => { void handleRedeem(r); }}
-          onCancelConfirm={() => setConfirming(null)}
-          onArchive={(id) => { void handleArchive(id); }}
-          onCreateNew={() => setModalOpen(true)}
-        />
+        {loadError ? (
+          <MobileErrorState
+            description="We couldn't load your rewards. Check your connection and try again."
+            onRetry={() => {
+              if (profileId && householdId) {
+                setLoading(true);
+                void loadData(profileId, householdId);
+              }
+            }}
+          />
+        ) : (
+          <>
+            {/* Reward grid */}
+            <RewardCardGrid
+              rewards={rewards}
+              balance={balance}
+              confirming={confirming}
+              redeeming={redeeming}
+              onConfirm={handleConfirmRedeem}
+              onRedeem={(r) => { void handleRedeem(r); }}
+              onCancelConfirm={() => setConfirming(null)}
+              onArchive={(id) => { void handleArchive(id); }}
+              onCreateNew={() => setModalOpen(true)}
+            />
 
-        {/* Redemption feed */}
-        <RedemptionFeed redemptions={redemptions} />
+            {/* Redemption feed */}
+            <RedemptionFeed redemptions={redemptions} />
+          </>
+        )}
       </ScrollView>
 
       {/* Create modal */}
