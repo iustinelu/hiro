@@ -1,40 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Share, Alert, Text } from "react-native";
-import * as Clipboard from "expo-clipboard";
-import { MobileButton, MobileCard, MobileListRow, MobileInput, MobileSwitchRow, MobileModalSheet, useTheme } from "@hiro/ui-primitives/mobile";
+import { ScrollView, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { MobileButton, MobileCard, MobileListRow, MobileInput, MobileModalSheet, useTheme } from "@hiro/ui-primitives/mobile";
 import { ALL_THEME_IDS, THEME_LABELS } from "@hiro/ui-tokens";
 import { useThemeControl } from "../theme/ThemeProvider";
-import { signOut } from "../lib/authService";
+import { signOut, getMyAccountMethods, updatePassword } from "../lib/authService";
 import { deleteAccount } from "../lib/accountService";
 import { supabase } from "../lib/supabase";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
-import { getActiveJoinLink, getOrCreateJoinLink, rotateJoinLink, setJoinLinkActive } from "../lib/joinLinkService";
 import { getDisplayName, updateDisplayName, updateTheme } from "../lib/profileService";
 import { JoinHouseholdForm } from "../components/JoinHouseholdForm";
 import { NotificationsCard } from "../components/NotificationsCard";
+import { InviteCard } from "./more/InviteCard";
+import { useOnboardingTour } from "../onboarding/OnboardingTourProvider";
 import type { ThemeId } from "@hiro/ui-tokens";
-import type { Household, HouseholdMemberWithProfile } from "@hiro/domain";
-
-const WEB_ORIGIN = process.env.EXPO_PUBLIC_WEB_ORIGIN ?? "http://localhost:3000";
+import type { Household, HouseholdMemberWithProfile, AuthMethod } from "@hiro/domain";
 
 export function MoreScreen() {
   const t = useTheme();
+  const navigation = useNavigation<{ navigate: (name: string, params?: Record<string, unknown>) => void }>();
+  const { startTour } = useOnboardingTour();
   const { themeId, setThemeId } = useThemeControl();
   const [email, setEmail] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [household, setHousehold] = useState<Household | null>(null);
   const [members, setMembers] = useState<HouseholdMemberWithProfile[]>([]);
 
-  // Join-link state. `linkCode` is the active code (null = link is OFF).
-  const [linkCode, setLinkCode] = useState<string | null>(null);
-  const [linkBusy, setLinkBusy] = useState(false);
-  const [linkError, setLinkError] = useState<string | null>(null);
-
   // Display name state
   const [displayName, setDisplayName] = useState("");
   const [savingName, setSavingName] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
   const [nameSaved, setNameSaved] = useState(false);
+
+  // HIR-71: add-password for Google-only accounts
+  const [accountMethods, setAccountMethods] = useState<AuthMethod[] | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [settingPassword, setSettingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSet, setPasswordSet] = useState(false);
 
   // Delete-account state
   const [showDelete, setShowDelete] = useState(false);
@@ -46,6 +50,7 @@ export function MoreScreen() {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user?.email) setEmail(data.user.email);
     });
+    getMyAccountMethods().then(setAccountMethods);
     supabase.rpc("current_profile_id").then(({ data }) => {
       if (data) {
         const id = data as string;
@@ -65,83 +70,7 @@ export function MoreScreen() {
     if (h) {
       const { members: m } = await getHouseholdMembers(h.id);
       setMembers(m);
-      // Read the current active link (without creating one) to seed the toggle.
-      const { code } = await getActiveJoinLink(h.id);
-      setLinkCode(code);
     }
-  }
-
-  // Toggle ON → ensure an active link exists and show it. Toggle OFF → revoke.
-  async function handleToggleLink(next: boolean) {
-    if (!household) return;
-    setLinkError(null);
-    setLinkBusy(true);
-    if (next) {
-      const { code, error } = await getOrCreateJoinLink(household.id);
-      setLinkBusy(false);
-      if (error) {
-        setLinkError(error);
-        return;
-      }
-      setLinkCode(code);
-    } else {
-      const { error } = await setJoinLinkActive(household.id, false);
-      setLinkBusy(false);
-      if (error) {
-        setLinkError(error);
-        return;
-      }
-      setLinkCode(null);
-    }
-  }
-
-  function joinUrl(code: string) {
-    return `${WEB_ORIGIN}/join/${code}`;
-  }
-
-  async function handleCopyLink() {
-    if (!linkCode) return;
-    await Clipboard.setStringAsync(joinUrl(linkCode));
-    Alert.alert("Copied", "Invite link copied to clipboard.");
-  }
-
-  async function handleShareLink() {
-    if (!linkCode || !household) return;
-    const message = `Join my household "${household.name}" on Hiro!\n${joinUrl(linkCode)}`;
-    try {
-      await Share.share({ message });
-    } catch {
-      Alert.alert("Invite link", joinUrl(linkCode));
-    }
-  }
-
-  function handleResetLink() {
-    if (!household) return;
-    Alert.alert(
-      "Reset invite link?",
-      "The current link will stop working.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Reset",
-          style: "destructive",
-          onPress: () => void doResetLink(),
-        },
-      ]
-    );
-  }
-
-  async function doResetLink() {
-    if (!household) return;
-    setLinkError(null);
-    setLinkBusy(true);
-    const { code, error } = await rotateJoinLink(household.id);
-    setLinkBusy(false);
-    if (error) {
-      setLinkError(error);
-      return;
-    }
-    setLinkCode(code);
   }
 
   async function handleSaveName() {
@@ -165,9 +94,38 @@ export function MoreScreen() {
     if (profileId) void updateTheme(profileId, id);
   }
 
+  async function handleSetPassword() {
+    setPasswordError(null);
+    if (newPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setPasswordError("Passwords do not match.");
+      return;
+    }
+    setSettingPassword(true);
+    const { error } = await updatePassword(newPassword);
+    setSettingPassword(false);
+    if (error) {
+      setPasswordError(error);
+      return;
+    }
+    setPasswordSet(true);
+    setNewPassword("");
+    setConfirmNewPassword("");
+    // Refresh methods so the section hides now that a password exists.
+    setAccountMethods(await getMyAccountMethods());
+  }
+
   async function handleSignOut() {
     await signOut();
     // Session change triggers RootNavigator to switch to AuthScreen
+  }
+
+  function handleReplayTour() {
+    startTour();
+    navigation.navigate("home");
   }
 
   function openDelete() {
@@ -197,6 +155,9 @@ export function MoreScreen() {
   }
 
   const isOwner = household && profileId && household.ownerProfileId === profileId;
+  // Show "Set a password" only for Google-only accounts (no password yet).
+  const isGoogleOnly =
+    accountMethods !== null && accountMethods.includes("google") && !accountMethods.includes("email");
   const isSoleMember = !!household && members.length <= 1;
   const deleteWarning = !household
     ? "Your account and all your personal data will be permanently deleted. This cannot be undone."
@@ -226,72 +187,21 @@ export function MoreScreen() {
         </MobileCard>
       )}
 
-      {isOwner && (
-        <MobileCard
-          title="Invite people"
-          description="Share one link. Anyone who taps it can join this household."
-        >
-          <View style={{ gap: t.spacing.md }}>
-            <MobileSwitchRow
-              label="Anyone with the link can join"
-              value={linkCode !== null}
-              onToggle={(next) => void handleToggleLink(next)}
-            />
-            {linkError && (
-              <Text
-                style={{
-                  color: t.color.error,
-                  fontFamily: t.typography.fontFamily,
-                  fontSize: t.typography.bodySmallSize,
-                  lineHeight: t.typography.lineHeightBody,
-                }}
-              >
-                {linkError}
-              </Text>
-            )}
-            {linkCode !== null && (
-              <View style={{ gap: t.spacing.sm }}>
-                <Text
-                  selectable
-                  style={{
-                    color: t.color.ink,
-                    fontFamily: t.typography.fontFamilyMono,
-                    fontSize: t.typography.bodySmallSize,
-                    lineHeight: t.typography.lineHeightBody,
-                  }}
-                >
-                  {joinUrl(linkCode)}
-                </Text>
-                <MobileButton
-                  label="Copy link"
-                  variant="secondary"
-                  disabled={linkBusy}
-                  onPress={() => void handleCopyLink()}
-                />
-                <MobileButton
-                  label="Share"
-                  variant="primary"
-                  disabled={linkBusy}
-                  onPress={() => void handleShareLink()}
-                />
-                <MobileButton
-                  label="Reset link"
-                  variant="danger"
-                  loading={linkBusy}
-                  loadingLabel="Working…"
-                  onPress={handleResetLink}
-                />
-              </View>
-            )}
-          </View>
-        </MobileCard>
-      )}
+      {isOwner && household && <InviteCard household={household} />}
 
       <MobileCard
         title="Join a household"
         description="Got an invite code? Enter it to join (or switch) households."
       >
         <JoinHouseholdForm onJoined={loadHousehold} />
+      </MobileCard>
+
+      <MobileCard title="Getting started" description="New to Hiro?">
+        <MobileListRow
+          title="Replay tour"
+          subtitle="Walk through the basics again"
+          onPress={handleReplayTour}
+        />
       </MobileCard>
 
       <MobileCard title="Appearance" description="Pick your theme">
@@ -326,6 +236,37 @@ export function MoreScreen() {
             loadingLabel="Saving…"
             onPress={() => void handleSaveName()}
           />
+          {isGoogleOnly && (
+            <>
+              <MobileInput
+                label="Set a password"
+                placeholder="Min. 6 characters"
+                value={newPassword}
+                onChangeText={(text) => { setNewPassword(text); setPasswordError(null); }}
+                secureTextEntry
+                state={passwordError ? "error" : "default"}
+                helperText={passwordError ?? "Add a password so you can also sign in with email."}
+              />
+              <MobileInput
+                label="Confirm password"
+                placeholder="Re-enter password"
+                value={confirmNewPassword}
+                onChangeText={(text) => { setConfirmNewPassword(text); setPasswordError(null); }}
+                secureTextEntry
+                state={passwordError ? "error" : "default"}
+              />
+              <MobileButton
+                label="Set password"
+                variant="secondary"
+                loading={settingPassword}
+                loadingLabel="Setting…"
+                onPress={() => void handleSetPassword()}
+              />
+            </>
+          )}
+          {passwordSet && (
+            <MobileListRow title="Password set" meta="You can now sign in with email too" />
+          )}
           <MobileButton
             label="Sign out"
             variant="danger"

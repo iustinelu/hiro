@@ -15,6 +15,7 @@
     "@expo-google-fonts/press-start-2p": "^0.4.1",
     "@expo-google-fonts/rajdhani": "^0.4.1",
     "@expo/metro-runtime": "~6.1.2",
+    "@expo/vector-icons": "^15.1.1",
     "@hiro/domain": "0.1.0",
     "@hiro/runtime": "0.1.0",
     "@hiro/supabase-clients": "0.1.0",

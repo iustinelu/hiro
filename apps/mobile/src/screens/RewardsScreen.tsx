@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Easing, RefreshControl, ScrollView, Text, View } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   MobileButton,
   MobileErrorState,
@@ -22,6 +22,13 @@ import {
 import { RewardCardGrid } from "./rewards/RewardCardGrid";
 import { RedemptionFeed } from "./rewards/RedemptionFeed";
 import { RewardCreateModal } from "./rewards/RewardCreateModal";
+import { useOnboardingTour, type TourStep } from "../onboarding/OnboardingTourProvider";
+import { OnboardingTourCard } from "../onboarding/OnboardingTourCard";
+
+/** Steps whose coaching card lives on the Rewards tab. */
+function isRewardStep(step: TourStep): boolean {
+  return step === "reward-create" || step === "reward-redeem" || step === "whats-next";
+}
 
 /* ─── Redeem Celebration ────────────────────────────────────────────────────
  * Lightweight pill that springs up and fades out. Uses RN Animated only.
@@ -39,11 +46,13 @@ function RedeemBurst({ points, title, onComplete }: RedeemBurstProps) {
 
   useEffect(() => {
     progress.setValue(0);
-    Animated.sequence([
+    const anim = Animated.sequence([
       Animated.spring(progress, { toValue: 1, useNativeDriver: true, friction: 6, tension: 80 }),
       Animated.delay(500),
       Animated.timing(progress, { toValue: 2, duration: 250, useNativeDriver: true, easing: Easing.in(Easing.ease) }),
-    ]).start(() => onComplete());
+    ]);
+    anim.start(({ finished }) => { if (finished) onComplete(); });
+    return () => anim.stop();
   }, [progress, onComplete, points, title]);
 
   const translateY = progress.interpolate({ inputRange: [0, 1, 2], outputRange: [20, -30, -50] });
@@ -85,6 +94,15 @@ function RedeemBurst({ points, title, onComplete }: RedeemBurstProps) {
 
 export function RewardsScreen() {
   const t = useTheme();
+  const navigation = useNavigation<{ navigate: (name: string) => void }>();
+  const { tourActive, tourStep, setTourStep, endTour } = useOnboardingTour();
+  /* Baseline snapshot for tour advancement: captured the first time we settle on
+   * a reward step (post-load), then we advance once the relevant count grows. */
+  const tourSnap = useRef<{ step: TourStep | null; rewards: number; redemptions: number }>({
+    step: null,
+    rewards: 0,
+    redemptions: 0,
+  });
   const [profileId, setProfileId] = useState<string | null>(null);
   const [householdId, setHouseholdId] = useState<string | null>(null);
   const [rewards, setRewards] = useState<Reward[]>([]);
@@ -176,6 +194,24 @@ export function RewardsScreen() {
     return () => { void supabase.removeChannel(channel); };
   }, [householdId, profileId]);
 
+  /* ── Onboarding tour advancement (reward-create → redeem → what's-next) ── */
+
+  useEffect(() => {
+    if (!tourActive || loading) return;
+    const snap = tourSnap.current;
+    // First settle on a (post-load) reward step: capture the baseline counts.
+    if (tourStep !== snap.step) {
+      tourSnap.current = { step: tourStep, rewards: rewards.length, redemptions: redemptions.length };
+      return;
+    }
+    // Same step still active: advance once the user's real action lands.
+    if (tourStep === "reward-create" && rewards.length > snap.rewards) {
+      setTourStep("reward-redeem");
+    } else if (tourStep === "reward-redeem" && redemptions.length > snap.redemptions) {
+      setTourStep("whats-next");
+    }
+  }, [tourActive, loading, tourStep, rewards.length, redemptions.length, setTourStep]);
+
   /* ── Handlers ───────────────────────────────────────────────────── */
 
   const handleCreate = useCallback(async (title: string, pointCost: number) => {
@@ -217,6 +253,10 @@ export function RewardsScreen() {
     await archiveReward(rewardId);
     await loadData(profileId, householdId);
   }, [profileId, householdId, loadData]);
+
+  // Stable so RedeemBurst's effect doesn't re-fire (restarting the animation)
+  // on the several re-renders that follow a redeem.
+  const handleBurstComplete = useCallback(() => setBurst(null), []);
 
   /* ── Render ─────────────────────────────────────────────────────── */
 
@@ -315,6 +355,7 @@ export function RewardsScreen() {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSave={handleCreate}
+        initialPointCost={tourActive && tourStep === "reward-create" ? Math.max(1, balance) : undefined}
       />
 
       {/* Celebration burst */}
@@ -322,7 +363,20 @@ export function RewardsScreen() {
         <RedeemBurst
           points={burst.points}
           title={burst.title}
-          onComplete={() => setBurst(null)}
+          onComplete={handleBurstComplete}
+        />
+      )}
+
+      {/* Guided tour coaching card (spend loop) */}
+      {tourActive && !modalOpen && isRewardStep(tourStep) && (
+        <OnboardingTourCard
+          step={tourStep}
+          pointsEarned={0}
+          streak={0}
+          onCreateReward={() => setModalOpen(true)}
+          onSkipRedeem={() => setTourStep("whats-next")}
+          onAdvance={() => { setTourStep("notify"); navigation.navigate("home"); }}
+          onSkip={endTour}
         />
       )}
     </View>

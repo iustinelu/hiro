@@ -6,21 +6,28 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onSave: (title: string, pointCost: number) => Promise<void>;
+  /** Pre-fills the point cost when opened (the onboarding tour sets this to the
+   * user's balance so the new reward is immediately claimable). Defaults to 10. */
+  initialPointCost?: number;
 }
 
-export function RewardCreateModal({ open, onClose, onSave }: Props) {
+export function RewardCreateModal({ open, onClose, onSave, initialPointCost }: Props) {
   const t = useTheme();
   const [title, setTitle] = useState("");
   const [pointCost, setPointCost] = useState("10");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Seed the form only when the sheet opens. `initialPointCost` is intentionally
+  // NOT a dep: re-seeding mid-edit (e.g. a realtime balance change) would wipe
+  // what the user has typed. The value is read fresh at each open.
   useEffect(() => {
     if (open) {
       setTitle("");
-      setPointCost("10");
+      setPointCost(String(initialPointCost ?? 10));
       setError(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   async function handleSave() {
@@ -64,6 +71,7 @@ export function RewardCreateModal({ open, onClose, onSave }: Props) {
           label="Point Cost"
           placeholder="10"
           value={pointCost}
+          keyboardType="number-pad"
           onChangeText={(v) => setPointCost(v.replace(/\D/g, ""))}
           state={error && (!parseInt(pointCost, 10) || parseInt(pointCost, 10) < 1) ? "error" : "default"}
           helperText={error && (!parseInt(pointCost, 10) || parseInt(pointCost, 10) < 1) ? error : undefined}

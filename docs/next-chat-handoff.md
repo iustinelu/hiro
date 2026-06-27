@@ -1,3 +1,24 @@
+# Session handoff — 2026-06-27 (v0.1.3 shipped to Internal/TestFlight)
+
+## TL;DR
+v0.1.3 is built and submitted to **Play Internal track + Apple TestFlight** (testing channel, not public). It bundles: the Pixel-QA fix batch, the modal keyboard-flicker fix, the **full guided onboarding tour** (earn loop on Home → spend loop on Rewards → Budget what's-next → notify), removal of the dev-only error-trigger button, and real store links in the invite share message. `main` is clean, `npm run check` green (8/8, 39 tests). Pre-merge audit: agent code review (4 bugs found + fixed), RLS denial tests on all v0.1.3 tables (anon rejected), on-device verification on the founder's Pixel.
+
+## Deployed state after this session
+| Surface | Version | Where |
+|---|---|---|
+| Android | 0.1.3 | Play **Internal** track (via `eas submit`) |
+| iOS | 0.1.3 | **TestFlight** (via `eas submit`) |
+
+This 0.1.3 build is the first store binary to carry the PKCE Google-OAuth fix (was main-only at 0.1.2).
+
+## Follow-ups / known
+- **Public store rollout** is still a separate, review-gated step (Play production track + Apple App Review + finalized listing). Internal/TestFlight only for now.
+- **Emulator QA harness broken** (node_modules SDK-54 skew → red-screen); fix as its own task so QA isn't Pixel-only.
+- Tour edge case (accepted): picking "one-off" during the create step won't auto-advance the tour (it watches recurring tasks); Skip still works.
+- Orphaned `apps/mobile/src/screens/DesignSystemGallery.tsx` (unimported) left in place; optional cleanup.
+
+---
+
 # Session handoff — 2026-06-26 (launch day: crash fixed, Android + iOS live, auth working)
 
 ## TL;DR for the orchestrator

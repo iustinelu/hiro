@@ -47,6 +47,7 @@ export interface InputProps {
   onChangeText?: (nextValue: string) => void;
   secureTextEntry?: boolean;
   forceFocused?: boolean;
+  keyboardType?: "number-pad" | "decimal-pad";
 }
 
 export interface CardProps {

@@ -12,7 +12,8 @@ export function MobileInput({
   helperText,
   onChangeText,
   secureTextEntry,
-  forceFocused
+  forceFocused,
+  keyboardType
 }: InputProps) {
   const t = useTheme();
   const borderColor =
@@ -41,6 +42,7 @@ export function MobileInput({
         placeholder={placeholder}
         editable={state !== "disabled"}
         secureTextEntry={secureTextEntry}
+        keyboardType={keyboardType}
         onChangeText={onChangeText}
         placeholderTextColor={resolveColor(t, "inkSoft")}
         style={{

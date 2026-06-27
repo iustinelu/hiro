@@ -118,6 +118,7 @@ export function ExpenseAddModal({
           label="Amount"
           placeholder="0.00"
           value={amount}
+          keyboardType="decimal-pad"
           onChangeText={setAmount}
         />
         <MobileInput

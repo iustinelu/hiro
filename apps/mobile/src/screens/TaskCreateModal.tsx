@@ -163,6 +163,7 @@ export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate, 
           label="Points"
           placeholder="5"
           value={points}
+          keyboardType="number-pad"
           onChangeText={(v) => setPoints(v.replace(/\D/g, ""))}
           state={error && (!parseInt(points, 10) || parseInt(points, 10) < 1) ? "error" : "default"}
         />
