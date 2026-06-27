@@ -36,10 +36,10 @@ const ADB = join(PLATFORM_TOOLS, "adb");
 const EMULATOR = join(EMULATOR_DIR, "emulator");
 
 const AVD_NAME = "hiro_pixel";
-// NOTE: the committed native project (apps/mobile/android) uses applicationId
-// `com.hiro.app`, which differs from app.json's android.package (`com.behiro.app`).
-// `expo run:android` builds the native project, so the installed package is com.hiro.app.
-const APP_ID = "com.hiro.app";
+// Matches app.json android.package (and the Apple/Play store id). apps/mobile/android
+// is a gitignored `expo prebuild` artifact; if a stale local prebuild ever installs a
+// different id, regenerate it with `npx expo prebuild --clean -p android`.
+const APP_ID = "com.behiro.app";
 const METRO_PORT = 8081;
 const SHOT_DIR = "/tmp/hiro-mobile-qa";
 

@@ -98,8 +98,14 @@ avdmanager create avd -n hiro_pixel -k "system-images;android-34;google_apis;x86
 - This debug build is a **real dev build with the app's native code baked in** - NOT Expo Go. That matters for **F3 (push notifications)**: `expo-notifications` native config cannot run under Expo Go, but it runs fine in this build. (`expo-dev-client` is not currently a dependency; the plain debug build still hosts native modules and connects to Metro, which is all the harness needs. If F3 wants the dev-client launcher UI specifically, add `expo-dev-client` then - separate change.)
 - **Metro reaches the device via `adb reverse tcp:8081`** (set by `boot`). Run **one Metro at a time** on port 8081; to QA a different worktree, stop the old Metro and start it from the new checkout.
 
-### ⚠️ Package-id drift (flagged, not fixed here)
-The committed native project (`apps/mobile/android/app/build.gradle`) uses `applicationId 'com.hiro.app'`, but `app.json` declares `android.package: 'com.behiro.app'`. `expo run:android` builds the native project, so the **installed/running package is `com.hiro.app`**. The harness targets `com.hiro.app`. This drift should be reconciled before a production Play build (separate ticket).
+### Package id: `com.behiro.app`
+`apps/mobile/android/` is **gitignored** - it's a local `expo prebuild` artifact, not committed. The id source of truth is `app.json` (`android.package` and `ios.bundleIdentifier`), both **`com.behiro.app`** - the same id used in the Apple App Store and Google Play. The harness targets `com.behiro.app`.
+
+If a stale local prebuild ever installs the app under a different id, regenerate the native dir from `app.json`:
+```bash
+cd apps/mobile && npx expo prebuild --clean -p android
+```
+(A previous local prebuild had drifted to `com.hiro.app`; `prebuild --clean` realigned it.)
 
 ---
 
