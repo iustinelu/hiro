@@ -1,3 +1,25 @@
+# Session handoff - 2026-07-05 (v0.1.4 ticket batch: Tasks board era)
+
+## TL;DR
+Founder dogfooding notes on v0.1.3 turned into a fully specced v0.1.4 batch.
+Four Linear tickets created (HIR-83..86) + matching implementation briefs in `docs/v0.1.4/` (per-item agent dispatch, one agent per brief in its own worktree).
+North star: the Tasks tab becomes the household chore board, judged against a "10x better UX/UI" bar.
+No code written this session; docs + tickets only.
+
+## The queue (order matters)
+1. **HIR-83** (High) - Tasks board redesign: flagship UX/UI overhaul, client-only. Defines `MobileTaskRow` primitive + task detail sheet that everything else slots into. Brief: `docs/v0.1.4/01-tasks-board-redesign.md`.
+2. **HIR-84** - Anytime chores: repeatable pool via new `recurring_tasks.cadence = 'anytime'`. Backend/domain parallel-safe with 83. Brief: `02-anytime-chores.md`.
+3. **HIR-85** - Done log + dispute discoverability (Done today section, Home dispute banner, Your history). After 83. Brief: `03-done-log.md`.
+4. **HIR-86** - Overdue recurring tasks: sweep fns + pg_cron + outbox notifications + in-app Missed section. Backend parallel-safe; push delivery gated on HIR-66 go-live. Brief: `04-overdue-reminders.md`.
+
+## Founder decisions locked this session (2026-07-05)
+- Sometimes-tasks = plain repeatable pool, NO cooldown logic in v1.
+- Overdue = in-app AND push (accepting the HIR-66 dependency for delivery).
+- Redesign scope = Tasks-centric (other tabs untouched).
+- **IA reversal:** Tasks tab becomes fully actionable (complete/claim/log on the board); supersedes `docs/v0.1.3/ia-decision.md` section 1 (addendum added there).
+
+---
+
 # Session handoff — 2026-06-27 (v0.1.3 shipped to Internal/TestFlight)
 
 ## TL;DR

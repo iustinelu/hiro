@@ -6,6 +6,10 @@ Date: 2026-06-27
 Scope: Where ad-hoc tasks, the activity board/history, interactive onboarding, and push-notification entry points live in the app's navigation; whether the canonical tab set changes; and the one-vs-many household decision (HIR-73).
 Related tickets: HIR-67 (one-off backlog), HIR-70 (ad-hoc tasks + contest/settle + activity board), HIR-73 (one vs. many households).
 
+> **Addendum 2026-07-05 (v0.1.4, HIR-83):** the "Tasks tab stays read-only / completing lives only on Home" rule below is superseded.
+> Founder approved making the Tasks tab fully actionable (complete, claim, and log directly on the redesigned board); Home remains the daily glance surface.
+> See `docs/v0.1.4/01-tasks-board-redesign.md`.
+
 ---
 
 ## 1. Current IA summary (verified against code)
