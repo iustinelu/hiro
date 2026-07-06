@@ -4,7 +4,6 @@ import { spawnSync } from "node:child_process";
 const resetTargets = [
   "node_modules",
   "apps/mobile/node_modules",
-  "apps/web/node_modules",
   "packages/ui-primitives/node_modules",
   "apps/mobile/.expo",
   "android",

@@ -29,7 +29,7 @@ const ERROR_ENUM_FILE = "packages/domain/src/errors.ts";
 // Codes raised in SQL that are deliberately NOT mapped on the client (internal preconditions the
 // user never sees). Keep this list tiny and justified.
 const INTERNAL_ONLY_CODES = new Set(["NOT_AUTHENTICATED", "INVALID_PLATFORM"]);
-const APP_DIRS = ["apps/web/src", "apps/mobile/src"];
+const APP_DIRS = ["apps/mobile/src"];
 const SKIP_DIRS = new Set(["node_modules", ".next", "dist", "build", ".expo", ".turbo"]);
 
 function fail(lines) {

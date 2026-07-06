@@ -16,20 +16,12 @@ const mobileDisallowedInteractivePrimitives = new Set([
   "Switch",
   "Modal"
 ]);
-const webDisallowedIntrinsicInteractiveTags = ["button", "input", "select", "textarea", "form"];
-
 // Files exempt from theme-reactivity rules. Keep this list TINY and justified:
-// - theming infrastructure that legitimately bridges tokens <-> CSS variables
+// - theming infrastructure that legitimately bridges tokens <-> theme values
 // - surfaces that render before a theme is available / non-UI metadata
 // - design-system showcases that intentionally display raw token values
 const themingAllowlist = [
-  "packages/ui-primitives/src/web/utils.ts",
   "packages/ui-primitives/src/mobile/utils.ts",
-  "apps/web/src/theme/",
-  "apps/web/src/app/manifest.ts",
-  "apps/web/src/app/layout.tsx",
-  "apps/web/src/app/global-error.tsx",
-  "apps/web/src/app/design-system/",
   "apps/mobile/src/screens/DesignSystemGallery.tsx",
   "apps/mobile/src/components/ErrorBoundary.tsx",
   // Design-system documentation/showcase components — display raw token values,
@@ -96,7 +88,7 @@ function walk(dir) {
     //    the default theme and won't change when the user switches themes.
     if (inThemeReactiveScope && !themingExempt && staticThemedTokenRegex.test(content)) {
       violations.push(
-        `${full}: static themed token (color/elevation/radius/fontFamily) is not theme-reactive; use cssColor()/cssShadow()/cssRadius()/cssFontFamily() (web) or useTheme() (mobile)`
+        `${full}: static themed token (color/elevation/radius/fontFamily) is not theme-reactive; use useTheme()`
       );
     }
 
@@ -116,14 +108,6 @@ function walk(dir) {
       }
     }
 
-    if (full.startsWith("apps/web/src/") && (full.endsWith(".tsx") || full.endsWith(".jsx"))) {
-      for (const tag of webDisallowedIntrinsicInteractiveTags) {
-        const regex = new RegExp(`<\\s*${tag}\\b`, "i");
-        if (regex.test(content)) {
-          violations.push(`${full}: raw <${tag}> in app layer is disallowed; use @hiro/ui-primitives/web`);
-        }
-      }
-    }
   }
 }
 

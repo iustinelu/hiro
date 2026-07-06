@@ -23,7 +23,7 @@
     "@hiro/ui-tokens": "0.1.0",
     "@react-navigation/bottom-tabs": "^7.15.5",
     "@react-navigation/native": "^7.1.33",
-    "@supabase/supabase-js": "^2.49.1",
+    "@supabase/supabase-js": "^2.105.1",
     "expo": "~54.0.0",
     "expo-clipboard": "~8.0.8",
     "expo-constants": "~18.0.13",

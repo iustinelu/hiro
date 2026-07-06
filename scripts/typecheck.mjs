@@ -1,7 +1,6 @@
 import { spawnSync } from "node:child_process";
 
 const tsconfigs = [
-  "apps/web/tsconfig.json",
   "apps/mobile/tsconfig.json",
   "packages/domain/tsconfig.json",
   "packages/runtime/tsconfig.json",
