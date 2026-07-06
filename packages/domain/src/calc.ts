@@ -107,3 +107,95 @@ export function isWithinUndoWindow(
 ): boolean {
   return now.getTime() - completedAt.getTime() < windowMs;
 }
+
+// ─── Missed recurring tasks ──────────────────────────────────────────────────
+//
+// Client twin of the overdue sweep `detect_overdue_recurring_tasks()` in
+// `supabase/migrations/20260706100000_overdue_reminders.sql` (HIR-86). The sweep
+// only ever looks one day back (yesterday); this helper generalises the same
+// due-date rule to a lookback window so the Missed section on the Tasks board
+// can list every uncompleted past due date, not just yesterday.
+//
+// Cadence semantics MUST match the sweep and the mobile `isDueToday`
+// (apps/mobile/src/lib/taskService.ts), INCLUDING their full-name-vs-abbreviation
+// inconsistency:
+//   daily  -> due every day
+//   weekly -> cadenceMeta.day is a FULL lowercase day name ('monday')
+//   custom -> cadenceMeta.days is 3-letter lowercase abbreviations ('mon')
+//   anything else (e.g. the 'anytime' cadence from HIR-84) -> never due.
+
+const DAY_ABBREVS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
+
+const FULL_DAY_TO_ABBR: Record<string, string> = {
+  sunday: "sun",
+  monday: "mon",
+  tuesday: "tue",
+  wednesday: "wed",
+  thursday: "thu",
+  friday: "fri",
+  saturday: "sat",
+};
+
+/** Minimal task shape the missed-derivation needs; platform-agnostic on purpose. */
+export interface MissedTaskInput {
+  cadence: string;
+  cadenceMeta: { day?: string; days?: string[] };
+}
+
+/**
+ * Whether `task` is due on the local calendar day of `date`, per its cadence.
+ * Days are read from `date` in local time (matching the client convention in
+ * `isDueToday`). Any cadence other than daily/weekly/custom is never due.
+ */
+export function isDueOnDate(task: MissedTaskInput, date: Date): boolean {
+  const abbr = DAY_ABBREVS[date.getDay()];
+  if (task.cadence === "daily") return true;
+  if (task.cadence === "weekly") {
+    return FULL_DAY_TO_ABBR[task.cadenceMeta.day ?? ""] === abbr;
+  }
+  if (task.cadence === "custom") {
+    return (task.cadenceMeta.days ?? []).includes(abbr);
+  }
+  return false;
+}
+
+/**
+ * The past due dates (most recent first) on which `task` was due but has no
+ * completion, within a `lookbackDays`-day window ending yesterday. `today` is
+ * excluded: an uncompleted task due today is still open (nudge territory), not
+ * missed. Days are compared at local-midnight granularity, so multiple
+ * completions on the same day count once and a completion anywhere in the day
+ * clears that date.
+ *
+ * @param task cadence + meta (see MissedTaskInput)
+ * @param completionDates completion timestamps for this task (any order, dupes fine)
+ * @param today reference "now" (injected so the function stays pure/testable)
+ * @param lookbackDays how many days before today to scan (default 7)
+ */
+export function computeMissedDueDates(
+  task: MissedTaskInput,
+  completionDates: Date[],
+  today: Date,
+  lookbackDays: number = 7
+): Date[] {
+  if (lookbackDays <= 0) return [];
+
+  const completedDayMs = new Set<number>();
+  for (const d of completionDates) {
+    completedDayMs.add(atMidnight(d).getTime());
+  }
+
+  const anchor = atMidnight(today);
+  const missed: Date[] = [];
+
+  // i = 1 is yesterday, growing back to lookbackDays ago — so the result is
+  // ordered most-recent-first.
+  for (let i = 1; i <= lookbackDays; i++) {
+    const day = new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate() - i);
+    if (!isDueOnDate(task, day)) continue;
+    if (completedDayMs.has(day.getTime())) continue;
+    missed.push(day);
+  }
+
+  return missed;
+}
