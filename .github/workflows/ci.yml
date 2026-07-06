@@ -17,3 +17,7 @@ jobs:
           cache: npm
       - run: npm ci || npm install
       - run: npm run check
+        env:
+          # Enables the live migration-drift check. When unset (e.g. on forks),
+          # the check skips gracefully and the rest of `npm run check` still runs.
+          SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
