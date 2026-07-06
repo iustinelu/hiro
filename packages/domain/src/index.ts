@@ -1,5 +1,6 @@
 export { ServiceErrorCode, matchServiceError } from "./errors";
 export { splitEvenly, computeStreak, pointsShortfall, canAfford, isWithinUndoWindow } from "./calc";
+export { isDueToday, cadenceLabel } from "./cadence";
 
 export type Uuid = string;
 export type CurrencyCode = "EUR" | "GBP" | "RON" | "USD";
@@ -95,7 +96,9 @@ export interface ActivityEvent {
 
 // ─── Task Domain ────────────────────────────────────────────────────────────
 
-export type TaskCadence = "daily" | "weekly" | "custom";
+// 'anytime' = repeatable pool chore (HIR-84): never due on a specific day,
+// completed on demand and stays in the pool. cadence_meta is always {}.
+export type TaskCadence = "daily" | "weekly" | "custom" | "anytime";
 
 export interface CadenceMeta {
   day?: string;

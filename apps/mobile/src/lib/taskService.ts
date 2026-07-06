@@ -2,6 +2,10 @@ import type { RecurringTask, TaskCadence, CadenceMeta, LeaderboardEntry } from "
 import { ServiceErrorCode, matchServiceError, computeStreak, isWithinUndoWindow } from "@hiro/domain";
 import { supabase } from "./supabase";
 
+// Cadence helpers live in the domain layer (single-sourced + unit-tested); re-exported
+// here so screens can keep importing them from the task service.
+export { isDueToday, cadenceLabel } from "@hiro/domain";
+
 export async function createTask(
   householdId: string,
   name: string,
@@ -253,32 +257,4 @@ export async function getStreak(
 
   const dates = data.map((row) => new Date(row.completed_at as string));
   return { streak: computeStreak(dates, new Date()), error: null };
-}
-
-// ─── Cadence helpers (shared by Home + Tasks screens) ───────────────────────
-
-const DAY_MAP: Record<string, string> = {
-  sunday: "sun", monday: "mon", tuesday: "tue", wednesday: "wed",
-  thursday: "thu", friday: "fri", saturday: "sat",
-};
-
-export function isDueToday(task: RecurringTask): boolean {
-  const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
-  const today = days[new Date().getDay()];
-  if (task.cadence === "daily") return true;
-  if (task.cadence === "weekly") return DAY_MAP[task.cadenceMeta.day ?? ""] === today;
-  if (task.cadence === "custom") return (task.cadenceMeta.days ?? []).includes(today);
-  return false;
-}
-
-export function cadenceLabel(cadence: TaskCadence, meta: CadenceMeta): string {
-  if (cadence === "daily") return "Every day";
-  if (cadence === "weekly") {
-    const d = meta.day ?? "";
-    return `Every ${d.charAt(0).toUpperCase()}${d.slice(1)}`;
-  }
-  if (cadence === "custom") {
-    return (meta.days ?? []).map((d) => d.charAt(0).toUpperCase() + d.slice(1)).join(", ");
-  }
-  return "";
 }
