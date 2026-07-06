@@ -2,6 +2,10 @@
 
 All implementation agents must follow this contract for every issue.
 
+**Current state (2026-07):** Hiro is a **mobile-only** product (Expo, `apps/mobile`), distributed natively via EAS to Play internal track + TestFlight.
+The web app has been retired; its history lives in git.
+For the freshest session-to-session state, read `docs/next-chat-handoff.md` first.
+
 ---
 
 ## Core Ethos: Founder Time Is the Scarcest Resource
@@ -43,7 +47,7 @@ Every decision, output, and handoff must be optimized for founder time. The stan
 2. Update docs/checklists when architecture or workflow is touched.
 3. Run `npm run check` before handoff.
 4. Use design-system primitives/tokens for all app UI elements; avoid raw platform interactive elements in `apps/*`.
-5. If required UI is missing from design system, implement it in `packages/ui-primitives` (web + mobile parity unless documented platform-specific) first, then consume it from apps.
+5. If required UI is missing from design system, implement it in `packages/ui-primitives` first, then consume it from apps. Hiro is mobile-only; primitives target React Native.
 
 ## Required In Final Handoff
 
@@ -65,26 +69,15 @@ Founder QA Quick Cycle format (mandatory):
 1. Closing implementation issues without founder QA sign-off.
 2. Skipping compliance checklist items without documented emergency deviation.
 
-## PR Creation Protocol (Mandatory)
+## PR Workflow
 
-All agents must use the repository PR workflow commands and template gate. Do not create PRs with ad-hoc bodies.
+The PR flow is deliberately lightweight (the old PR-governance template gate was scrapped in 2026-06, commit `f8fece0`):
 
-Required sequence:
-
-1. `npm run pr:prepare` (creates `/tmp/pr_body.md` from `.github/PULL_REQUEST_TEMPLATE.md`)
-2. Fill in `/tmp/pr_body.md` using the template sections exactly.
-3. `npm run pr:validate -- --file /tmp/pr_body.md --title "HIR-XX: ..."`
-4. Create or update the PR/MR using GitHub MCP tools (preferred), only after step 3 passes for the exact title/body pair.
-5. If MCP is unavailable, use `npm run pr:create:fallback -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md`.
-6. Follow the reusable playbook in `docs/skills/pr-governance/SKILL.md`.
-
-Hard rules:
-
-1. Do not use `gh pr create` directly.
-2. Prefer GitHub MCP tools for PR/MR create or update operations in this repository.
-3. Do not use MCP PR creation/update tools unless the same template validation command has passed for the exact body/title.
-4. Use `npm run pr:create:fallback` only when MCP is unavailable or blocked.
-5. PR body must preserve template section names/order and checked compliance items.
+1. Branch from updated `main` using `hir-{number}/{short-slug}` (or `chore/{slug}` for non-ticket work).
+2. Run `npm run check` and get it green before opening a PR.
+3. Open the PR with plain `gh pr create`. The template pre-fills Summary / What Changed / Founder QA Quick Cycle; fill them in.
+4. The `quality` CI check is the only automated gate.
+5. Founder QA gates the merge; do not merge without founder sign-off unless the founder pre-authorized it for the session.
 
 ## Repository Skills (Mandatory)
 
@@ -94,4 +87,3 @@ Use these repository skills when their triggers apply:
 2. `docs/skills/founder-qa-handoff/SKILL.md` for all final ticket/PR handoffs.
 3. `docs/skills/branch-pr-lifecycle/SKILL.md` for branch creation, PR creation, merge follow-up.
 4. `docs/skills/design-system-change-gate/SKILL.md` for any design-system/tokens/primitives changes.
-5. `docs/skills/pr-governance/SKILL.md` for PR template/governance compliance.

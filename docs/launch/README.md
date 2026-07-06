@@ -1,5 +1,8 @@
 # Hiro v0.1 — Launch runbook
 
+> **RETIRED TRACK (2026-06-27):** Track A (web/Vercel) was dropped when Hiro went mobile-only.
+> Only Track B (native via EAS) is live. Track A content below is historical reference only.
+
 Two distribution tracks. Track A (web) is the fastest path to a live URL; Track B (native) is
 the founder's stated goal but gated on store-account approvals (start those today — they're the
 long pole).
