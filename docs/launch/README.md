@@ -94,6 +94,14 @@ on a real device.** The first store binary crashed on launch and there was no on
 between build and submit. Always: `eas build --profile preview` → install → confirm launch +
 core flow → only then `eas build --profile production` → `eas submit`.
 
+### Version + tag on release (MANDATORY)
+The store-facing version lives in `apps/mobile/app.json` (`expo.version`); the root
+`package.json` version must match it (enforced by `npm run check:versions`). On every release:
+1. Bump `expo.version` in `apps/mobile/app.json` and `version` in root `package.json` together.
+2. After the release commit lands on `main`, tag it: `git tag -a vX.Y.Z -m "vX.Y.Z" && git push origin vX.Y.Z`.
+   (`versionCode`/`buildNumber` still auto-increment on EAS via `appVersionSource: remote`.)
+Tags are the only durable record of what shipped — there is no CHANGELOG file.
+
 ### Founder steps — store accounts (THE LONG POLE, start now)
 1. **Apple Developer Program** enrollment for the team — ~24–48h to approve. Required before any
    TestFlight build. ($99/yr)

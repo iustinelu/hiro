@@ -171,7 +171,7 @@ If the app shows a **blank/black screen**, it's almost always a missing `.env` i
 ### Reaching gated screens (auth + onboarding)
 Home/Tasks/etc. are behind auth **and** onboarding (a user is "onboarded" only with a household membership **and** a non-empty display name - see `RootNavigator.tsx`). To land on Home:
 
-1. Use the canonical QA account: **`apple@test.com` / `Pass4Apple!`** (pre-seeded, onboarded - "Alex Dogfood" / "The Dogfood House").
+1. Use the canonical QA account: **"Alex Dogfood" / "The Dogfood House"** (pre-seeded, onboarded). Its email + password live in the gitignored **`.secrets/qa-account`** file (not in git). As of the 2026-07-06 audit the account email is `alex.dogfood.0627@gmail.com` (the old docs said `apple@test.com`, which does not exist in the DB).
 2. If you need a different account, (re)set a password via Supabase admin (no email round-trip), using the Supabase MCP `execute_sql` on project `pfokfopwjrahclmseper`:
    ```sql
    update auth.users
