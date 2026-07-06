@@ -75,6 +75,7 @@ export async function createOneOffTask(
 
 export interface BacklogTask extends OneOffTask {
   claimedByDisplayName: string | null;
+  postedByDisplayName: string | null;
 }
 
 export async function getBacklogTasks(
@@ -83,7 +84,7 @@ export async function getBacklogTasks(
   const { data, error } = await supabase
     .from("one_off_tasks")
     .select(
-      "*, claimer:profiles!one_off_tasks_claimed_by_profile_id_fkey(display_name)"
+      "*, claimer:profiles!one_off_tasks_claimed_by_profile_id_fkey(display_name), poster:profiles!one_off_tasks_created_by_profile_id_fkey(display_name)"
     )
     .eq("household_id", householdId)
     .in("status", ["open", "claimed"])
@@ -93,7 +94,12 @@ export async function getBacklogTasks(
 
   const tasks: BacklogTask[] = (data ?? []).map((row) => {
     const claimer = row.claimer as unknown as { display_name: string | null } | null;
-    return { ...mapOneOff(row), claimedByDisplayName: claimer?.display_name ?? null };
+    const poster = row.poster as unknown as { display_name: string | null } | null;
+    return {
+      ...mapOneOff(row),
+      claimedByDisplayName: claimer?.display_name ?? null,
+      postedByDisplayName: poster?.display_name ?? null
+    };
   });
 
   return { tasks, error: null };

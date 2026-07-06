@@ -17,4 +17,5 @@ export * from "./MobileSegmentedControl";
 export * from "./MobileSpacingMatrix";
 export * from "./MobileStatusBadge";
 export * from "./MobileStates";
+export * from "./MobileTaskRow";
 export * from "./MobileSwitchRow";
