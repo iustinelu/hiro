@@ -60,6 +60,8 @@ export async function getNotificationStatus(): Promise<NotificationPermission> {
     const { status, canAskAgain } = await Notifications.getPermissionsAsync();
     return { status: status as NotificationStatus, canAskAgain };
   } catch {
+    // Permission API can throw on some OS/device combos; fall back to a safe
+    // "not decided, can still ask" so the UI shows the enable path.
     return { status: "undetermined", canAskAgain: true };
   }
 }
@@ -78,6 +80,8 @@ export async function isDeviceRegistered(): Promise<boolean> {
       .maybeSingle();
     return !!data;
   } catch {
+    // Never block the caller on a token/registration lookup failure; treat as
+    // "not registered" so the UI can offer to enable notifications.
     return false;
   }
 }

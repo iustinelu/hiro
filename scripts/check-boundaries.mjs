@@ -3,10 +3,27 @@ import { join } from "node:path";
 
 const roots = ["apps", "packages"];
 const exts = new Set([".ts", ".tsx", ".js", ".jsx"]);
+// Never descend into dependency/build output — walking node_modules is slow and
+// a false-positive surface (a dep's source may contain a matching import string).
+const skipDirs = new Set(["node_modules", ".next", ".expo", "dist", "build", "coverage", "android", "ios"]);
 const violations = [];
+
+// The app talks to Supabase only through its service layer (`apps/mobile/src/lib/*`).
+// Screens/components/onboarding must consume those services (or hooks), never the
+// raw client — this keeps data access, error mapping, and RPC names in one place.
+const supabaseCallRegex = /\bsupabase\s*\.\s*(from|rpc|auth|storage|functions|channel)\b/;
+
+function isMobileAppLayer(path) {
+  if (!path.startsWith(join("apps", "mobile", "src"))) return false;
+  const libDir = join("apps", "mobile", "src", "lib");
+  return !path.startsWith(libDir);
+}
 
 function walk(dir) {
   for (const entry of readdirSync(dir)) {
+    if (skipDirs.has(entry)) {
+      continue;
+    }
     const full = join(dir, entry);
     const stat = statSync(full);
     if (stat.isDirectory()) {
@@ -25,6 +42,12 @@ function walk(dir) {
 
     if (full.startsWith("packages/domain") && /@hiro\/(ui-primitives|ui-tokens)/.test(content)) {
       violations.push(`${full}: packages/domain cannot import UI packages`);
+    }
+
+    if (isMobileAppLayer(full) && supabaseCallRegex.test(content)) {
+      violations.push(
+        `${full}: direct supabase.* call outside apps/mobile/src/lib; add/use a service function in src/lib instead`
+      );
     }
   }
 }

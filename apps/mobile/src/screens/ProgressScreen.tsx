@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import type { DailyPoints, HouseholdActivity, LeaderboardEntry, OneOffTask, PersonalStats, TaskStats } from "@hiro/domain";
 import { MobileEmptyState, MobileErrorState, MobileSegmentedControl, useTheme } from "@hiro/ui-primitives/mobile";
-import { supabase } from "../lib/supabase";
+import { useSessionBootstrap } from "../lib/useSessionBootstrap";
 import { getPersonalStats, getWeeklyPointsTrend, getTaskStats } from "../lib/progressService";
 import { getWeeklyLeaderboard } from "../lib/taskService";
 import {
@@ -27,9 +27,7 @@ const SEGMENTS = [
 export function ProgressScreen() {
   const t = useTheme();
 
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [householdId, setHouseholdId] = useState<string | null>(null);
-  const [bootstrapped, setBootstrapped] = useState(false);
+  const { profileId, householdId, bootstrapped } = useSessionBootstrap();
 
   const [view, setView] = useState("trends");
   const [stats, setStats] = useState<PersonalStats | null>(null);
@@ -43,26 +41,6 @@ export function ProgressScreen() {
   const [loadError, setLoadError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  /* ── Bootstrap profile + household ─────────────────────────────────────── */
-  useEffect(() => {
-    let active = true;
-    void (async () => {
-      const { data: pid } = await supabase.rpc("current_profile_id");
-      if (!active) return;
-      if (!pid) { setBootstrapped(true); return; }
-      setProfileId(pid as string);
-      const { data: membership } = await supabase
-        .from("household_members")
-        .select("household_id")
-        .eq("profile_id", pid)
-        .limit(1)
-        .maybeSingle();
-      if (!active) return;
-      if (membership) setHouseholdId(membership.household_id as string);
-      setBootstrapped(true);
-    })();
-    return () => { active = false; };
-  }, []);
 
   /* ── Parallel data fetch ────────────────────────────────────────────────── */
   const loadData = useCallback(async () => {

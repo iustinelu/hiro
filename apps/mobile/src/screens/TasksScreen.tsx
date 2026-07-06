@@ -3,7 +3,7 @@ import { ScrollView, Text, View } from "react-native";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import type { RecurringTask, TaskCadence, CadenceMeta, OneOffTaskKind } from "@hiro/domain";
 import { MobileButton, MobileCard, MobileSegmentedControl, useTheme } from "@hiro/ui-primitives/mobile";
-import { supabase } from "../lib/supabase";
+import { useSessionBootstrap } from "../lib/useSessionBootstrap";
 import {
   getHouseholdTasks,
   getTodayCompletions,
@@ -37,9 +37,7 @@ export function TasksScreen() {
   const t = useTheme();
   const navigation = useNavigation<{ setParams: (p: Record<string, unknown>) => void }>();
   const route = useRoute<{ key: string; name: string; params?: { focusBacklog?: boolean } }>();
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [householdId, setHouseholdId] = useState<string | null>(null);
-  const [bootstrapped, setBootstrapped] = useState(false);
+  const { profileId, householdId, bootstrapped } = useSessionBootstrap();
 
   const [tab, setTab] = useState("today");
   const [tasks, setTasks] = useState<RecurringTask[]>([]);
@@ -52,26 +50,6 @@ export function TasksScreen() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [lastCompletion, setLastCompletion] = useState<CompletionResult | null>(null);
 
-  /* ── Bootstrap ───────────────────────────────────────────────────────── */
-  useEffect(() => {
-    let active = true;
-    void (async () => {
-      const { data: pid } = await supabase.rpc("current_profile_id");
-      if (!active) return;
-      if (!pid) { setBootstrapped(true); return; }
-      setProfileId(pid as string);
-      const { data: membership } = await supabase
-        .from("household_members")
-        .select("household_id")
-        .eq("profile_id", pid)
-        .limit(1)
-        .maybeSingle();
-      if (!active) return;
-      if (membership) setHouseholdId(membership.household_id as string);
-      setBootstrapped(true);
-    })();
-    return () => { active = false; };
-  }, []);
 
   /* ── Fetch ───────────────────────────────────────────────────────────── */
   const fetchData = useCallback(async () => {

@@ -1,4 +1,5 @@
 import * as WebBrowser from "expo-web-browser";
+import type { Session } from "@supabase/supabase-js";
 import type { AuthMethod } from "@hiro/domain";
 import { supabase } from "./supabase";
 
@@ -18,6 +19,28 @@ export async function getMyAccountMethods(): Promise<AuthMethod[] | null> {
   const { data, error } = await supabase.rpc("current_account_methods");
   if (error) return null;
   return (data as AuthMethod[] | null) ?? [];
+}
+
+// The signed-in user's email (for display in account settings).
+export async function getMyEmail(): Promise<string | null> {
+  const { data } = await supabase.auth.getUser();
+  return data.user?.email ?? null;
+}
+
+// The current auth session (null when signed out). Used to gate the root navigator.
+export async function getCurrentSession(): Promise<Session | null> {
+  const { data } = await supabase.auth.getSession();
+  return data.session;
+}
+
+/** Subscribe to auth-state changes. Returns an unsubscribe function. */
+export function onAuthStateChange(
+  callback: (session: Session | null) => void
+): () => void {
+  const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    callback(session);
+  });
+  return () => listener.subscription.unsubscribe();
 }
 
 export async function updatePassword(
