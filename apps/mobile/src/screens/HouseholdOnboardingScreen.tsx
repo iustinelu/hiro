@@ -13,7 +13,7 @@ import { tokens } from "@hiro/ui-tokens";
 import { createHousehold, getMyHousehold } from "../lib/householdService";
 import { getDisplayName, updateDisplayName } from "../lib/profileService";
 import { registerForPushNotifications } from "../lib/notificationService";
-import { supabase } from "../lib/supabase";
+import { getCurrentProfileId } from "../lib/sessionService";
 import { JoinHouseholdForm } from "../components/JoinHouseholdForm";
 
 interface HouseholdOnboardingScreenProps {
@@ -38,7 +38,7 @@ export function HouseholdOnboardingScreen({ onCompleted }: HouseholdOnboardingSc
   useEffect(() => {
     let active = true;
     async function resolve() {
-      const { data: profileId } = await supabase.rpc("current_profile_id");
+      const profileId = await getCurrentProfileId();
       if (!profileId) {
         // No profile yet — treat as needing the full flow.
         if (active) {
@@ -48,7 +48,7 @@ export function HouseholdOnboardingScreen({ onCompleted }: HouseholdOnboardingSc
         return;
       }
       const [{ displayName }, { household }] = await Promise.all([
-        getDisplayName(profileId as string),
+        getDisplayName(profileId),
         getMyHousehold(),
       ]);
       if (!active) return;
@@ -142,13 +142,13 @@ function NameStep({ onDone }: { onDone: () => void }) {
     }
     setError(null);
     setLoading(true);
-    const { data: profileId } = await supabase.rpc("current_profile_id");
+    const profileId = await getCurrentProfileId();
     if (!profileId) {
       setLoading(false);
       setError("Could not load your profile. Please try again.");
       return;
     }
-    const { error: saveError } = await updateDisplayName(profileId as string, name.trim());
+    const { error: saveError } = await updateDisplayName(profileId, name.trim());
     setLoading(false);
     if (saveError) {
       setError(saveError);

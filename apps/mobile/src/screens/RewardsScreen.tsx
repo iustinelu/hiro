@@ -9,7 +9,7 @@ import {
 } from "@hiro/ui-primitives/mobile";
 import type { Reward, RewardRedemptionWithDetails } from "@hiro/domain";
 import { ServiceErrorCode, pointsShortfall } from "@hiro/domain";
-import { supabase } from "../lib/supabase";
+import { getCurrentProfileId } from "../lib/sessionService";
 import { getMyHousehold } from "../lib/householdService";
 import {
   getHouseholdRewards,
@@ -18,6 +18,7 @@ import {
   redeemReward,
   createReward,
   archiveReward,
+  subscribeToRewardRedemptions,
 } from "../lib/rewardService";
 import { RewardCardGrid } from "./rewards/RewardCardGrid";
 import { RedemptionFeed } from "./rewards/RedemptionFeed";
@@ -120,8 +121,8 @@ export function RewardsScreen() {
   /* ── Bootstrap ────────────────────────────────────────────────────── */
 
   useEffect(() => {
-    supabase.rpc("current_profile_id").then(({ data }) => {
-      if (data) setProfileId(data as string);
+    getCurrentProfileId().then((id) => {
+      if (id) setProfileId(id);
     });
     getMyHousehold().then(({ household }) => {
       if (household) setHouseholdId(household.id);
@@ -170,28 +171,14 @@ export function RewardsScreen() {
   useEffect(() => {
     if (!householdId || !profileId) return;
 
-    const channel = supabase
-      .channel(`rewards-feed-${householdId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "reward_redemptions",
-          filter: `household_id=eq.${householdId}`,
-        },
-        async () => {
-          const [feedRes, balRes] = await Promise.all([
-            getRedemptionHistory(householdId),
-            getPointBalance(profileId, householdId),
-          ]);
-          if (!feedRes.error) setRedemptions(feedRes.redemptions);
-          if (!balRes.error) setBalance(balRes.balance);
-        }
-      )
-      .subscribe();
-
-    return () => { void supabase.removeChannel(channel); };
+    return subscribeToRewardRedemptions(householdId, async () => {
+      const [feedRes, balRes] = await Promise.all([
+        getRedemptionHistory(householdId),
+        getPointBalance(profileId, householdId),
+      ]);
+      if (!feedRes.error) setRedemptions(feedRes.redemptions);
+      if (!balRes.error) setBalance(balRes.balance);
+    });
   }, [householdId, profileId]);
 
   /* ── Onboarding tour advancement (reward-create → redeem → what's-next) ── */

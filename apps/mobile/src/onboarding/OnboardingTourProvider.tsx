@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { getCurrentProfileId } from "../lib/sessionService";
 import { getOnboardingCompleted, markOnboardingCompleted } from "../lib/profileService";
 
 /**
@@ -50,10 +50,10 @@ export function OnboardingTourProvider({ children }: { children: React.ReactNode
   useEffect(() => {
     let active = true;
     void (async () => {
-      const { data: pid } = await supabase.rpc("current_profile_id");
+      const pid = await getCurrentProfileId();
       if (!active || !pid) return;
-      setProfileId(pid as string);
-      const { onboardingCompleted } = await getOnboardingCompleted(pid as string);
+      setProfileId(pid);
+      const { onboardingCompleted } = await getOnboardingCompleted(pid);
       if (active && !onboardingCompleted) setTourActive(true);
     })();
     return () => {

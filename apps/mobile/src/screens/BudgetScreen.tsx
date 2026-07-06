@@ -8,7 +8,7 @@ import {
   useTheme,
 } from "@hiro/ui-primitives/mobile";
 import type { CurrencyCode, Expense, HouseholdMemberWithProfile, MonthlyBreakdown } from "@hiro/domain";
-import { supabase } from "../lib/supabase";
+import { getCurrentProfileId } from "../lib/sessionService";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
 import {
   getMonthExpenses,
@@ -42,8 +42,8 @@ export function BudgetScreen() {
 
   // Bootstrap profileId and household on mount
   useEffect(() => {
-    supabase.rpc("current_profile_id").then(({ data }) => {
-      if (data) setProfileId(data as string);
+    getCurrentProfileId().then((id) => {
+      if (id) setProfileId(id);
     });
     getMyHousehold().then(({ household }) => {
       if (household) {

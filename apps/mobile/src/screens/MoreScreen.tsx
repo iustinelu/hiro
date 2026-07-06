@@ -4,9 +4,9 @@ import { useNavigation } from "@react-navigation/native";
 import { MobileButton, MobileCard, MobileListRow, MobileInput, MobileModalSheet, useTheme } from "@hiro/ui-primitives/mobile";
 import { ALL_THEME_IDS, THEME_LABELS } from "@hiro/ui-tokens";
 import { useThemeControl } from "../theme/ThemeProvider";
-import { signOut, getMyAccountMethods, updatePassword } from "../lib/authService";
+import { signOut, getMyAccountMethods, updatePassword, getMyEmail } from "../lib/authService";
 import { deleteAccount } from "../lib/accountService";
-import { supabase } from "../lib/supabase";
+import { getCurrentProfileId } from "../lib/sessionService";
 import { getMyHousehold, getHouseholdMembers } from "../lib/householdService";
 import { getDisplayName, updateDisplayName, updateTheme } from "../lib/profileService";
 import { JoinHouseholdForm } from "../components/JoinHouseholdForm";
@@ -47,13 +47,12 @@ export function MoreScreen() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user?.email) setEmail(data.user.email);
+    getMyEmail().then((userEmail) => {
+      if (userEmail) setEmail(userEmail);
     });
     getMyAccountMethods().then(setAccountMethods);
-    supabase.rpc("current_profile_id").then(({ data }) => {
-      if (data) {
-        const id = data as string;
+    getCurrentProfileId().then((id) => {
+      if (id) {
         setProfileId(id);
         getDisplayName(id).then(({ displayName: name }) => {
           if (name) setDisplayName(name);

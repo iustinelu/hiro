@@ -164,6 +164,34 @@ export async function getRedemptionHistory(
   return { redemptions, error: null };
 }
 
+/**
+ * Subscribe to new reward redemptions for a household (realtime). Invokes
+ * `onRedemption` on every INSERT so the caller can refetch the feed/balance.
+ * Returns an unsubscribe function suitable for a useEffect cleanup.
+ */
+export function subscribeToRewardRedemptions(
+  householdId: string,
+  onRedemption: () => void
+): () => void {
+  const channel = supabase
+    .channel(`rewards-feed-${householdId}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "reward_redemptions",
+        filter: `household_id=eq.${householdId}`,
+      },
+      () => onRedemption()
+    )
+    .subscribe();
+
+  return () => {
+    void supabase.removeChannel(channel);
+  };
+}
+
 /* ─── Helpers ────────────────────────────────────────────────────────────── */
 
 function mapReward(row: Record<string, unknown>): Reward {
