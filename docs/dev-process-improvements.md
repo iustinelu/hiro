@@ -69,3 +69,44 @@ beats a heavyweight framework. Append an entry below each session.
   owns and advances on real data deltas snapshotted on step-entry (not per-render).
 - **Emulator harness still down** (node_modules SDK-54 skew → red-screen on launch); real-device QA
   on the Pixel is the only reliable surface. Worth fixing the harness as a separate task.
+
+## 2026-07-06 — repo-health overhaul (4-PR stack, PRs #53–#59)
+
+A full A-Z health audit (three parallel Explore agents: architecture, CI/deploy, docs) drove a
+sequenced set of fixes. Process learnings worth keeping:
+
+- **CI ran a strict subset of `npm run check`** (6 of 8 gates); the two skipped guards
+  (`check:expo-root-artifacts`, `check:mobile-runtime`) are exactly the ones that encode the
+  Play Store crash class. CI now runs `npm run check` verbatim, so local and CI can never diverge
+  again. Lesson: when a pre-commit chain and CI list steps separately, they *will* drift — have CI
+  call the one orchestrator.
+- **A scrapped process outlived its removal in the enforced layer.** `pr-governance` was deleted in
+  June, but `scripts/check-governance.mjs` still *required* the governance docs to exist and forced
+  `AGENTS.md` to reference a `pr:validate` script that no longer existed — so the CI gate actively
+  kept dead instructions alive and a cold-start agent was routed to a command that hard-fails.
+  Lesson: when you kill a process, grep the enforcement (`check-*.mjs`) in the same change, not just
+  the docs.
+- **Audit findings need verification, not blind application.** The architecture audit flagged
+  "empty catch blocks swallowing write failures" in modal submit handlers — but those `catch {`
+  blocks all call `setError(...)`; the finding matched *catch-without-binding*, not empty bodies.
+  Applying the "fix" would have been churn. Always confirm a finding against the real code.
+- **Migration drift is real and structural here.** The live DB had 2 migrations not in the repo
+  (a sibling v0.1.4 worktree ahead of merge — the normal pattern) and 15 historical files whose
+  timestamps never matched the applied versions. New `check-migration-drift.mjs` compares by
+  migration *name*, **fails** only on committed-but-not-applied, and **warns** on
+  applied-but-not-committed so it never breaks the parallel-worktree flow.
+- **Stale credentials in docs point at ghosts.** The documented QA account `apple@test.com` did not
+  exist in the DB; the real onboarded account was `alex.dogfood.0627@gmail.com`. Verifying against
+  the live DB (not the doc) found it. Creds moved to gitignored `.secrets/qa-account`; the plaintext
+  password + wrong email were removed from the committed doc.
+- **New guardrails added** (the "cheapest guardrail for the bug class" habit): a boundary rule
+  forbidding raw `supabase.*` calls outside `apps/mobile/src/lib` (the leak was copy-pasted into 8
+  screens), a version-parity gate (root `package.json` vs `app.json`), Dependabot (weekly, expo/RN
+  majors ignored), and the first real service-layer test coverage (39 → 88 tests).
+
+### Founder follow-ups from this session
+- Add a `SUPABASE_PAT` GitHub Actions secret so the migration-drift check runs in CI (it skips
+  gracefully until then).
+- `main` is still unprotected (CI is advisory) — deliberate for now; revisit if the team grows.
+- Deep-link config still ships the `hiro.example.com` placeholder (founder-gated domain decision).
+- The emulator QA harness is still broken (SDK-54 skew) — physical Pixel remains the QA path.
