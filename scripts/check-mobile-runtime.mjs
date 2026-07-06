@@ -71,7 +71,6 @@ function validateInstalledTree() {
 }
 
 const mobilePackage = JSON.parse(readFileSync("apps/mobile/package.json", "utf8"));
-const webPackage = JSON.parse(readFileSync("apps/web/package.json", "utf8"));
 const lockfile = JSON.parse(readFileSync("package-lock.json", "utf8"));
 const expoRange = mobilePackage.dependencies?.expo;
 
@@ -94,33 +93,7 @@ if (parsed.major < REQUIRED_EXPO_MAJOR) {
   );
 }
 
-const mobileReact = getDependency(mobilePackage, "react", "apps/mobile/package.json");
-const webReact = getDependency(webPackage, "react", "apps/web/package.json");
-const mobileReactDom = getDependency(mobilePackage, "react-dom", "apps/mobile/package.json");
-const webReactDom = getDependency(webPackage, "react-dom", "apps/web/package.json");
 const mobileReactNative = getDependency(mobilePackage, "react-native", "apps/mobile/package.json");
-
-if (mobileReact !== webReact) {
-  fail(
-    [
-      "Mobile runtime check failed: react version mismatch between web and mobile.",
-      `- apps/mobile: ${mobileReact}`,
-      `- apps/web: ${webReact}`,
-      "Fix: align both to the same exact version."
-    ]
-  );
-}
-
-if (mobileReactDom !== webReactDom) {
-  fail(
-    [
-      "Mobile runtime check failed: react-dom version mismatch between web and mobile.",
-      `- apps/mobile: ${mobileReactDom}`,
-      `- apps/web: ${webReactDom}`,
-      "Fix: align both to the same exact version."
-    ]
-  );
-}
 
 const expectedRn = EXPECTED_RN_BY_EXPO_MAJOR[parsed.major];
 if (expectedRn && mobileReactNative !== expectedRn) {
@@ -217,5 +190,5 @@ validateInstalledTree();
 checkMobileNativeDeps();
 
 console.log(`Mobile runtime check passed: Expo SDK ${parsed.major} (${expoRange}).`);
-console.log(`Mobile runtime check passed: react=${mobileReact} react-dom=${mobileReactDom} react-native=${mobileReactNative}.`);
+console.log(`Mobile runtime check passed: react-native=${mobileReactNative}.`);
 console.log("Founder QA note: if Expo Go and project SDK diverge again, use a dev build or upgrade SDK before QA.");

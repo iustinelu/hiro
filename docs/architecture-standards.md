@@ -16,7 +16,6 @@ This document defines the mandatory engineering standards for Hiro. All contribu
 Approved top-level boundaries:
 
 - `apps/mobile`: Expo/React Native app shell and feature UI.
-- `apps/web`: Next.js web app shell and feature UI.
 - `packages/domain`: Shared domain types/logic, platform-agnostic.
 - `packages/ui-tokens`: Shared design tokens and theme contracts.
 - `packages/ui-primitives`: Reusable UI primitives and state components.
@@ -26,7 +25,7 @@ Approved top-level boundaries:
 
 Disallowed:
 
-- Direct imports from one app to another (`apps/web` -> `apps/mobile` or inverse).
+- Direct imports from one app to another (if a second app ever exists again).
 - Feature logic implemented under root-level ad hoc folders.
 
 Allowed import directions:
@@ -106,10 +105,8 @@ RLS conventions:
 
 ## 6. Supabase Access Patterns
 
-- Web server contexts use server client factory.
-- Web browser contexts use browser client factory.
-- Mobile app uses mobile client with secure persistence.
-- Never expose service-role keys in mobile or browser bundles.
+- Mobile app uses the mobile client factory (`@hiro/supabase-clients`) with secure persistence.
+- Never expose service-role keys in app bundles.
 
 ## 7. UX State Standards
 
@@ -133,11 +130,10 @@ Rules:
 - App-level UI in `apps/*` must not introduce raw platform interactive elements (for example, web `<button>/<input>` or React Native `Pressable/TextInput/Switch/Modal`) when a design-system primitive is expected.
 - If an app needs UI not present in `packages/ui-primitives`, implement the primitive in `packages/ui-primitives` first, then consume it from the app layer.
 
-## 9. Web Boundary Standards
+## 9. Web Boundary Standards (Retired)
 
-- Keep server/client split explicit in module naming and imports.
-- Server-only modules must never be imported by browser code.
-- Route grouping should align to IA and tab structure.
+The web app was removed in 2026-07 (history lives in git).
+If web is ever revived: keep the server/client split explicit, never import server-only modules from browser code, and align route grouping to IA and tab structure.
 
 ## 10. Mobile Boundary Standards
 
@@ -170,15 +166,15 @@ Rules:
 
 Allowed:
 
-- `apps/web` imports `packages/domain` types.
+- `apps/mobile` imports `packages/domain` types.
 - `apps/mobile` uses `packages/ui-primitives` `Button`.
 - New table includes UUID PK + timestamps + RLS.
 
 Disallowed:
 
-- `apps/web` importing `apps/mobile/src/screens/...`.
+- `packages/domain` importing `@hiro/ui-primitives` or `@hiro/ui-tokens`.
 - Hardcoded `#ff0000` inside feature components.
-- Supabase query directly in page component.
+- Supabase query directly in a screen component (belongs in `src/lib/*Service.ts`).
 
 ## 14. Emergency Deviation Process
 

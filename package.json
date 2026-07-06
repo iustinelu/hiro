@@ -7,7 +7,6 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:web": "npm run dev --workspace @hiro/web",
     "dev:mobile": "npm run dev --workspace @hiro/mobile",
     "mobile:reset": "node scripts/mobile-orbital-reset.mjs",
     "lint": "node scripts/lint.mjs",

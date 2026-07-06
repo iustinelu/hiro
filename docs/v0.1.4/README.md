@@ -22,8 +22,8 @@ Design rationale, UX diagnosis, and founder decisions are captured in each Linea
 
 ## Shared rules for every brief
 
-- Mobile only (web is parked per the mobile-first decision of 2026-06-27).
-- Every themed value must be reactive (useTheme); all 4 themes (aurora, daylight, superchore, neon) pixel-QAd on the emulator harness (`docs/v0.1.3/mobile-qa-harness.md`).
+- Mobile only (the web app was removed 2026-07; history lives in git).
+- Every themed value must be reactive (useTheme); all 4 themes (aurora, daylight, superchore, neon) pixel-QAd on-device. The emulator harness (`docs/v0.1.3/mobile-qa-harness.md`) is currently broken; QA on the physical Pixel over USB.
 - Agents work in their own worktree and commit there, never in the shared main checkout.
 - Fresh worktrees: copy gitignored `.env` files from main, symlink `node_modules` from the main checkout, restart Metro for `EXPO_PUBLIC_*`.
 - Migrations: check the live head via `list_migrations` first, version strictly after it, pass `npm run check:migrations`, denial-test every new policy/function grant.

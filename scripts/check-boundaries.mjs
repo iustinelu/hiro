@@ -18,7 +18,7 @@ function walk(dir) {
     }
     const content = readFileSync(full, "utf8");
 
-    const appToApp = content.match(/from\s+["']apps\/(web|mobile)\//g) || [];
+    const appToApp = content.match(/from\s+["']apps\/\w+\//g) || [];
     if (appToApp.length > 0) {
       violations.push(`${full}: imports from apps/* are not allowed`);
     }

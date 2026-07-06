@@ -6,6 +6,6 @@
   "main": "src/index.ts",
   "dependencies": {
     "@hiro/runtime": "0.1.0",
-    "@supabase/supabase-js": "^2.49.1"
+    "@supabase/supabase-js": "^2.105.1"
   }
 }
