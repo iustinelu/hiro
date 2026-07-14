@@ -5,6 +5,9 @@ import {
   pointsShortfall,
   canAfford,
   isWithinUndoWindow,
+  isDueOnDate,
+  computeMissedDueDates,
+  type MissedTaskInput,
 } from "./calc";
 
 // Compare in integer cents so float artefacts can't mask a real rounding bug.
@@ -115,5 +118,120 @@ describe("isWithinUndoWindow", () => {
   it("respects a custom window", () => {
     expect(isWithinUndoWindow(minutesAgo(9), now, 10 * 60_000)).toBe(true);
     expect(isWithinUndoWindow(minutesAgo(11), now, 10 * 60_000)).toBe(false);
+  });
+});
+
+describe("isDueOnDate", () => {
+  const daily: MissedTaskInput = { cadence: "daily", cadenceMeta: {} };
+  const weeklySun: MissedTaskInput = { cadence: "weekly", cadenceMeta: { day: "sunday" } };
+  const customMonWed: MissedTaskInput = { cadence: "custom", cadenceMeta: { days: ["mon", "wed"] } };
+
+  const sun = new Date(2026, 6, 5); // Sun 5 Jul 2026
+  const mon = new Date(2026, 6, 6); // Mon 6 Jul 2026
+  const wed = new Date(2026, 6, 1); // Wed 1 Jul 2026
+
+  it("daily is due every day", () => {
+    expect(isDueOnDate(daily, sun)).toBe(true);
+    expect(isDueOnDate(daily, mon)).toBe(true);
+    expect(isDueOnDate(daily, wed)).toBe(true);
+  });
+
+  it("weekly matches the full-name day only", () => {
+    expect(isDueOnDate(weeklySun, sun)).toBe(true);
+    expect(isDueOnDate(weeklySun, mon)).toBe(false);
+  });
+
+  it("custom matches any of the 3-letter abbreviations", () => {
+    expect(isDueOnDate(customMonWed, mon)).toBe(true);
+    expect(isDueOnDate(customMonWed, wed)).toBe(true);
+    expect(isDueOnDate(customMonWed, sun)).toBe(false);
+  });
+
+  it("treats an unknown cadence (e.g. 'anytime') as never due", () => {
+    const anytime: MissedTaskInput = { cadence: "anytime", cadenceMeta: {} };
+    expect(isDueOnDate(anytime, sun)).toBe(false);
+    expect(isDueOnDate(anytime, mon)).toBe(false);
+  });
+
+  it("is safe when meta is missing/empty", () => {
+    expect(isDueOnDate({ cadence: "weekly", cadenceMeta: {} }, sun)).toBe(false);
+    expect(isDueOnDate({ cadence: "custom", cadenceMeta: {} }, mon)).toBe(false);
+  });
+});
+
+describe("computeMissedDueDates", () => {
+  // Anchor: Mon 6 Jul 2026, noon. Prior 7 days:
+  //   -1 Sun 5 Jul, -2 Sat 4, -3 Fri 3, -4 Thu 2, -5 Wed 1 Jul,
+  //   -6 Tue 30 Jun, -7 Mon 29 Jun.
+  const today = new Date(2026, 6, 6, 12, 0, 0);
+  const key = (d: Date) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  const keys = (ds: Date[]) => ds.map(key);
+  const day = (y: number, m: number, d: number, hour = 9) => new Date(y, m - 1, d, hour, 0, 0);
+
+  const daily: MissedTaskInput = { cadence: "daily", cadenceMeta: {} };
+  const weeklySun: MissedTaskInput = { cadence: "weekly", cadenceMeta: { day: "sunday" } };
+  const customMonWed: MissedTaskInput = { cadence: "custom", cadenceMeta: { days: ["mon", "wed"] } };
+
+  it("lists every past due date, most recent first, and excludes today", () => {
+    const missed = computeMissedDueDates(daily, [], today, 7);
+    expect(keys(missed)).toEqual([
+      "2026-7-5", "2026-7-4", "2026-7-3", "2026-7-2", "2026-7-1", "2026-6-30", "2026-6-29",
+    ]);
+    // today (Mon 6 Jul), though due for a daily task, is never in the list.
+    expect(keys(missed)).not.toContain("2026-7-6");
+  });
+
+  it("clears a due date that has a completion that day (any time)", () => {
+    const missed = computeMissedDueDates(daily, [day(2026, 7, 5, 23)], today, 7);
+    expect(keys(missed)).not.toContain("2026-7-5");
+    expect(missed).toHaveLength(6);
+  });
+
+  it("collapses multiple completions on the same day", () => {
+    const missed = computeMissedDueDates(
+      daily,
+      [day(2026, 7, 4, 8), day(2026, 7, 4, 20)],
+      today,
+      7
+    );
+    expect(keys(missed)).not.toContain("2026-7-4");
+    expect(missed).toHaveLength(6);
+  });
+
+  it("weekly returns only the matching weekday in the window", () => {
+    const missed = computeMissedDueDates(weeklySun, [], today, 7);
+    expect(keys(missed)).toEqual(["2026-7-5"]);
+  });
+
+  it("weekly is empty once that day is completed", () => {
+    const missed = computeMissedDueDates(weeklySun, [day(2026, 7, 5)], today, 7);
+    expect(missed).toHaveLength(0);
+  });
+
+  it("custom returns each matching weekday, most recent first", () => {
+    const missed = computeMissedDueDates(customMonWed, [], today, 7);
+    // Wed 1 Jul then Mon 29 Jun within the 7-day window.
+    expect(keys(missed)).toEqual(["2026-7-1", "2026-6-29"]);
+  });
+
+  it("honours a shorter lookback window (week boundary)", () => {
+    // 3-day lookback ends at Fri 3 Jul; the only Sunday (5 Jul) is inside it.
+    expect(keys(computeMissedDueDates(weeklySun, [], today, 3))).toEqual(["2026-7-5"]);
+    // 2-day lookback (Sun 5, Sat 4) still includes the Sunday.
+    expect(keys(computeMissedDueDates(weeklySun, [], today, 2))).toEqual(["2026-7-5"]);
+    // A weekly-Monday task: the only past Monday (29 Jun) is outside a 6-day window.
+    const weeklyMon: MissedTaskInput = { cadence: "weekly", cadenceMeta: { day: "monday" } };
+    expect(computeMissedDueDates(weeklyMon, [], today, 6)).toHaveLength(0);
+    expect(keys(computeMissedDueDates(weeklyMon, [], today, 7))).toEqual(["2026-6-29"]);
+  });
+
+  it("returns empty for an 'anytime' / unknown cadence", () => {
+    const anytime: MissedTaskInput = { cadence: "anytime", cadenceMeta: {} };
+    expect(computeMissedDueDates(anytime, [], today, 7)).toHaveLength(0);
+  });
+
+  it("returns empty for a non-positive lookback", () => {
+    expect(computeMissedDueDates(daily, [], today, 0)).toHaveLength(0);
+    expect(computeMissedDueDates(daily, [], today, -3)).toHaveLength(0);
   });
 });

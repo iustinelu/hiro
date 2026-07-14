@@ -1,5 +1,14 @@
 export { ServiceErrorCode, matchServiceError } from "./errors";
-export { splitEvenly, computeStreak, pointsShortfall, canAfford, isWithinUndoWindow } from "./calc";
+export {
+  splitEvenly,
+  computeStreak,
+  pointsShortfall,
+  canAfford,
+  isWithinUndoWindow,
+  isDueOnDate,
+  computeMissedDueDates,
+} from "./calc";
+export type { MissedTaskInput } from "./calc";
 
 export type Uuid = string;
 export type CurrencyCode = "EUR" | "GBP" | "RON" | "USD";
