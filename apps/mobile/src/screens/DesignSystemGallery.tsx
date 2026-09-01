@@ -17,7 +17,8 @@ import {
   MobileSegmentedControl,
   MobileSpacingMatrix,
   MobileStatusBadge,
-  MobileSwitchRow
+  MobileSwitchRow,
+  MobileTaskRow
 } from "@hiro/ui-primitives/mobile";
 import { tokens } from "@hiro/ui-tokens";
 
@@ -123,7 +124,61 @@ export function DesignSystemGalleryScreen() {
             </View>
           </MobileCard>
 
+          <MobileCard title="Task Rows (HIR-83)" description="Board rows: complete-circle, avatar, cadence glyph, points chip, Manage actions.">
+            <View style={{ gap: tokens.spacing.sm }}>
+              <MobileTaskRow
+                title="Take out the recycling"
+                meta="Every day"
+                points={5}
+                leading={{ kind: "checkbox" }}
+                onPress={() => undefined}
+              />
+              <MobileTaskRow
+                title="Deep clean the kitchen"
+                meta="Every Sunday"
+                points={20}
+                leading={{ kind: "checkbox" }}
+                completed
+                onPress={() => undefined}
+              />
+              <MobileTaskRow
+                title="Assemble the new shelf"
+                meta="Claimed by Alex, 2h ago"
+                points={12}
+                leading={{ kind: "avatar", name: "Alex Doe", highlighted: true }}
+                onPress={() => undefined}
+              />
+              <MobileTaskRow
+                title="Water the plants"
+                meta="Weekdays"
+                points={3}
+                leading={{ kind: "glyph", icon: "tasks" }}
+                actions={
+                  <>
+                    <MobileButton label="Edit" variant="secondary" size="sm" />
+                    <MobileButton label="Archive" variant="ghost" size="sm" />
+                  </>
+                }
+              />
+              <MobileTaskRow
+                title="Locked chore (disabled)"
+                meta="Someone else is on it"
+                points={8}
+                leading={{ kind: "avatar", name: "Maya Ray" }}
+                disabled
+              />
+            </View>
+          </MobileCard>
+
           <MobileEmptyStatePanel title="No data available" description="Check connector settings" />
+          <MobileEmptyStatePanel
+            variant="inline"
+            icon="tasks"
+            title="Nothing due today"
+            description="Grab something from Anytime or Up for grabs to earn points."
+            actionLabel="Browse chores"
+            onAction={() => undefined}
+          />
 
           <MobileSpacingMatrix />
 

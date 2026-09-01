@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ScrollView, Text, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { RecurringTask, LeaderboardEntry, TaskCadence, CadenceMeta, OneOffTaskKind } from "@hiro/domain";
-import { MobileButton, MobileCard, useTheme } from "@hiro/ui-primitives/mobile";
+import { MobileButton, MobileCard, MobileTaskRow, useTheme } from "@hiro/ui-primitives/mobile";
 import { supabase } from "../lib/supabase";
 import {
   getHouseholdTasks,
@@ -13,6 +13,7 @@ import {
   uncompleteTask,
   createTask,
   isDueToday,
+  cadenceLabel,
 } from "../lib/taskService";
 import { createOneOffTask, getBacklogTasks, type BacklogTask } from "../lib/oneOffService";
 import { registerForPushNotifications } from "../lib/notificationService";
@@ -218,6 +219,7 @@ export function HomeScreen() {
     [todayTasks, completedIds],
   );
   const allDone = todayTasks.length > 0 && doneCount === todayTasks.length;
+  const firstPendingId = todayTasks.find((task) => !completedIds.has(task.id))?.id ?? null;
 
   const handleBurstComplete = useCallback(() => {
     setLastCompletion(null);
@@ -271,49 +273,26 @@ export function HomeScreen() {
               {todayTasks.map((task) => {
                 const done = completedIds.has(task.id);
                 const canUndo = done && undoableTaskId === task.id;
-                return (
-                  <View
-                    key={task.id}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: t.spacing.sm,
-                      paddingVertical: t.spacing.xs,
+                const isTourTarget = tourActive && tourStep === "complete" && !done && task.id === firstPendingId;
+                const row = (
+                  <MobileTaskRow
+                    title={task.name}
+                    meta={cadenceLabel(task.cadence, task.cadenceMeta)}
+                    points={task.points}
+                    completed={done}
+                    leading={{
+                      kind: "checkbox",
+                      busy: completing === task.id,
+                      onToggle: () => { if (!done) void handleComplete(task.id); },
                     }}
-                  >
-                    <Text
-                      numberOfLines={1}
-                      style={{
-                        flex: 1,
-                        color: done ? t.color.inkSoft : t.color.ink,
-                        textDecorationLine: done ? "line-through" : "none",
-                        fontFamily: t.typography.fontFamily,
-                        fontSize: t.typography.bodySize,
-                      }}
-                    >
-                      {task.name}
-                    </Text>
-                    <Text style={{ color: t.color.inkMuted, fontFamily: t.typography.fontFamilyMono, fontSize: t.typography.labelSize }}>
-                      {task.points} pts
-                    </Text>
-                    {done ? (
-                      canUndo ? (
-                        <MobileButton label="Undo" variant="ghost" size="sm" onPress={() => void handleUndo(task.id)} />
-                      ) : (
-                        <Text style={{ color: t.color.success, fontSize: 16, fontWeight: "800" }}>✓</Text>
-                      )
-                    ) : (
-                      <TourSpotlight active={tourActive && tourStep === "complete"}>
-                        <MobileButton
-                          label={completing === task.id ? "…" : "Done"}
-                          variant="primary"
-                          size="sm"
-                          disabled={completing === task.id}
-                          onPress={() => void handleComplete(task.id)}
-                        />
-                      </TourSpotlight>
-                    )}
+                    actions={canUndo ? (
+                      <MobileButton label="Undo" variant="ghost" size="sm" onPress={() => void handleUndo(task.id)} />
+                    ) : undefined}
+                  />
+                );
+                return (
+                  <View key={task.id}>
+                    {isTourTarget ? <TourSpotlight active>{row}</TourSpotlight> : row}
                   </View>
                 );
               })}
@@ -329,12 +308,14 @@ export function HomeScreen() {
           <MobileCard title="Up for grabs" description="Claimable one-off chores">
             <View style={{ gap: t.spacing.sm }}>
               {upForGrabs.map((item) => (
-                <View key={item.id} style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: t.spacing.sm }}>
-                  <Text numberOfLines={1} style={{ flex: 1, color: t.color.ink, fontFamily: t.typography.fontFamily, fontSize: t.typography.bodySize }}>
-                    {item.name}
-                  </Text>
-                  <Text style={{ color: t.color.inkMuted, fontFamily: t.typography.fontFamilyMono, fontSize: t.typography.labelSize }}>{item.points} pts</Text>
-                </View>
+                <MobileTaskRow
+                  key={item.id}
+                  title={item.name}
+                  meta={`Posted by ${item.postedByDisplayName ?? "someone"}`}
+                  points={item.points}
+                  leading={{ kind: "glyph", icon: "tasks" }}
+                  onPress={() => navigation.navigate("tasks", { focusBacklog: true })}
+                />
               ))}
               <View style={{ marginTop: t.spacing.xs }}>
                 <MobileButton

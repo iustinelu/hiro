@@ -24,6 +24,8 @@ export type IconName =
   | "strokeOutline"
   | "strokeFill"
   | "close"
+  | "check"
+  | "add"
   | "navigation";
 
 export interface ButtonProps {
@@ -145,6 +147,36 @@ export interface EmptyStatePanelProps {
   description: string;
   icon?: IconName;
   subtitle?: string;
+  // "spec" (default) is the design-system showcase treatment with the EMPTY STATE
+  // eyebrow and uppercase mono description. "inline" is a compact, friendly panel
+  // for use inside a real feature surface (normal casing, optional action).
+  variant?: "spec" | "inline";
+  actionLabel?: string;
+  onAction?: () => void;
+}
+
+// ─── Task row (HIR-83) ───────────────────────────────────────────────────────
+// A single household-chore row used across the Tasks board, Home, and Manage.
+// The leading affordance encodes the row's role: a tappable complete-circle for
+// actionable tasks, a member avatar for claimed/done rows, or a cadence glyph in
+// Manage. The row body is tappable to open a detail sheet.
+
+export type TaskRowLeading =
+  | { kind: "checkbox"; onToggle?: () => void; busy?: boolean }
+  | { kind: "avatar"; name: string; highlighted?: boolean }
+  | { kind: "glyph"; icon: IconName };
+
+export interface TaskRowProps {
+  title: string;
+  meta?: string;
+  points?: number;
+  leading?: TaskRowLeading;
+  // Strikes the title, dims the row, and fills the complete-circle.
+  completed?: boolean;
+  disabled?: boolean;
+  onPress?: () => void;
+  // Optional action buttons rendered on a second line (e.g. Edit / Archive in Manage).
+  actions?: ReactNode;
 }
 
 export interface SpacingMatrixProps {

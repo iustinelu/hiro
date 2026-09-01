@@ -25,6 +25,8 @@ const iconMap: Record<IconName, keyof typeof Ionicons.glyphMap> = {
   strokeOutline: "ellipse-outline",
   strokeFill: "ellipse",
   close: "close",
+  check: "checkmark",
+  add: "add",
   navigation: "compass-outline"
 };
 
@@ -44,6 +46,8 @@ const filledIconMap: Record<IconName, keyof typeof Ionicons.glyphMap> = {
   strokeOutline: "ellipse-outline",
   strokeFill: "ellipse",
   close: "close",
+  check: "checkmark",
+  add: "add",
   navigation: "compass"
 };
 

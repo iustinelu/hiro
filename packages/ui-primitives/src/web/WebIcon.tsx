@@ -1,4 +1,4 @@
-import { BarChart3, Circle, CircleAlert, CircleDot, Compass, Gift, House, Inbox, Link2, ListChecks, LoaderCircle, MoreHorizontal, ShieldCheck, Sparkles, Wallet, X } from "lucide-react";
+import { BarChart3, Check, Circle, CircleAlert, CircleDot, Compass, Gift, House, Inbox, Link2, ListChecks, LoaderCircle, MoreHorizontal, Plus, ShieldCheck, Sparkles, Wallet, X } from "lucide-react";
 import type { IconName } from "../shared/types";
 
 interface WebIconProps {
@@ -26,6 +26,8 @@ const iconMap = {
   strokeOutline: Circle,
   strokeFill: CircleDot,
   close: X,
+  check: Check,
+  add: Plus,
   navigation: Compass
 } as const;
 
