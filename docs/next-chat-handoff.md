@@ -88,7 +88,7 @@ Both apps are **fixed, installable, and crash-free**, Google sign-in **works**, 
 - **TestFlight:** internal = no review (instant once processed); external = needs Beta App Review. Use internal to dogfdood fast.
 
 ## Process notes
-- **Founder pre-authorizes autonomous commit/push/PR/merge** (gh logged in). Branch for code, `npm run check`, then PR + merge (`--admin` to bypass the scrapped `pr-governance` CI check, which always fails by design). Docs/handoff commits go direct to `main`. PR governance is scrapped — plain `gh pr create`.
+- **Founder pre-authorizes autonomous commit/push/PR/merge** (gh logged in). Branch for code, `npm run check`, then PR + merge. Docs/handoff commits go direct to `main`. PR governance is scrapped and fully removed (no failing check to bypass anymore) — plain `gh pr create`.
 - **Continuous improvement is a standing ask** ([[feedback_continuous_improvement]]): every session leave the dev process ≥1% better; log it in `docs/dev-process-improvements.md`. When fixing a bug, add the cheapest guardrail for its class.
 - `npm run check` chain: boundaries → governance → **migrations** → expo-root-artifacts → mobile-runtime (incl. native-dep guard) → lint → typecheck → **test**.
 - No emulator/simulator on this Linux box — mobile QA is on the founder's connected devices (Pixel via adb; iPhone via TestFlight).

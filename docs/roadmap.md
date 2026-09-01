@@ -1,9 +1,9 @@
 # Hiro MVP Roadmap
 
-> Last synced: 2026-04-11 · 12/30 impl tickets done
+> Last synced: 2026-07-06 · 21/30 impl tickets done
 
 ## Overall Progress
-`███░░░░░ 40%`
+`██████░░ 70%`
 
 ## 📍 Now — E0 - Architecture Governance & Delivery Rules
 _No active implementation tickets — check backlog below._
@@ -15,11 +15,11 @@ _No active implementation tickets — check backlog below._
 | E1 | Design System & Interaction Foundation | `████████ 100%` | 3/3 | ✅ |
 | E2 | Platform & Supabase Foundation | `████████ 100%` | 3/3 | ✅ |
 | E3 | Accounts, Households, and Invites | `████████ 100%` | 3/3 | ✅ |
-| E4 | Recurring Tasks + Points Core | `░░░░░░░░ 0%` | 0/3 | ⏳ |
-| E5 | Progress Hub (Velocity, Leaderboard, Calendar) | `░░░░░░░░ 0%` | 0/2 | ⏳ |
-| E6 | Budget & Shared Expenses | `░░░░░░░░ 0%` | 0/2 | ⏳ |
+| E4 | Recurring Tasks + Points Core | `████████ 100%` | 3/3 | ✅ |
+| E5 | Progress Hub (Velocity, Leaderboard, Calendar) | `████████ 100%` | 2/2 | ✅ |
+| E6 | Budget & Shared Expenses | `████████ 100%` | 2/2 | ✅ |
 | E7 | Commitments Dashboard | `░░░░░░░░ 0%` | 0/2 | ⏳ |
-| E8 | Rewards Marketplace v1 | `░░░░░░░░ 0%` | 0/2 | ⏳ |
+| E8 | Rewards Marketplace v1 | `████████ 100%` | 2/2 | ✅ |
 | E9 | MCP Foundation v1 | `░░░░░░░░ 0%` | 0/2 | ⏳ |
 | E10 | Distribution Readiness & Final Polish | `░░░░░░░░ 0%` | 0/2 | ⏳ |
 
@@ -74,37 +74,37 @@ _No active implementation tickets — check backlog below._
 
 </details>
 
-<details><summary>[HIR-9](https://linear.app/household-hiro/issue/HIR-9/e4-recurring-tasks-points-core) – E4 - Recurring Tasks + Points Core</summary>
+<details><summary>[HIR-9](https://linear.app/household-hiro/issue/HIR-9/e4-recurring-tasks-points-core) – E4 - Recurring Tasks + Points Core ✅</summary>
 
-**[HIR-20](https://linear.app/household-hiro/issue/HIR-20/s41-as-a-household-member-i-want-recurring-chores-with-points-so-that) – S4.1 - As a household member, I want recurring chores with points, so that work is visible and fair.**
+**[HIR-20](https://linear.app/household-hiro/issue/HIR-20/s41-as-a-household-member-i-want-recurring-chores-with-points-so-that) – S4.1 - As a household member, I want recurring chores with points, so that work is visible and fair.** ✅
 
 | ID | Title | Status |
 |----|-------|--------|
-| [HIR-39](https://linear.app/household-hiro/issue/HIR-39/i13-implement-recurring-task-crud-with-cadence-and-point-values) | I13 - Implement recurring task CRUD with cadence and point values | ⏳ Backlog |
-| [HIR-40](https://linear.app/household-hiro/issue/HIR-40/i14-implement-task-completion-flow-and-atomic-points-ledger) | I14 - Implement task completion flow and atomic points ledger | ⏳ Backlog |
-| [HIR-41](https://linear.app/household-hiro/issue/HIR-41/i15-build-task-inbox-ux-todayupcoming-filters-states) | I15 - Build task inbox UX (today/upcoming, filters, states) | ⏳ Backlog |
+| [HIR-39](https://linear.app/household-hiro/issue/HIR-39/i13-implement-recurring-task-crud-with-cadence-and-point-values) | I13 - Implement recurring task CRUD with cadence and point values | ✅ Done |
+| [HIR-40](https://linear.app/household-hiro/issue/HIR-40/i14-implement-task-completion-flow-and-atomic-points-ledger) | I14 - Implement task completion flow and atomic points ledger | ✅ Done |
+| [HIR-41](https://linear.app/household-hiro/issue/HIR-41/i15-build-task-inbox-ux-todayupcoming-filters-states) | I15 - Build task inbox UX (today/upcoming, filters, states) | ✅ Done |
 
 </details>
 
-<details><summary>[HIR-10](https://linear.app/household-hiro/issue/HIR-10/e5-progress-hub-velocity-leaderboard-calendar) – E5 - Progress Hub (Velocity, Leaderboard, Calendar)</summary>
+<details><summary>[HIR-10](https://linear.app/household-hiro/issue/HIR-10/e5-progress-hub-velocity-leaderboard-calendar) – E5 - Progress Hub (Velocity, Leaderboard, Calendar) ✅</summary>
 
-**[HIR-21](https://linear.app/household-hiro/issue/HIR-21/s51-as-a-household-member-i-want-progress-views-so-that-i-stay) – S5.1 - As a household member, I want progress views, so that I stay motivated and aligned.**
+**[HIR-21](https://linear.app/household-hiro/issue/HIR-21/s51-as-a-household-member-i-want-progress-views-so-that-i-stay) – S5.1 - As a household member, I want progress views, so that I stay motivated and aligned.** ✅
 
 | ID | Title | Status |
 |----|-------|--------|
-| [HIR-42](https://linear.app/household-hiro/issue/HIR-42/i16-create-progress-aggregation-queries-for-velocity-and-leaderboard) | I16 - Create progress aggregation queries for velocity and leaderboard | ⏳ Backlog |
-| [HIR-43](https://linear.app/household-hiro/issue/HIR-43/i17-implement-progress-hub-ui-velocity-leaderboard-calendar) | I17 - Implement progress hub UI (velocity, leaderboard, calendar) | ⏳ Backlog |
+| [HIR-42](https://linear.app/household-hiro/issue/HIR-42/i16-create-progress-aggregation-queries-for-velocity-and-leaderboard) | I16 - Create progress aggregation queries for velocity and leaderboard | ✅ Done |
+| [HIR-43](https://linear.app/household-hiro/issue/HIR-43/i17-implement-progress-hub-ui-velocity-leaderboard-calendar) | I17 - Implement progress hub UI (velocity, leaderboard, calendar) | ✅ Done |
 
 </details>
 
-<details><summary>[HIR-11](https://linear.app/household-hiro/issue/HIR-11/e6-budget-and-shared-expenses) – E6 - Budget & Shared Expenses</summary>
+<details><summary>[HIR-11](https://linear.app/household-hiro/issue/HIR-11/e6-budget-and-shared-expenses) – E6 - Budget & Shared Expenses ✅</summary>
 
-**[HIR-22](https://linear.app/household-hiro/issue/HIR-22/s61-as-a-household-member-i-want-fast-expense-logging-and-summaries-so) – S6.1 - As a household member, I want fast expense logging and summaries, so that finances stay transparent.**
+**[HIR-22](https://linear.app/household-hiro/issue/HIR-22/s61-as-a-household-member-i-want-fast-expense-logging-and-summaries-so) – S6.1 - As a household member, I want fast expense logging and summaries, so that finances stay transparent.** ✅
 
 | ID | Title | Status |
 |----|-------|--------|
-| [HIR-44](https://linear.app/household-hiro/issue/HIR-44/i18-implement-expense-schema-and-fast-add-expense-flow) | I18 - Implement expense schema and fast add-expense flow | ⏳ Backlog |
-| [HIR-45](https://linear.app/household-hiro/issue/HIR-45/i19-build-monthly-budget-summaries-and-charted-history-navigation) | I19 - Build monthly budget summaries and charted history navigation | ⏳ Backlog |
+| [HIR-44](https://linear.app/household-hiro/issue/HIR-44/i18-implement-expense-schema-and-fast-add-expense-flow) | I18 - Implement expense schema and fast add-expense flow | ✅ Done |
+| [HIR-45](https://linear.app/household-hiro/issue/HIR-45/i19-build-monthly-budget-summaries-and-charted-history-navigation) | I19 - Build monthly budget summaries and charted history navigation | ✅ Done |
 
 </details>
 
@@ -119,14 +119,14 @@ _No active implementation tickets — check backlog below._
 
 </details>
 
-<details><summary>[HIR-13](https://linear.app/household-hiro/issue/HIR-13/e8-rewards-marketplace-v1) – E8 - Rewards Marketplace v1</summary>
+<details><summary>[HIR-13](https://linear.app/household-hiro/issue/HIR-13/e8-rewards-marketplace-v1) – E8 - Rewards Marketplace v1 ✅</summary>
 
-**[HIR-24](https://linear.app/household-hiro/issue/HIR-24/s81-as-a-household-member-i-want-to-redeem-rewards-with-points-so-that) – S8.1 - As a household member, I want to redeem rewards with points, so that chores feel motivating.**
+**[HIR-24](https://linear.app/household-hiro/issue/HIR-24/s81-as-a-household-member-i-want-to-redeem-rewards-with-points-so-that) – S8.1 - As a household member, I want to redeem rewards with points, so that chores feel motivating.** ✅
 
 | ID | Title | Status |
 |----|-------|--------|
-| [HIR-48](https://linear.app/household-hiro/issue/HIR-48/i22-implement-rewards-catalog-crud) | I22 - Implement rewards catalog CRUD | ⏳ Backlog |
-| [HIR-49](https://linear.app/household-hiro/issue/HIR-49/i23-implement-reward-redemption-with-non-negative-balance-guard) | I23 - Implement reward redemption with non-negative balance guard | ⏳ Backlog |
+| [HIR-48](https://linear.app/household-hiro/issue/HIR-48/i22-implement-rewards-catalog-crud) | I22 - Implement rewards catalog CRUD | ✅ Done |
+| [HIR-49](https://linear.app/household-hiro/issue/HIR-49/i23-implement-reward-redemption-with-non-negative-balance-guard) | I23 - Implement reward redemption with non-negative balance guard | ✅ Done |
 
 </details>
 
@@ -165,5 +165,27 @@ _No active implementation tickets — check backlog below._
 | [HIR-63](https://linear.app/household-hiro/issue/HIR-63/hir-37-custom-transactional-email-templates-confirm-reset-invite) | HIR-37: Custom transactional email templates (confirm, reset, invite) | ⏳ Backlog |
 | [HIR-64](https://linear.app/household-hiro/issue/HIR-64/hir-38-social-sign-in-google-oauth-on-web-and-mobile) | HIR-38: Social sign-in (Google OAuth) on web and mobile | ⏳ Backlog |
 | [HIR-65](https://linear.app/household-hiro/issue/HIR-65/web-tab-navigation-feels-laggy-500ms-block-on-switch) | Web tab navigation feels laggy (~500ms block on switch) | ⏳ Backlog |
+| [HIR-66](https://linear.app/household-hiro/issue/HIR-66/wire-up-push-notifications-apns-key-expo-notifications) | Wire up push notifications (APNs key + expo-notifications) | ⏳ Backlog |
+| [HIR-67](https://linear.app/household-hiro/issue/HIR-67/household-chore-backlog-one-off-ad-hoc-tasks) | Household chore backlog (one-off / ad-hoc tasks) | ⏳ Backlog |
+| [HIR-68](https://linear.app/household-hiro/issue/HIR-68/research-spike-app-information-architecture-and-navigation-how-should) | [Research Spike] App information architecture & navigation — how should the whole app be structured? | ⏳ Backlog |
+| [HIR-69](https://linear.app/household-hiro/issue/HIR-69/interactive-new-user-onboarding-guided-first-win-gamified) | Interactive new-user onboarding (guided first-win, gamified) | ⏳ Backlog |
+| [HIR-70](https://linear.app/household-hiro/issue/HIR-70/ad-hoc-tasks-self-assigned-points-contestsettle-flow-activity-board) | Ad-hoc tasks: self-assigned points + contest/settle flow + activity board & history | ⏳ Backlog |
+| [HIR-71](https://linear.app/household-hiro/issue/HIR-71/auth-account-exists-with-a-different-sign-in-method-offer-to-linkmerge) | Auth: account exists with a different sign-in method → offer to link/merge instead of "sign-in failed" | ⏳ Backlog |
+| [HIR-72](https://linear.app/household-hiro/issue/HIR-72/verify-and-fix-google-oauth-consent-screen-redirect-uris-consolidate) | Verify & fix Google OAuth (consent screen + redirect URIs) + consolidate owning Google account | ⏳ Backlog |
+| [HIR-73](https://linear.app/household-hiro/issue/HIR-73/decision-one-vs-multiple-households-per-user-join-flow-data-loss) | Decision: one vs. multiple households per user (join flow + data-loss / ownership handling) | ⏳ Backlog |
+| [HIR-74](https://linear.app/household-hiro/issue/HIR-74/ops-consolidate-all-hiro-infra-under-one-owner-of-record-account) | Ops: consolidate all Hiro infra under one owner-of-record account (Google/Apple/Play/EAS/Supabase/Vercel/GitHub) | ⏳ Backlog |
+| [HIR-75](https://linear.app/household-hiro/issue/HIR-75/research-monetization-strategy-how-should-hiro-make-money) | [Research] Monetization strategy — how should Hiro make money? | ⏳ Backlog |
+| [HIR-76](https://linear.app/household-hiro/issue/HIR-76/research-beta-launch-timing-structure-and-gono-go-criteria) | [Research] Beta launch — timing, structure, and go/no-go criteria | ⏳ Backlog |
+| [HIR-77](https://linear.app/household-hiro/issue/HIR-77/research-influencer-and-paid-collaborator-growth-strategy-positioning) | [Research] Influencer & paid-collaborator growth strategy (+ positioning) | ⏳ Backlog |
+| [HIR-78](https://linear.app/household-hiro/issue/HIR-78/research-evaluate-linear-beads-for-agentic-parallel-development) | [Research] Evaluate Linear → Beads for agentic, parallel development | ⏳ Backlog |
+| [HIR-79](https://linear.app/household-hiro/issue/HIR-79/spike-fully-automated-agent-dev-cycle-plan-spec-implement-test-evals) | [Spike] Fully automated agent dev cycle: plan → spec → implement → test → evals (Claude Team sub, agent-run tests) | ⏳ Backlog |
+| [HIR-80](https://linear.app/household-hiro/issue/HIR-80/in-app-account-deletion-app-store-google-play-requirement) | In-app account deletion (App Store + Google Play requirement) | ✅ Done |
+| [HIR-81](https://linear.app/household-hiro/issue/HIR-81/monetizing-hiro-without-killing-the-vibe-freemium-strategy-hiro-plus) | Monetizing Hiro Without Killing the Vibe — freemium strategy ("Hiro Plus") | ⏳ Backlog |
+| [HIR-82](https://linear.app/household-hiro/issue/HIR-82/rewards-economy-household-marketplace-engagement-points-and-streaks) | Rewards economy — household marketplace, engagement points & streaks | ⏳ Backlog |
+| [HIR-83](https://linear.app/household-hiro/issue/HIR-83/tasks-board-redesign-from-dead-tab-to-household-chore-board-flagship) | Tasks board redesign: from dead tab to household chore board (flagship UX/UI overhaul) | ⏳ Backlog |
+| [HIR-84](https://linear.app/household-hiro/issue/HIR-84/anytime-chores-repeatable-pool-for-tasks-with-no-fixed-day-take-out) | Anytime chores: repeatable pool for tasks with no fixed day (take out trash) | ⏳ Backlog |
+| [HIR-85](https://linear.app/household-hiro/issue/HIR-85/done-log-visible-record-of-what-just-got-done-dispute-discoverability) | Done log: visible record of what just got done + dispute discoverability | ⏳ Backlog |
+| [HIR-86](https://linear.app/household-hiro/issue/HIR-86/overdue-recurring-tasks-detection-in-app-missed-section-and-push) | Overdue recurring tasks: detection, in-app Missed section, and push reminders | ⏳ Backlog |
 
 </details>
+

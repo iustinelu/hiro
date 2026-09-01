@@ -1,8 +1,11 @@
 # Hiro Architecture Standards v1
 
-Last updated: 2026-02-28
+Last updated: 2026-07-05
 Status: Mandatory
 Canonicality: This file is the single source of truth for architecture rules.
+
+> **Mobile-only (2026-07):** Hiro is a mobile-only product.
+> The web app is retired; web-specific rules below apply only if web is ever un-parked.
 
 ## 1. Purpose
 
@@ -126,7 +129,7 @@ Rules:
 
 - Use tokens from `packages/ui-tokens`; no hardcoded feature-level color/spacing/radius values.
 - Use primitives from `packages/ui-primitives` where available.
-- New primitives require both web and mobile equivalents unless explicitly platform-specific.
+- New primitives target React Native (mobile-only product); web equivalents are not required.
 - App-level UI in `apps/*` must not introduce raw platform interactive elements (for example, web `<button>/<input>` or React Native `Pressable/TextInput/Switch/Modal`) when a design-system primitive is expected.
 - If an app needs UI not present in `packages/ui-primitives`, implement the primitive in `packages/ui-primitives` first, then consume it from the app layer.
 

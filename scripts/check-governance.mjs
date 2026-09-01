@@ -9,12 +9,8 @@ const requiredFiles = [
   ".github/ISSUE_TEMPLATE/implementation.md",
   ".github/PULL_REQUEST_TEMPLATE.md",
   ".npmrc",
-  "scripts/prepare-pr-body.mjs",
-  "scripts/create-pr.mjs",
   "scripts/check-expo-root-artifacts.mjs",
   "scripts/mobile-orbital-reset.mjs",
-  "docs/skills/pr-governance/SKILL.md",
-  "docs/skills/pr-governance/agents/openai.yaml",
   "docs/skills/linear-implementation-flow/SKILL.md",
   "docs/skills/linear-implementation-flow/agents/openai.yaml",
   "docs/skills/founder-qa-handoff/SKILL.md",
@@ -43,6 +39,10 @@ if (!readme.includes("docs/architecture/founder-qa-workflow.md")) {
   console.error("README.md must link to docs/architecture/founder-qa-workflow.md");
   process.exit(1);
 }
+if (!readme.includes("docs/next-chat-handoff.md")) {
+  console.error("README.md must link to docs/next-chat-handoff.md as the current-state pointer.");
+  process.exit(1);
+}
 
 const npmrc = readFileSync(".npmrc", "utf8");
 if (!npmrc.includes("legacy-peer-deps=true")) {
@@ -53,11 +53,6 @@ if (!npmrc.includes("legacy-peer-deps=true")) {
 const issueTemplate = readFileSync(".github/ISSUE_TEMPLATE/implementation.md", "utf8");
 if (!issueTemplate.includes("Founder QA Stop-Point")) {
   console.error("Issue template must include Founder QA Stop-Point");
-  process.exit(1);
-}
-
-if (!issueTemplate.includes("Compliance Checklist")) {
-  console.error("Issue template must include compliance checklist");
   process.exit(1);
 }
 if (!issueTemplate.includes("Do not mark this ticket Done")) {
@@ -80,11 +75,6 @@ if (!issueTemplate.includes("Pass/Fail")) {
 const prTemplate = readFileSync(".github/PULL_REQUEST_TEMPLATE.md", "utf8");
 if (!prTemplate.includes("Founder QA Gate")) {
   console.error("PR template must include Founder QA Gate");
-  process.exit(1);
-}
-
-if (!prTemplate.includes("Compliance Checklist")) {
-  console.error("PR template must include compliance checklist");
   process.exit(1);
 }
 if (!prTemplate.includes("must not be treated as final complete")) {
@@ -123,20 +113,12 @@ if (!agents.includes("Founder QA Quick Cycle")) {
   console.error("AGENTS.md must require Founder QA Quick Cycle in handoff.");
   process.exit(1);
 }
-if (!agents.includes("PR Creation Protocol")) {
-  console.error("AGENTS.md must define a PR Creation Protocol.");
+if (!agents.includes("PR Workflow")) {
+  console.error("AGENTS.md must define the PR workflow.");
   process.exit(1);
 }
-if (!agents.includes("npm run pr:prepare")) {
-  console.error("AGENTS.md must require using npm run pr:prepare.");
-  process.exit(1);
-}
-if (!agents.includes("npm run pr:create:fallback")) {
-  console.error("AGENTS.md must require using npm run pr:create:fallback.");
-  process.exit(1);
-}
-if (!agents.includes("Do not use `gh pr create` directly")) {
-  console.error("AGENTS.md must explicitly prohibit direct gh pr create usage.");
+if (!agents.includes("gh pr create")) {
+  console.error("AGENTS.md must document PR creation via gh pr create.");
   process.exit(1);
 }
 if (!agents.includes("Repository Skills (Mandatory)")) {
@@ -157,10 +139,6 @@ if (!agents.includes("docs/skills/branch-pr-lifecycle/SKILL.md")) {
 }
 if (!agents.includes("docs/skills/design-system-change-gate/SKILL.md")) {
   console.error("AGENTS.md must reference design-system-change-gate skill.");
-  process.exit(1);
-}
-if (!agents.includes("docs/skills/pr-governance/SKILL.md")) {
-  console.error("AGENTS.md must reference pr-governance skill.");
   process.exit(1);
 }
 if (!agents.includes("Use design-system primitives/tokens for all app UI elements")) {

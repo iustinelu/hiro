@@ -1,5 +1,9 @@
 # Hiro v0.1.3 - "The Big One" - agent dispatch index
 
+> **ARCHIVED (2026-06-27):** v0.1.3 shipped to Play Internal + TestFlight (PR #52).
+> This is a historical record, not a live queue; the status table below reflects mid-flight state.
+> Note: the emulator QA harness referenced below is currently broken (see the banner in `mobile-qa-harness.md`); founder QA runs on the physical Pixel.
+
 This folder holds **paste-able agent briefs** for the v0.1.3 release.
 Each `NN-slug.md` is a standalone prompt: spawn one agent per brief, in its own git worktree, and it builds + self-verifies one ticket.
 Full program + rationale: `~/.claude/plans/` v0.1.3 plan. Source-of-truth state was verified against code on 2026-06-27 (roadmap.md is stale; the app is core-complete).

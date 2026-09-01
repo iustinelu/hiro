@@ -1,5 +1,9 @@
 # Mobile QA harness (Android emulator)
 
+> **STATUS: BROKEN (as of 2026-06-27).** A node_modules SDK-54 version skew makes the emulator app crash with an EventEmitter red screen on launch.
+> Until the harness is repaired, QA runs on the **physical Pixel over USB** (`46221FDAS00412`) - see `docs/next-chat-handoff.md`.
+> Gotcha that still applies there: only ONE Metro on port 8081, and it must be the active worktree's, or the device loads the wrong bundle.
+
 This is the reusable harness v0.1.3 build agents use to **self-verify mobile work on a real Android runtime** - boot a headless emulator, launch the Hiro app, drive a flow, capture a screenshot - instead of relying on unit tests alone.
 
 Set up once (see [Install recap](#install-recap)); every later agent just runs the [per-branch QA recipe](#per-branch-qa-recipe).

@@ -1,5 +1,8 @@
 # v0.1 Polish — agent dispatch index
 
+> **ARCHIVED (2026-06-25):** all 4 items merged; this queue is complete.
+> Kept as a historical record of the per-item dispatch pattern — not a live queue.
+
 Four independent polish items, one agent per item, each in its own git worktree off `main`. Hand an agent its number ("you are the agent for `docs/polish/2-tab-icons.md`"); it has the full self-contained brief, branch name, worktree command, and Founder QA Quick Cycle. Agent reports done → founder tests → founder says merge.
 
 | # | Item | Status | Branch | Touches |

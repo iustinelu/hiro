@@ -19,7 +19,7 @@ Before starting, also check `docs/skills/branch-pr-lifecycle/SKILL.md` for branc
 - `supabase/README.md` — migration precision mandate and naming conventions
 - `docs/skills/linear-implementation-flow/SKILL.md` — handoff format
 - `docs/skills/branch-pr-lifecycle/SKILL.md` — branch and PR rules
-- `.github/PULL_REQUEST_TEMPLATE.md` — exact required sections and checklist items (governance check will fail if any are missing or unchecked)
+- `.github/PULL_REQUEST_TEMPLATE.md` — lightweight PR template (Summary / What Changed / Founder QA Quick Cycle)
 - `docs/architecture/founder-qa-workflow.md` — Founder QA Quick Cycle format (Commands / Validate / Look for / Pass/Fail)
 
 ### 2. Explore the relevant codebase areas

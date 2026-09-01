@@ -15,15 +15,13 @@ Use this lifecycle for every implementation branch.
 
 ## Validate
 
-1. Run `npm run check` before PR creation.
-2. Ensure governance and PR template requirements are satisfied.
+1. Run `npm run check` before PR creation; it must be green.
 
 ## Create PR
 
-1. Run `npm run pr:prepare`.
-2. Fill `/tmp/pr_body.md`.
-3. Run `npm run pr:validate -- --file /tmp/pr_body.md --title "HIR-XX: ..."` .
-4. Run `npm run pr:create:fallback -- --base main --head <branch> --title "HIR-XX: ..." --body-file /tmp/pr_body.md` only when MCP is unavailable.
+1. Open the PR with plain `gh pr create --base main --title "HIR-XX: ..."`.
+2. The repo PR template pre-fills Summary / What Changed / Founder QA Quick Cycle; fill them in.
+3. The `quality` CI check is the only automated gate; founder QA gates the merge.
 
 ## Post-merge
 

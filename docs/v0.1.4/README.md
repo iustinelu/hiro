@@ -27,5 +27,5 @@ Design rationale, UX diagnosis, and founder decisions are captured in each Linea
 - Agents work in their own worktree and commit there, never in the shared main checkout.
 - Fresh worktrees: copy gitignored `.env` files from main, symlink `node_modules` from the main checkout, restart Metro for `EXPO_PUBLIC_*`.
 - Migrations: check the live head via `list_migrations` first, version strictly after it, pass `npm run check:migrations`, denial-test every new policy/function grant.
-- `npm run check` green before PR; PR via `node scripts/create-pr.mjs`; the `quality` check is the only CI gate.
+- `npm run check` green before PR; PR via plain `gh pr create`; the `quality` check is the only CI gate.
 - Every brief ends with the Founder QA Quick Cycle from its ticket; do not mark Done before founder sign-off.
