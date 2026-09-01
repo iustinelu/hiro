@@ -87,9 +87,10 @@ export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate, 
   }
 
   function buildCadenceMeta(): CadenceMeta {
-    if (cadence === "daily") return {};
     if (cadence === "weekly") return { day: DAY_FULL[selectedDays[0]] ?? "monday" };
-    return { days: selectedDays };
+    if (cadence === "custom") return { days: selectedDays };
+    // daily + anytime carry no meta
+    return {};
   }
 
   async function handleSave() {
@@ -193,15 +194,18 @@ export function TaskCreateModal({ open, editingTask, onClose, onSave, onUpdate, 
           <View style={{ gap: t.spacing.sm }}>
             <Text style={fieldLabelStyle(t)}>Cadence</Text>
             <View style={{ flexDirection: "row", gap: t.spacing.sm, flexWrap: "wrap" }}>
-              {(["daily", "weekly", "custom"] as const).map((c) => (
+              {(["daily", "weekly", "custom", "anytime"] as const).map((c) => (
                 <MobileInteractiveChip
                   key={c}
-                  label={c === "daily" ? "Daily" : c === "weekly" ? "Weekly" : "Custom"}
+                  label={c === "daily" ? "Daily" : c === "weekly" ? "Weekly" : c === "custom" ? "Custom" : "Anytime"}
                   active={cadence === c}
                   onPress={() => { setCadence(c); setSelectedDays([]); }}
                 />
               ))}
             </View>
+            {cadence === "anytime" && (
+              <Text style={hintStyle(t)}>Whenever it needs doing</Text>
+            )}
           </View>
         )}
 
