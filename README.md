@@ -7,7 +7,8 @@ Post a chore up for grabs or log one you just did, earn the points your househol
 A shared budget tracks who paid what.
 
 Built with Expo / React Native and Supabase, shipped natively via EAS to the Play internal track and TestFlight, and running in the author's own home.
-Built with a fleet of coding agents; the repo doubles as a lab for agent-era engineering practice (see [AGENTS.md](AGENTS.md)).
+Built end to end by fully agentic loops: agents pick up tickets, implement, test, run QA on a four-slot Android emulator harness and ship features to devices.
+No fancy orchestration tool in between, only plain scripts and the tools' native capabilities, from idea to phone (see [AGENTS.md](AGENTS.md)).
 
 ## Screens
 
