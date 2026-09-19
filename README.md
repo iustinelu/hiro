@@ -1,6 +1,23 @@
-# Hiro Monorepo
+# Hiro
 
-## Canonical Architecture Rules
+Chores become points, points become rewards, and the bills get split on the way.
+
+Hiro is a household app for partners, families and housemates.
+Post a chore up for grabs or log one you just did, earn the points your household agreed on, climb the weekly leaderboard, and spend points on rewards the household defines.
+A shared budget tracks who paid what.
+
+Built with Expo / React Native and Supabase, shipped natively via EAS to the Play internal track and TestFlight, and running in the author's own home.
+Built with a fleet of coding agents; the repo doubles as a lab for agent-era engineering practice (see [AGENTS.md](AGENTS.md)).
+
+## Screens
+
+| Home and new task | Tasks backlog | Progress | Budget | Household |
+| --- | --- | --- | --- | --- |
+| ![Home screen with the new-task sheet open](docs/screenshots/home-new-task.jpg) | ![Backlog of chores up for grabs with point values](docs/screenshots/tasks-backlog.jpg) | ![Weekly points, streak, leaderboard and task breakdown](docs/screenshots/progress.jpg) | ![Monthly budget with who paid what](docs/screenshots/budget.jpg) | ![Household members and invite code](docs/screenshots/more-household.jpg) |
+
+## For contributors and agents
+
+### Canonical Architecture Rules
 
 Architecture and engineering guardrails live in:
 
@@ -10,7 +27,7 @@ Architecture and engineering guardrails live in:
 This file is mandatory for all contributors and agents.
 Branch protection must require `quality` and `pr-governance` checks before merge.
 
-## Workspace Layout
+### Workspace Layout
 
 - `apps/mobile`
 - `apps/web`
@@ -21,7 +38,7 @@ Branch protection must require `quality` and `pr-governance` checks before merge
 - `packages/supabase-clients`
 - `supabase`
 
-## Common Commands
+### Common Commands
 
 - `npm run dev:web`
 - `npm run dev:mobile`
